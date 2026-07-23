@@ -1,0 +1,305 @@
+{
+	"pages": [
+		{
+			"path": "pages/library/home",
+			"style": {
+				"navigationBarTitleText": "首页",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/square/index",
+			"style": {
+				"navigationBarTitleText": "广场",
+				"enablePullDownRefresh": true,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/library/index",
+			"style": {
+				"navigationBarTitleText": "云艺库",
+				"enablePullDownRefresh": true,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+				"path": "pages/login/index",
+				"style": {
+					"navigationBarTitleText": "登录",
+					"navigationStyle": "custom"
+				}
+		},
+		{
+			"path": "pages/library/works/create",
+			"style": {
+				"navigationBarTitleText": "新建作品"
+			}
+		},
+		{
+			"path": "pages/library/tags/edit",
+			"style": {
+				"navigationBarTitleText": "我的标签"
+			}
+		},
+		{
+			"path": "pages/library/collection/create",
+			"style": {
+				"navigationBarTitleText": "新建作品集"
+			}
+		},
+		{
+			"path": "pages/library/collection/detail",
+			"style": {
+				"navigationBarTitleText": "作品集详情",
+				"enableShareAppMessage": true,
+				"enableShareTimeline": true
+			}
+		},
+		{
+			"path": "pages/profile/index",
+			"style": {
+				"navigationBarTitleText": "我的",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/profile/storage-management",
+			"style": {
+				"navigationBarTitleText": "空间管理"
+			}
+		},
+		{
+			"path": "pages/profile/outsourcing/index",
+			"style": {
+				"navigationBarTitleText": "我的外包",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/profile/withdrawalcenter/index",
+			"style": {
+				"navigationBarTitleText": "提现中心",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/profile/withdrawalcenter/detail/index",
+			"style": {
+				"navigationBarTitleText": "订单详情",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/taskOrder/index",
+			"style": {
+				"navigationBarTitleText": "我的订单",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/profile/team/index",
+			"style": {
+				"navigationBarTitleText": "我的团队",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/profile/team/agree",
+			"style": {
+				"navigationBarTitleText": "加入团队"
+			}
+		},
+		{
+			"path": "pages/profile/edit",
+			"style": {
+				"navigationBarTitleText": "编辑资料"
+			}
+		},
+		{
+			"path": "pages/works-detail/detail",
+			"style": {
+				"navigationBarTitleText": "作品详情",
+				"enableShareAppMessage": true,
+				"enableShareTimeline": true
+			}
+		},
+		{
+			"path": "pages/works-detail/image-preview",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom",
+				"backgroundColor": "#000000",
+				"pageOrientation": "portrait"
+			}
+		},
+		{
+			"path": "pages/profile/visitor/index",
+			"style": {
+				"navigationBarTitleText": "我的访客"
+			}
+		},
+		{
+			"path": "pages/profile/member/index",
+			"style": {
+				"navigationBarTitleText": "会员中心"
+			}
+		},
+		{
+			"path": "pages/profile/feedback/index",
+			"style": {
+				"navigationBarTitleText": "问题反馈"
+			}
+		},
+		{
+			"path": "pages/profile/settings/index",
+			"style": {
+				"navigationBarTitleText": "设置"
+			}
+		},
+		{
+			"path": "pages/profile/follow-list"
+		},
+		{
+			"path": "pages/library/visitor-home",
+			"style": {
+				"navigationBarTitleText": "用户主页"
+			}
+		},
+		{
+			"path": "pages/publish/index",
+			"style": {
+				"navigationBarTitleText": "发布"
+			}
+		},
+		{
+			"path": "pages/task/index",
+			"style": {
+				"navigationBarTitleText": "发布任务",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/task/detail/index",
+			"style": {
+				"navigationBarTitleText": "任务详情",
+				"navigationStyle": "custom",
+				"enableShareAppMessage": true,
+				"enableShareTimeline": true
+			}
+		},
+		{
+			"path": "pages/showCase/index",
+			"style": {
+				"navigationBarTitleText": "发布橱窗",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/showCase/my/index",
+			"style": {
+				"navigationBarTitleText": "我的橱窗",
+				"navigationStyle": "custom",
+				"enableShareAppMessage": true
+			}
+		},
+		{
+			"path": "pages/showCase/favorite/index",
+			"style": {
+				"navigationBarTitleText": "我的收藏",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/showCase/detail/index",
+			"style": {
+				"navigationBarTitleText": "橱窗详情",
+				"navigationStyle": "custom",
+				"enableShareAppMessage": true,
+				"enableShareTimeline": true
+			}
+		},
+		{
+			"path": "pages/professionCategory/select",
+			"style": {
+				"navigationBarTitleText": "选择",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/professionCategory/push",
+			"style": {
+				"navigationBarTitleText": "专业推送",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/library/portfolio-sort/portfolio-sort",
+			"style": {
+				"navigationBarTitleText": "按住拖拽排序"
+			}
+		},
+		{
+			"path": "pages/login/aggrement",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "云艺坊",
+		"navigationBarBackgroundColor": "#FFFFFF",
+		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"color": "#999999",
+		"selectedColor": "#222222",
+		"backgroundColor": "#FFFFFF",
+		"height": "60px",
+		"list": [{
+				"pagePath": "pages/library/home",
+				"text": "首页",
+				"iconPath": "static/tabbar/首页.png",
+				"selectedIconPath": "static/tabbar/首页.png"
+			},
+			{
+				"pagePath": "pages/square/index",
+				"text": "广场",
+				"iconPath": "static/tabbar/square.png",
+				"selectedIconPath": "static/tabbar/square=sleect.png"
+			},
+			{
+				"pagePath": "pages/publish/index",
+				"text": "发布",
+				"iconPath": "static/tabbar/发布.png",
+				"selectedIconPath": "static/tabbar/发布.png"
+			},
+			{
+				"pagePath": "pages/library/index",
+				"text": "云艺库",
+				"iconPath": "static/tabbar/云艺库未选中.png",
+				"selectedIconPath": "static/tabbar/云艺库选中.png"
+			},
+			{
+				"pagePath": "pages/profile/index",
+				"text": "我的",
+				"iconPath": "static/tabbar/我的未选中.png",
+				"selectedIconPath": "static/tabbar/我的选中.png"
+			}
+		]
+	},
+	"uniIdRouter": {},
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			"^yun-(.*)": "@/components/yun-$1.vue"
+		}
+	},
+	 "permission": {
+	    "scope.writePhotosAlbum": {
+	      "desc": "用于保存图片和视频到相册"
+	    }
+	  },
+	  "requiredPrivateInfos": ["chooseMessageFile"]
+}
