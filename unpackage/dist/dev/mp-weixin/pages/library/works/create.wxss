@@ -1,0 +1,815 @@
+@charset "UTF-8";
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+.publish-container.data-v-7e690276 {
+  /* 移除固定高度，让内容自适应 */
+  min-height: 100vh;
+  /* 保持最小高度为屏幕高度 */
+  background-color: #fff;
+  padding: 0 40rpx;
+  /* 增加顶部和底部留白 */
+  padding-top: 60rpx;
+  padding-bottom: 80rpx;
+  box-sizing: border-box;
+}
+/* 标题 */
+.input-section.data-v-7e690276 {
+  /* 减少内边距 */
+}
+.title-input.data-v-7e690276 {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  height: 60rpx;
+}
+.placeholder-style.data-v-7e690276 {
+  color: #ccc;
+  /* 浅灰色占位文字 */
+  font-weight: normal;
+}
+/* 标签 */
+.tag-section.data-v-7e690276 {
+  padding: 30rpx 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.tag-label.data-v-7e690276 {
+  font-size: 28rpx;
+  color: #333;
+  flex: 1;
+}
+.selected-tags.data-v-7e690276 {
+  display: flex;
+  flex-wrap: wrap;
+}
+.tag-pill.data-v-7e690276 {
+  background: #f0f0f0;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  color: #666;
+  margin-right: 10rpx;
+  margin-bottom: 6rpx;
+}
+.add-tag-btn.data-v-7e690276 {
+  color: #000;
+  /* 蓝色文字按钮 */
+  font-size: 28rpx;
+}
+/* 上传区域 */
+.upload-section.data-v-7e690276 {
+  margin-top: 10rpx;
+  /* 移除固定高度，让内容自适应 */
+  background-color: #fff;
+  /* 白色背景 */
+  position: relative;
+  padding: 20rpx 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+/* 无图片时的占位符样式 */
+.upload-placeholder.data-v-7e690276 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  width: 100%;
+  /* 移除固定高度，使用padding来控制大小 */
+  padding: 100rpx 0;
+  text-align: center;
+  position: relative;
+}
+.placeholder-text.data-v-7e690276 {
+  font-size: 28rpx;
+  color: #999;
+  font-weight: 400;
+  line-height: 1.5;
+  max-width: 80%;
+  margin-bottom: 20rpx;
+}
+.upload-guide.data-v-7e690276 {
+  font-size: 24rpx;
+  color: #ccc;
+  line-height: 1.5;
+  max-width: 80%;
+}
+.upload-add.data-v-7e690276 {
+  background: #ff7a22;
+  width: 48rpx;
+  height: 20rpx;
+  border-radius: 50%;
+  color: white;
+  font-size: 24rpx;
+  padding: 10rpx;
+}
+.upload-btn.data-v-7e690276 {
+  position: absolute;
+  bottom: 60rpx;
+  right: 60rpx;
+  width: 120rpx;
+  height: 120rpx;
+  background: #ff7a22;
+  color: white;
+  border: none;
+  border-radius: 50%;
+}
+/* 悬浮上传按钮样式 */
+.floating-upload-btn.data-v-7e690276 {
+  position: fixed;
+  right: 40rpx;
+  bottom: 180rpx;
+  width: 100rpx;
+  height: 100rpx;
+  /* 与确认发布按钮一致的橙色主题 */
+  color: white;
+  border-radius: 50%;
+  z-index: 99;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 24rpx;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+.floating-upload-btn.data-v-7e690276:active {
+  -webkit-transform: scale(0.96);
+          transform: scale(0.96);
+}
+.upload-btn.data-v-7e690276:active {
+  background: #ff9547;
+  -webkit-transform: scale(0.96);
+          transform: scale(0.96);
+}
+.plus.data-v-7e690276 {
+  width: 88rpx;
+  height: 88rpx;
+  margin-bottom: 4rpx;
+}
+.upload-text.data-v-7e690276 {
+  font-size: 20rpx;
+}
+/* 4. 底部弹窗样式 */
+.popup-mask.data-v-7e690276 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.popup-content.data-v-7e690276 {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 20rpx 30rpx 30rpx;
+  position: relative;
+  margin: 20rpx;
+}
+.popup-handle.data-v-7e690276 {
+  width: 80rpx;
+  height: 8rpx;
+  background: #eee;
+  border-radius: 4rpx;
+  margin: 0 auto 30rpx;
+}
+.popup-header.data-v-7e690276 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+.ph-title.data-v-7e690276 {
+  font-size: 24rpx;
+  color: #999;
+}
+.ph-link.data-v-7e690276 {
+  font-size: 24rpx;
+  color: #333;
+  font-weight: bold;
+}
+.popup-item.data-v-7e690276 {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+.p-icon.data-v-7e690276 {
+  width: 60rpx;
+  height: 60rpx;
+  margin-right: 20rpx;
+}
+/* 请替换为你的图标 */
+.p-info.data-v-7e690276 {
+  flex: 1;
+}
+.p-main.data-v-7e690276 {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+}
+.p-sub.data-v-7e690276 {
+  font-size: 24rpx;
+  color: #ccc;
+}
+/* 图片网格样式 - 自适应布局 */
+.image-grid.data-v-7e690276 {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12rpx;
+  padding: 0rpx;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  /* 移除overflow: hidden，允许内容溢出时滚动 */
+  /* 移除固定行数，让行数根据内容自适应 */
+  /* 移除min-height，让高度根据内容自适应 */
+  align-content: start;
+  /* 确保网格内容从顶部开始排列 */
+  justify-content: start;
+  /* 确保网格内容从左侧开始排列 */
+}
+/* 拖拽态禁用过渡动画 */
+.drag-disabled-transition.data-v-7e690276 {
+  transition: none !important;
+}
+/* 图片项样式 - 固定宽高比 */
+.image-item.data-v-7e690276 {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1/1;
+  box-sizing: border-box;
+  /* 确保项目在网格中对齐 */
+  justify-self: start;
+  align-self: start;
+  /* 防止项目被意外拉伸 */
+  flex-shrink: 0;
+  /* 拖拽相关样式 */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: move;
+  /* 添加过渡动画 */
+  -webkit-animation: fadeInUp-data-v-7e690276 0.3s ease-out;
+          animation: fadeInUp-data-v-7e690276 0.3s ease-out;
+  -webkit-transform-origin: center center;
+          transform-origin: center center;
+}
+/* 拖拽中的图片样式 - 增强视觉反馈 */
+.image-item.dragging.data-v-7e690276 {
+  opacity: 0.85;
+  z-index: 1000;
+  box-shadow: 0 16rpx 60rpx rgba(0, 0, 0, 0.4);
+  border-radius: 14rpx;
+  background-color: rgba(255, 255, 255, 0.98);
+  -webkit-backdrop-filter: blur(12rpx);
+          backdrop-filter: blur(12rpx);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  /* 防止拖拽时触发点击事件 */
+}
+/* 占位符样式 - 保持布局稳定 */
+.image-item.placeholder.data-v-7e690276 {
+  opacity: 0.6;
+  background-color: rgba(0, 122, 255, 0.15);
+  border: 2rpx dashed rgba(0, 122, 255, 0.5);
+  border-radius: 12rpx;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  -webkit-animation: pulse-data-v-7e690276 1.5s infinite;
+          animation: pulse-data-v-7e690276 1.5s infinite;
+}
+@-webkit-keyframes pulse-data-v-7e690276 {
+0% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+}
+50% {
+    -webkit-transform: scale(1.02);
+            transform: scale(1.02);
+}
+100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+}
+}
+@keyframes pulse-data-v-7e690276 {
+0% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+}
+50% {
+    -webkit-transform: scale(1.02);
+            transform: scale(1.02);
+}
+100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+}
+}
+/* 增强的拖拽反馈效果 */
+.image-item.dragging.data-v-7e690276 {
+  /* 确保拖拽元素始终在最上层 */
+  will-change: transform, opacity;
+  /* 添加轻微的旋转效果增强立体感 */
+  -webkit-transform-style: preserve-3d;
+          transform-style: preserve-3d;
+}
+/* 确保拖拽时图片预览元素不会被缩放 */
+.image-item.dragging .image-preview.data-v-7e690276 {
+  -webkit-transform: none !important;
+          transform: none !important;
+  object-fit: contain !important;
+}
+/* 最后一个图片项样式 - 禁用点击和拖拽 */
+.image-item.last-image.data-v-7e690276 {
+  cursor: default;
+  /* 移除pointer-events: none，因为我们已经在事件绑定中处理了最后一个图片的情况 */
+  /* pointer-events: none; */
+}
+/* 拖拽经过时的目标区域样式 - 清晰的视觉提示 */
+.image-item.dragover.data-v-7e690276 {
+  border: 3rpx dashed #ff7a22;
+  background-color: rgba(255, 122, 34, 0.1);
+  border-radius: 14rpx;
+  -webkit-transform: scale(0.95);
+          transform: scale(0.95);
+  transition: all 0.2s ease;
+}
+/* 添加图片加载完成的动画 */
+.image-preview.loaded.data-v-7e690276 {
+  opacity: 1;
+  -webkit-transform: translateY(0);
+          transform: translateY(0);
+  transition: opacity 0.4s ease, -webkit-transform 0.4s ease;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  transition: opacity 0.4s ease, transform 0.4s ease, -webkit-transform 0.4s ease;
+}
+/* 文档预览样式 */
+.document-preview.data-v-7e690276 {
+  width: 100%;
+  height: 100%;
+  background-color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8rpx;
+}
+/* 文档图标样式 */
+.document-icon.data-v-7e690276 {
+  width: 80rpx;
+  height: 80rpx;
+  margin-bottom: 12rpx;
+}
+/* 文档名称样式 */
+.document-name.data-v-7e690276 {
+  font-size: 24rpx;
+  color: #666;
+  max-width: 80%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+/* 新增：图片交换时的过渡动画 */
+.image-item.data-v-7e690276 {
+  will-change: transform, opacity, z-index;
+}
+/* 新增：增强的拖拽反馈效果 */
+.image-grid.data-v-7e690276 {
+  -webkit-perspective: 1000rpx;
+          perspective: 1000rpx;
+}
+/* 图片容器 - 确保图片和删除按钮的相对位置稳定 */
+.image-container.data-v-7e690276 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 10rpx;
+  overflow: hidden;
+  background: #f0f0f0;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+  /* 确保容器不会因内容溢出而变形 */
+  box-sizing: border-box;
+}
+/* 图片预览样式 - 固定尺寸 */
+.image-preview.data-v-7e690276 {
+  width: 100%;
+  height: 100%;
+  /* 确保图片不会超出容器 - 使用mode="aspectFill"替代object-fit */
+  display: block;
+  /* 防止图片加载时的闪烁 */
+  transition: opacity 0.3s ease, -webkit-transform 0.3s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease, -webkit-transform 0.3s ease;
+  /* 确保图片作为块级元素显示 */
+  box-sizing: border-box;
+  /* 拖拽时的图片样式 */
+  -webkit-user-select: none;
+          user-select: none;
+  /* 初始状态 */
+  opacity: 0;
+  -webkit-transform: translateY(10rpx);
+          transform: translateY(10rpx);
+  /* 添加加载完成的动画 */
+  -webkit-animation: imageLoadIn-data-v-7e690276 0.4s ease forwards;
+          animation: imageLoadIn-data-v-7e690276 0.4s ease forwards;
+}
+/* 视频预览特殊处理 */
+video.image-preview.data-v-7e690276 {
+  object-fit: cover;
+}
+/* 过渡动画定义 */
+@-webkit-keyframes fadeInUp-data-v-7e690276 {
+from {
+    opacity: 0;
+    -webkit-transform: translateY(20rpx);
+            transform: translateY(20rpx);
+}
+to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
+}
+}
+@keyframes fadeInUp-data-v-7e690276 {
+from {
+    opacity: 0;
+    -webkit-transform: translateY(20rpx);
+            transform: translateY(20rpx);
+}
+to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
+}
+}
+/* 图片加载动画 */
+@-webkit-keyframes imageLoadIn-data-v-7e690276 {
+to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
+}
+}
+@keyframes imageLoadIn-data-v-7e690276 {
+to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
+}
+}
+/* 确保视频和图片大小一致 */
+video.image-preview.data-v-7e690276 {
+  object-fit: cover;
+}
+/* 视频预览容器 */
+.video-preview.data-v-7e690276 {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+/* 视频标记 */
+.video-tag.data-v-7e690276 {
+  position: absolute;
+  bottom: 10rpx;
+  right: 10rpx;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 20rpx;
+  padding: 5rpx 10rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.video-tag-text.data-v-7e690276 {
+  color: #fff;
+  font-size: 24rpx;
+}
+/* 拖拽悬停状态 */
+.image-item.dragover.data-v-7e690276 {
+  border: 2rpx dashed #ff7a22;
+  background-color: rgba(255, 122, 34, 0.1);
+}
+/* 视频标记 */
+.video-tag.data-v-7e690276 {
+  position: absolute;
+  bottom: 10rpx;
+  right: 10rpx;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 20rpx;
+  padding: 5rpx 10rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.video-tag-icon.data-v-7e690276 {
+  width: 24rpx;
+  height: 24rpx;
+}
+/* 确保视频和图片大小一致 */
+video.image-preview.data-v-7e690276 {
+  object-fit: cover;
+}
+/* 删除按钮样式 - 精确位置控制 */
+.delete-btn.data-v-7e690276 {
+  position: absolute;
+  top: 8rpx;
+  right: 8rpx;
+  width: 40rpx;
+  height: 40rpx;
+  color: #fff;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 40rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  z-index: 2;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.2);
+  /* 确保删除按钮在拖拽时依然可见 */
+  pointer-events: auto;
+}
+.delete-btn.data-v-7e690276:active {
+  background: rgba(255, 68, 68, 0.9);
+  -webkit-transform: scale(0.9);
+          transform: scale(0.9);
+}
+/* 添加按钮容器 */
+.add-container.data-v-7e690276 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 2rpx dashed #ff7a22;
+  border-radius: 10rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff8f5;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  /* 与图片容器保持一致的阴影效果 */
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+  /* 确保尺寸与图片容器完全一致 */
+  box-sizing: border-box;
+}
+/* 加号按钮样式 */
+.add-icon.data-v-7e690276 {
+  font-size: 56rpx;
+  color: #ff7a22;
+  /* 防止加号按钮被拉伸 */
+  flex-shrink: 0;
+}
+.add-container.data-v-7e690276:active {
+  background: #fff0e6;
+  border-color: #ff9547;
+  -webkit-transform: scale(0.98);
+          transform: scale(0.98);
+}
+.add-container:active .add-icon.data-v-7e690276 {
+  color: #ff9547;
+}
+/* 底部按钮区域 */
+.footer-btn-area.data-v-7e690276 {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 20rpx 0 40rpx 0;
+  background: #fff;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+}
+.publish-btn.data-v-7e690276 {
+  width: 100%;
+  max-width: 600rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  background: #ff7a22;
+  /* 橙色主题 */
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: bold;
+  border-radius: 44rpx;
+  transition: all 0.3s ease;
+}
+.publish-btn.disabled.data-v-7e690276 {
+  background: #F37738;
+  color: #fff;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+/* 为了防止底部按钮遮挡内容，给容器加个 padding-bottom */
+.publish-container.data-v-7e690276 {
+  padding-bottom: 160rpx;
+}
+/* 上传加载动画样式 */
+.loading-container.data-v-7e690276 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.loading-spinner.data-v-7e690276 {
+  width: 40rpx;
+  height: 40rpx;
+  border: 4rpx solid rgba(255, 255, 255, 0.3);
+  border-top: 4rpx solid #fff;
+  border-radius: 50%;
+  -webkit-animation: spin-data-v-7e690276 1s linear infinite;
+          animation: spin-data-v-7e690276 1s linear infinite;
+  margin-bottom: 10rpx;
+}
+.loading-text.data-v-7e690276 {
+  color: #fff;
+  font-size: 24rpx;
+}
+@-webkit-keyframes spin-data-v-7e690276 {
+0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+}
+100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+}
+}
+@keyframes spin-data-v-7e690276 {
+0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+}
+100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+}
+}
+/* 简介弹窗 */
+.desc-popup.data-v-7e690276 {
+  height: 60vh;
+}
+.ph-confirm.data-v-7e690276 {
+  font-size: 28rpx;
+  color: #ff7a22;
+  font-weight: bold;
+}
+.desc-edit-area.data-v-7e690276 {
+  position: relative;
+  height: calc(100% - 100rpx);
+}
+.desc-textarea.data-v-7e690276 {
+  width: 100%;
+  height: 100%;
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.5;
+}
+.desc-count.data-v-7e690276 {
+  position: absolute;
+  bottom: 20rpx;
+  right: 20rpx;
+  font-size: 24rpx;
+  color: #ccc;
+}
+/* 标签弹窗样式 */
+.tag-popup.data-v-7e690276 {
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+.tag-confirm-btn.data-v-7e690276 {
+  background: #000;
+  color: #fff;
+  padding: 10rpx 30rpx;
+  border-radius: 30rpx;
+  font-size: 26rpx;
+}
+.tag-input-section.data-v-7e690276 {
+  margin-bottom: 40rpx;
+}
+.tag-input.data-v-7e690276 {
+  background: #f5f5f5;
+  border-radius: 8rpx;
+  padding: 0 20rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 28rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+.my-tags-header.data-v-7e690276 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #eee;
+}
+.my-tags-title.data-v-7e690276 {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+}
+.manage-tags.data-v-7e690276 {
+  font-size: 24rpx;
+  color: #999;
+}
+.tags-list.data-v-7e690276 {
+  display: flex;
+  flex-wrap: wrap;
+}
+.tag-item.data-v-7e690276 {
+  background: #f5f5f5;
+  color: #333;
+  padding: 12rpx 24rpx;
+  border-radius: 30rpx;
+  margin-right: 20rpx;
+  margin-bottom: 20rpx;
+  font-size: 26rpx;
+  border: 1px solid transparent;
+}
+.tag-item.active.data-v-7e690276 {
+  background: #fff;
+  color: #ff7a22;
+  border-color: #ff7a22;
+}
+.selected-tags-preview.data-v-7e690276 {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 20rpx;
+}
+.upload-guide-container.data-v-7e690276 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  /* 文字和图标之间的间距 */
+  text-align: center;
+}
+.text.data-v-7e690276 {
+  color: #999;
+  /* 灰色文字 */
+  font-size: 28rpx;
+  font-family: sans-serif;
+}
+.upload-icon.data-v-7e690276 {
+  width: 24px;
+  /* 图标大小 */
+  height: 24px;
+  background-color: #FF6B00;
+  /* 橙色背景 */
+  border-radius: 50%;
+  /* 圆形 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.plus2.data-v-7e690276 {
+  width: 24px;
+  /* 图标大小 */
+  height: 24px;
+  color: white;
+  font-size: 28rpx;
+  font-weight: bold;
+  line-height: 1;
+}

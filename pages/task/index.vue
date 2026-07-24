@@ -8,8 +8,7 @@
 			</view>
 		</view>
 
-		<scroll-view class="page-scroll" scroll-y>
-			<view class="page-canvas">
+		<view class="page-canvas">
 				<view class="form-card intro-card">
 					<view class="field-block title-block">
 						<text class="field-title">任务标题</text>
@@ -101,7 +100,6 @@
 					<text class="agreement-link" @click.stop="openAgreementPopup">《云艺库协议》</text>
 				</view>
 			</view>
-		</scroll-view>
 
 		<view class="bottom-actions">
 			<template v-if="showInviteActionButtons">
@@ -1112,10 +1110,6 @@ export default {
 	font-size: 40rpx;
 	line-height: 56rpx;
 	color: #000000;
-}
-
-.page-scroll {
-	height: 100vh;
 }
 
 .page-canvas {

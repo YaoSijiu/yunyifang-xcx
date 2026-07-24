@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "我的订单",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "reject-reason-popup": "/components/reject-reason-popup",
+    "contact-info-popup": "/components/contact-info-popup"
+  }
+}

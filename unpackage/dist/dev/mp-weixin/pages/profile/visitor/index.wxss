@@ -1,0 +1,597 @@
+@charset "UTF-8";
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+/* 基础变量 */
+/* 橙色高亮 */
+.container.data-v-f4b00c3c {
+  min-height: 100vh;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+/* 1. 顶部导航模拟 */
+.custom-nav.data-v-f4b00c3c {
+  height: 88rpx;
+  /* 适配状态栏高度，实际开发建议用 uni.getSystemInfoSync().statusBarHeight */
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30rpx;
+  background-color: #fff;
+}
+.custom-nav .nav-title.data-v-f4b00c3c {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: #333;
+}
+.custom-nav .nav-right.data-v-f4b00c3c {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+.custom-nav .nav-right .dots.data-v-f4b00c3c {
+  font-weight: bold;
+  font-size: 32rpx;
+  margin-bottom: 10rpx;
+}
+.custom-nav .nav-right .circle-icon.data-v-f4b00c3c {
+  font-size: 36rpx;
+}
+/* 2. Tab 栏样式 */
+.tab-header.data-v-f4b00c3c {
+  display: flex;
+  align-items: center;
+  padding: 10rpx 0 0 30rpx;
+  background-color: #fff;
+  border-bottom: 1rpx solid transparent;
+}
+.tab-scroll.data-v-f4b00c3c {
+  flex: 1;
+  white-space: nowrap;
+  width: 80%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* 针对不同平台的隐藏滚动条 */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE 10+ */
+}
+.tab-scroll.data-v-f4b00c3c::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background-color: transparent !important;
+}
+.tab-item1.data-v-f4b00c3c {
+  display: inline-block;
+  margin-right: 20rpx;
+  padding-bottom: 20rpx;
+  position: relative;
+  width: 140rpx;
+}
+.tab-item1 .tab-text.data-v-f4b00c3c {
+  font-size: 30rpx;
+  color: #666;
+  font-weight: 500;
+}
+.tab-item1 .badge.data-v-f4b00c3c {
+  display: inline-block;
+  background-color: #333;
+  color: #fff;
+  font-size: 20rpx;
+  padding: 2rpx 10rpx;
+  border-radius: 20rpx;
+  margin-left: 8rpx;
+  vertical-align: middle;
+}
+.tab-item1.active .tab-text.data-v-f4b00c3c {
+  color: #333;
+  font-weight: bold;
+  font-size: 32rpx;
+}
+.tab-item1.active .yellow-underline.data-v-f4b00c3c {
+  width: 50rpx;
+  height: 12rpx;
+  position: absolute;
+  bottom: 0;
+  left: 21%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  border-radius: 6rpx;
+}
+.tab-item.data-v-f4b00c3c {
+  display: inline-block;
+  margin-right: 40rpx;
+  padding-bottom: 20rpx;
+  position: relative;
+}
+.tab-item .tab-text.data-v-f4b00c3c {
+  font-size: 30rpx;
+  color: #666;
+  font-weight: 500;
+}
+.tab-item .badge.data-v-f4b00c3c {
+  display: inline-block;
+  background-color: #333;
+  color: #fff;
+  font-size: 20rpx;
+  padding: 2rpx 10rpx;
+  border-radius: 20rpx;
+  margin-left: 8rpx;
+  vertical-align: middle;
+}
+.tab-item.active.data-v-f4b00c3c {
+  /* 橙色弧线指示器 */
+}
+.tab-item.active .tab-text.data-v-f4b00c3c {
+  color: #333;
+  font-weight: bold;
+  font-size: 32rpx;
+}
+.tab-item.active .active-line.data-v-f4b00c3c {
+  position: absolute;
+  bottom: 10rpx;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  width: 40rpx;
+  height: 6rpx;
+  background-color: #ff6b00;
+  border-radius: 6rpx;
+  /* 这里的 box-shadow 模拟弧形光晕效果 */
+  box-shadow: 0 2rpx 4rpx rgba(255, 107, 0, 0.3);
+}
+.yellow-underline.data-v-f4b00c3c {
+  width: 50rpx;
+  height: 12rpx;
+  position: absolute;
+  bottom: 0;
+  left: 32%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  border-radius: 6rpx;
+}
+.expand-btn.data-v-f4b00c3c {
+  padding: 0 10rpx;
+  display: flex;
+  align-items: center;
+  position: -webkit-sticky;
+  position: sticky;
+  right: 0;
+  z-index: 10;
+  background: linear-gradient(to right, transparent, #fff 20%);
+  /* 渐变遮罩 */
+  box-shadow: none;
+  margin-top: -10rpx;
+  border-left: 1px solid #eee;
+  font-size: 32rpx;
+}
+.expand-btn .triangle.data-v-f4b00c3c {
+  font-size: 20rpx;
+  margin-top: 5rpx;
+}
+.expand-btn .expand-text.data-v-f4b00c3c {
+  width: 70rpx;
+}
+/* 3. 搜索框样式 */
+.search-box-wrapper.data-v-f4b00c3c {
+  padding: 20rpx 30rpx;
+  background-color: #fff;
+}
+.search-icon.data-v-f4b00c3c {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 20rpx;
+}
+.search-box.data-v-f4b00c3c {
+  background-color: #f7f8fa;
+  height: 72rpx;
+  border-radius: 36rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 24rpx;
+}
+.search-box .search-input.data-v-f4b00c3c {
+  flex: 1;
+  font-size: 28rpx;
+  margin-left: 10rpx;
+  color: #333;
+}
+.placeholder-style.data-v-f4b00c3c {
+  color: #bbb;
+}
+/* 4. 列表展示样式 (有数据) */
+.content-list.data-v-f4b00c3c {
+  padding: 0 30rpx;
+}
+.content-list .visitor-card.data-v-f4b00c3c {
+  padding: 30rpx 0;
+  border-bottom: 1rpx solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.content-list .visitor-card .card-header.data-v-f4b00c3c {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+.content-list .visitor-card .card-header .visitor-name.data-v-f4b00c3c {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: 500;
+}
+.content-list .visitor-card .card-header .visitor-phone.data-v-f4b00c3c {
+  margin-left: 10rpx;
+}
+.content-list .visitor-card .card-header .more-icon.data-v-f4b00c3c {
+  color: #999;
+  font-weight: bold;
+  letter-spacing: 2rpx;
+}
+.content-list .visitor-card .visit-time.data-v-f4b00c3c {
+  font-size: 24rpx;
+  color: #999;
+}
+/* 5. 空状态样式 (无数据) */
+.content-empty.data-v-f4b00c3c {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 240rpx;
+  /* 调整位置 */
+}
+.content-empty .empty-image-placeholder.data-v-f4b00c3c {
+  width: 200rpx;
+  height: 160rpx;
+  position: relative;
+  margin-bottom: 20rpx;
+  opacity: 0.5;
+  /* CSS 画一个简单的空状态图，你可以直接替换为 <image> */
+}
+.content-empty .empty-image-placeholder .img-head.data-v-f4b00c3c {
+  width: 80rpx;
+  height: 80rpx;
+  background: #ddd;
+  border-radius: 50%;
+  margin: 0 auto;
+}
+.content-empty .empty-image-placeholder .img-body.data-v-f4b00c3c {
+  width: 120rpx;
+  height: 60rpx;
+  background: #ddd;
+  border-radius: 60rpx 60rpx 0 0;
+  margin: -10rpx auto 0;
+}
+.content-empty .empty-image-placeholder .img-lines.data-v-f4b00c3c {
+  position: absolute;
+  right: 0;
+  top: 30rpx;
+}
+.content-empty .empty-image-placeholder .img-lines .line.data-v-f4b00c3c {
+  width: 60rpx;
+  height: 10rpx;
+  background: #ddd;
+  margin-bottom: 10rpx;
+  border-radius: 10rpx;
+}
+.content-empty .empty-image-placeholder .img-lines .short.data-v-f4b00c3c {
+  width: 40rpx;
+}
+.content-empty .empty-text.data-v-f4b00c3c {
+  font-size: 28rpx;
+  color: #999;
+}
+/* 仅用于演示的按钮样式 */
+.demo-toggle-btn.data-v-f4b00c3c {
+  margin-top: 80rpx;
+  font-size: 24rpx;
+  background-color: #f0f0f0;
+  color: #666;
+}
+.more-options.data-v-f4b00c3c {
+  width: 50rpx;
+  /* 点击区域宽度 */
+  height: 50rpx;
+  /* 点击区域高度 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: 30rpx;
+  /* 右侧留白 */
+  position: relative;
+  z-index: 1;
+}
+/* 水平排列三个小圆点 */
+.dot-row.data-v-f4b00c3c {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 30rpx;
+  /* 精确控制总宽度 */
+  height: 6rpx;
+}
+.dot.data-v-f4b00c3c {
+  width: 8rpx;
+  /* 非常小的圆点，匹配图片 */
+  height: 8rpx;
+  background-color: #333;
+  /* 纯黑色 */
+  border-radius: 50%;
+}
+/* 可选：为每个点单独控制间距 */
+.dot-row .dot.data-v-f4b00c3c:nth-child(1) {
+  opacity: 1;
+}
+.dot-row .dot.data-v-f4b00c3c:nth-child(2) {
+  opacity: 1;
+}
+.dot-row .dot.data-v-f4b00c3c:nth-child(3) {
+  opacity: 1;
+}
+/* 在原有样式的基础上添加 */
+/* 弹窗遮罩 */
+.filter-popup.data-v-f4b00c3c {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 999;
+  padding-top: 20rpx;
+  /* 控制弹窗位置 */
+}
+/* 弹窗内容 */
+.popup-content.data-v-f4b00c3c {
+  background-color: #fff;
+  border-radius: 20rpx;
+  width: 670rpx;
+  max-width: 90%;
+  padding: 30rpx;
+  box-shadow: 0 10rpx 40rpx rgba(0, 0, 0, 0.1);
+}
+/* 弹窗头部 */
+.popup-header.data-v-f4b00c3c {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #eee;
+}
+.popup-title.data-v-f4b00c3c {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+.close-btn.data-v-f4b00c3c {
+  font-size: 40rpx;
+  color: #999;
+  width: 50rpx;
+  height: 50rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+/* 标签行 */
+.tab-row.data-v-f4b00c3c {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30rpx;
+}
+.tab-row.data-v-f4b00c3c:last-child {
+  margin-bottom: 0;
+}
+/* 过滤标签样式 */
+.filter-tab.data-v-f4b00c3c {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx 0;
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+.tag-popup.data-v-f4b00c3c {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.popup-content.data-v-f4b00c3c {
+  background-color: #fff;
+  border-radius: 20rpx;
+  width: 650rpx;
+  max-width: 90%;
+  padding: 40rpx 30rpx 30rpx;
+  box-shadow: 0 10rpx 40rpx rgba(0, 0, 0, 0.1);
+}
+.popup-header.data-v-f4b00c3c {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-bottom: 30rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #eee;
+}
+.popup-title.data-v-f4b00c3c {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 2rpx;
+}
+.close-btn.data-v-f4b00c3c {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 40rpx;
+  color: #999;
+  width: 50rpx;
+  height: 50rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.current-visitor-info.data-v-f4b00c3c {
+  text-align: center;
+  margin-bottom: 40rpx;
+  padding: 0 20rpx;
+}
+.current-visitor-info .visitor-name.data-v-f4b00c3c {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: 500;
+  margin-right: 10rpx;
+}
+.current-visitor-info .visitor-phone-popup.data-v-f4b00c3c {
+  font-size: 28rpx;
+  color: #999;
+}
+/* 简化标签样式 */
+.simple-tags-container.data-v-f4b00c3c {
+  margin-bottom: 50rpx;
+  padding: 0 20rpx;
+}
+.tags-row.data-v-f4b00c3c {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 20rpx;
+}
+.tags-row.data-v-f4b00c3c:last-child {
+  margin-bottom: 0;
+}
+.tag-item.data-v-f4b00c3c {
+  width: 130rpx;
+  margin: 0 10rpx;
+  border-radius: 100rpx;
+  background-color: #f5f5f5;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+.tag-item.selected.data-v-f4b00c3c {
+  background-color: #e8f5e8;
+  border: 1rpx solid #FF6B00;
+}
+.tag-item .tag-content.data-v-f4b00c3c {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx 10rpx;
+}
+.tag-item .tag-name.data-v-f4b00c3c {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+  text-align: center;
+  flex: 1;
+}
+.tag-item .tag-badge.data-v-f4b00c3c {
+  min-width: 40rpx;
+  height: 40rpx;
+  border-radius: 20rpx;
+  background-color: #999;
+  color: #fff;
+  font-size: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12rpx;
+  font-weight: 500;
+}
+.tag-item.selected .tag-name.data-v-f4b00c3c {
+  color: #FF6B00;
+  font-weight: 600;
+}
+.tag-item.selected .tag-badge.data-v-f4b00c3c {
+  font-weight: 600;
+}
+.tag-selected-indicator.data-v-f4b00c3c {
+  display: none;
+  /* 隐藏下划线指示器，使用边框代替 */
+}
+/* 底部按钮 */
+.popup-buttons.data-v-f4b00c3c {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20rpx;
+  padding-top: 30rpx;
+  border-top: 1rpx solid #eee;
+}
+.popup-buttons .btn.data-v-f4b00c3c {
+  flex: 1;
+  height: 80rpx;
+  border-radius: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30rpx;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+.popup-buttons .btn.cancel-btn.data-v-f4b00c3c {
+  background-color: #f5f5f5;
+  color: #666;
+  margin-right: 20rpx;
+}
+.popup-buttons .btn.cancel-btn.data-v-f4b00c3c:active {
+  background-color: #e8e8e8;
+}
+.popup-buttons .btn.confirm-btn.data-v-f4b00c3c {
+  background-color: #FF6B00;
+  color: #fff;
+  margin-left: 20rpx;
+}
+.popup-buttons .btn.confirm-btn.data-v-f4b00c3c:active {
+  background-color: #FF6B00;
+}
+.tag-item.selected.data-v-f4b00c3c {
+  background-color: #FF6B00;
+}
+.tag-item.selected .tag-name.data-v-f4b00c3c {
+  color: #fff;
+}

@@ -1,0 +1,246 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*每个页面公共css */
+page,
+view,
+text,
+button,
+input,
+textarea,
+picker,
+navigator,
+label,
+form,
+radio,
+checkbox,
+cover-view,
+cover-image,
+scroll-view,
+swiper,
+swiper-item {
+  font-family: "PingFangSC-Medium", "PingFang SC", -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+/* 隐藏所有滚动条 - 适用于所有平台 */
+::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  -webkit-appearance: none;
+  background: transparent;
+}
+/* 为不同平台添加滚动条隐藏样式 */
+page {
+  -webkit-overflow-scrolling: touch;
+  overflow: auto;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+/* 确保在手机端不显示滚动条 */
+@media (max-width: 767px) {
+  /* 强制隐藏所有滚动条 */
+  
+  /* 确保页面元素不显示滚动条 */
+page, page, page {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+  
+  /* 隐藏手机端特有的滚动条 */
+::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+  
+  /* 针对所有可能的滚动容器 */
+.scroll-view, .list-container, .content-wrapper, .swiper-item, .work-grid, .collection-detail, .tab-content, .tag-tabs, .main-swiper, .page, .page-container, .container {
+    overflow: auto !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    -webkit-overflow-scrolling: touch;
+}
+  
+  /* 确保这些容器也不显示滚动条 */
+.scroll-view::-webkit-scrollbar,
+  .list-container::-webkit-scrollbar,
+  .content-wrapper::-webkit-scrollbar,
+  .swiper-item::-webkit-scrollbar,
+  .work-grid::-webkit-scrollbar,
+  .collection-detail::-webkit-scrollbar,
+  .tab-content::-webkit-scrollbar,
+  .tag-tabs::-webkit-scrollbar,
+  .main-swiper::-webkit-scrollbar,
+  .page::-webkit-scrollbar,
+  .page-container::-webkit-scrollbar,
+  .container::-webkit-scrollbar {
+    display: none !important;
+}
+}
+/* 针对电脑端小程序的滚动条隐藏 */
+@media (min-width: 768px) {
+  /* 强制隐藏所有滚动条 */
+  
+  /* 确保页面元素不显示滚动条 */
+page, page, page {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+  
+  /* 隐藏微信小程序电脑端特有的滚动条 */
+::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+  
+  /* 针对所有可能的滚动容器 */
+.scroll-view, .list-container, .content-wrapper, .swiper-item, .work-grid, .collection-detail, .tab-content, .tag-tabs, .main-swiper, .page, .page-container, .container {
+    overflow: auto !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    -webkit-overflow-scrolling: touch;
+}
+  
+  /* 确保这些容器也不显示滚动条 */
+.scroll-view::-webkit-scrollbar,
+  .list-container::-webkit-scrollbar,
+  .content-wrapper::-webkit-scrollbar,
+  .swiper-item::-webkit-scrollbar,
+  .work-grid::-webkit-scrollbar,
+  .collection-detail::-webkit-scrollbar,
+  .tab-content::-webkit-scrollbar,
+  .tag-tabs::-webkit-scrollbar,
+  .main-swiper::-webkit-scrollbar,
+  .page::-webkit-scrollbar,
+  .page-container::-webkit-scrollbar,
+  .container::-webkit-scrollbar {
+    display: none !important;
+}
+}
+/* 隐藏文本区域的滚动条 */
+textarea::-webkit-scrollbar {
+  display: none !important;
+}
+/* 隐藏iframe的滚动条 */
+._iframe::-webkit-scrollbar {
+  display: none !important;
+}
+/* 隐藏select元素的滚动条 */
+._select::-webkit-scrollbar {
+  display: none !important;
+}
+/* 隐藏所有可能的滚动容器 */
+::-webkit-scrollbar-track {
+  display: none !important;
+}
+::-webkit-scrollbar-thumb {
+  display: none !important;
+}
+::-webkit-scrollbar-button {
+  display: none !important;
+}
+::-webkit-scrollbar-corner {
+  display: none !important;
+}
+

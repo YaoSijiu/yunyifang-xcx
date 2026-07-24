@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "按住拖拽排序",
+  "usingComponents": {
+    "portfolio-select": "/components/portfolio-select"
+  }
+}

@@ -8,8 +8,7 @@
 			</view>
 		</view>
 
-		<scroll-view class="page-scroll" scroll-y>
-			<view class="page-canvas">
+		<view class="page-canvas">
 				<view class="form-card">
 					<view class="field-block">
 						<text class="field-title">上传封面</text>
@@ -67,8 +66,6 @@
 							v-model="form.price"
 							placeholder="请输入价格"
 							placeholder-class="line-placeholder"
-							:adjust-position="false"
-							:always-embed="true"
 						/>
 					</view>
 
@@ -96,7 +93,6 @@
 					</view>
 				</view>
 			</view>
-		</scroll-view>
 
 		<view class="bottom-actions">
 			<button class="draft-btn" :disabled="submitting" @click="saveDraft">存为草稿</button>
@@ -717,10 +713,6 @@ export default {
 	font-size: 40rpx;
 	line-height: 56rpx;
 	color: #000000;
-}
-
-.page-scroll {
-	height: 100vh;
 }
 
 .page-canvas {

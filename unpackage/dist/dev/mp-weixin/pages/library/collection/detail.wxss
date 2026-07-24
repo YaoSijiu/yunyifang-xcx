@@ -1,0 +1,612 @@
+@charset "UTF-8";
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+/* 隐藏所有滚动条 */
+.data-v-49084b65::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  -webkit-appearance: none;
+  background: transparent;
+}
+.collection-detail.data-v-49084b65 {
+  min-height: 100vh;
+  background: #f9f9f9;
+  padding-bottom: 120rpx;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.yellow-underline.data-v-49084b65 {
+  width: 50rpx;
+  height: 12rpx;
+  position: absolute;
+  bottom: 0;
+  left: 35%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  border-radius: 6rpx;
+}
+/* 标签栏样式 */
+.tag-tabs-container.data-v-49084b65 {
+  background: #fff;
+  border-bottom: 1rpx solid #eee;
+}
+.tag-tabs.data-v-49084b65 {
+  flex: 1;
+  white-space: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.tag-tabs.data-v-49084b65::-webkit-scrollbar {
+  display: none !important;
+}
+.tab-content.data-v-49084b65 {
+  display: inline-block;
+  margin-right: 40rpx;
+  padding-bottom: 10rpx;
+  position: relative;
+}
+/* 移除重复的滚动条样式 */
+/* 工作网格区域 */
+.tab-item.data-v-49084b65 {
+  display: inline-block;
+  margin: 0 20rpx;
+  padding: 20rpx;
+  position: relative;
+}
+.tab-item text.data-v-49084b65 {
+  font-size: 28rpx;
+  color: #666;
+}
+.tab-item text.active.data-v-49084b65 {
+  color: #333;
+  font-weight: bold;
+}
+.badge.data-v-49084b65 {
+  display: inline-block;
+  background-color: #333;
+  color: #fff;
+  font-size: 20rpx;
+  padding: 2rpx 10rpx;
+  border-radius: 20rpx;
+  margin-left: 8rpx;
+  vertical-align: middle;
+}
+.work-grid.data-v-49084b65 {
+  padding: 20rpx;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-content: flex-start;
+  padding-bottom: 120rpx;
+  flex: 1;
+  min-height: 400rpx;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.work-item.data-v-49084b65 {
+  width: 48%;
+  background: #fff;
+  border-radius: 16rpx;
+  overflow: auto;
+  padding-bottom: 20rpx;
+  cursor: pointer;
+  position: relative;
+}
+/* 图片包装器 */
+.img-box-wrapper.data-v-49084b65 {
+  position: relative;
+  height: 340rpx;
+}
+.img-box.data-v-49084b65 {
+  height: 100%;
+  background: #eee;
+  overflow: hidden;
+}
+.work-img.data-v-49084b65 {
+  width: 100%;
+  height: 100%;
+}
+.top-tag.data-v-49084b65 {
+  position: absolute;
+  top: 16rpx;
+  left: 0;
+  background: linear-gradient(135deg, #ff7a22, #ff9547);
+  padding: 10rpx 20rpx;
+  border-radius: 0 16rpx 16rpx 0;
+  box-shadow: 0 6rpx 16rpx rgba(255, 122, 34, 0.2);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.top-tag-text.data-v-49084b65 {
+  font-size: 20rpx;
+  font-weight: bold;
+  color: #fff;
+  line-height: 1;
+}
+/* 悬浮在图片右上角的更多选项（竖排三个点） */
+.more-options.data-v-49084b65 {
+  position: absolute;
+  top: 20rpx;
+  right: 10rpx;
+  width: 40rpx;
+  height: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  z-index: 10;
+}
+.more-options.data-v-49084b65:active {
+  opacity: 1;
+}
+/* 垂直排列三个小圆点 */
+.dot-column.data-v-49084b65 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 6rpx;
+  height: 34rpx;
+}
+.dot.data-v-49084b65 {
+  width: 10rpx;
+  height: 10rpx;
+  background-color: #fff;
+  border-radius: 50%;
+}
+/* 可以调整点与点之间的间距 */
+.dot-column .dot.data-v-49084b65:nth-child(2) {
+  margin: 4rpx 0;
+}
+.collection-info.data-v-49084b65 {
+  display: flex;
+  justify-content: space-between;
+  padding-right: 16rpx;
+  align-items: left;
+  padding-top: 5rpx;
+}
+.info-area.data-v-49084b65 {
+  align-items: flex-start;
+  margin: 6rpx 0;
+}
+.work-title.data-v-49084b65 {
+  font-size: 28rpx;
+  font-weight: bold;
+  padding: 12rpx 16rpx;
+  display: block;
+}
+.work-tags.data-v-49084b65 {
+  padding: 5rpx 12rpx;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+}
+.tag-item.data-v-49084b65 {
+  font-size: 20rpx;
+  color: #999;
+  background-color: #f5f5f5;
+  padding: 4rpx 12rpx;
+  border-radius: 12rpx;
+}
+.footer-info.data-v-49084b65 {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100rpx;
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 30rpx;
+  border-top: 1rpx solid #eee;
+  box-sizing: border-box;
+}
+.collection-action-bar.data-v-49084b65 {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 998;
+  min-height: calc(120rpx + constant(safe-area-inset-bottom));
+  min-height: calc(120rpx + env(safe-area-inset-bottom));
+  padding: 0 30rpx constant(safe-area-inset-bottom);
+  padding: 0 30rpx env(safe-area-inset-bottom);
+  box-sizing: border-box;
+  background: #fff;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.action-user.data-v-49084b65 {
+  height: 120rpx;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  flex: 1;
+}
+.action-user.data-v-49084b65:active,
+.action-btn.data-v-49084b65:active {
+  opacity: 0.7;
+}
+.action-avatar.data-v-49084b65 {
+  width: 90rpx;
+  height: 90rpx;
+  border-radius: 50%;
+  background: #f0f0f0;
+  border: 1rpx solid #eee;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+}
+.action-user-info.data-v-49084b65 {
+  min-width: 0;
+  flex: 1;
+}
+.action-user-name.data-v-49084b65 {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: #000;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+}
+.action-icons.data-v-49084b65 {
+  height: 120rpx;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+.action-btn.data-v-49084b65 {
+  width: 60rpx;
+  height: 60rpx;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.action-btn + .action-btn.data-v-49084b65 {
+  margin-left: 34rpx;
+}
+.action-icon.data-v-49084b65 {
+  width: 48rpx;
+  height: 48rpx;
+  display: block;
+}
+.action-share-btn.data-v-49084b65 {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  line-height: inherit;
+  border-radius: 0;
+  border: none;
+}
+.action-share-btn.data-v-49084b65::after {
+  border: none;
+}
+.action-btn + .action-share-btn.data-v-49084b65 {
+  margin-left: 34rpx;
+}
+.user-left.data-v-49084b65 {
+  display: flex;
+  align-items: center;
+}
+.avatar.data-v-49084b65 {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  margin-right: 20rpx;
+}
+.user-text.data-v-49084b65 {
+  display: flex;
+  flex-direction: column;
+}
+.name.data-v-49084b65 {
+  font-size: 28rpx;
+  font-weight: bold;
+}
+.desc.data-v-49084b65 {
+  font-size: 22rpx;
+  color: #999;
+}
+.share-icon-small.data-v-49084b65 {
+  width: 40rpx;
+  height: 40rpx;
+  cursor: pointer;
+}
+.share-img.data-v-49084b65 {
+  width: 100%;
+  height: 100%;
+}
+/* 空状态样式 */
+.empty-state.data-v-49084b65 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 160rpx 0;
+  color: #999;
+  flex-grow: 1;
+}
+.empty-img.data-v-49084b65 {
+  width: 180rpx;
+  height: 180rpx;
+  margin-bottom: 30rpx;
+  opacity: 0.4;
+}
+.empty-text.data-v-49084b65 {
+  font-size: 28rpx;
+  color: #999;
+}
+/* 加载动画样式 */
+.loading-container.data-v-49084b65 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 160rpx 0;
+  flex-grow: 1;
+}
+.loading-spinner.data-v-49084b65 {
+  width: 60rpx;
+  height: 60rpx;
+  border: 6rpx solid #f3f3f3;
+  border-top: 6rpx solid #ff7a22;
+  border-radius: 50%;
+  -webkit-animation: spin-data-v-49084b65 1s linear infinite;
+          animation: spin-data-v-49084b65 1s linear infinite;
+  margin-bottom: 20rpx;
+}
+@-webkit-keyframes spin-data-v-49084b65 {
+0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+}
+100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+}
+}
+@keyframes spin-data-v-49084b65 {
+0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+}
+100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+}
+}
+.loading-text.data-v-49084b65 {
+  font-size: 28rpx;
+  color: #999;
+}
+/* 作品项动画效果 - 小程序兼容版 */
+.work-item.data-v-49084b65 {
+  -webkit-tap-highlight-color: transparent;
+  tap-highlight-color: transparent;
+  outline: none;
+  -webkit-user-select: none;
+  user-select: none;
+  margin-bottom: 20rpx;
+}
+/* 定义基础动画 - 纯淡入淡出效果 */
+@-webkit-keyframes fadeIn-data-v-49084b65 {
+0% {
+    opacity: 0;
+}
+100% {
+    opacity: 1;
+}
+}
+@keyframes fadeIn-data-v-49084b65 {
+0% {
+    opacity: 0;
+}
+100% {
+    opacity: 1;
+}
+}
+/* 为不同位置的元素添加固定延迟，避免使用动态计算 */
+.item-0.data-v-49084b65 {
+  -webkit-animation-delay: 0ms;
+          animation-delay: 0ms;
+}
+.item-1.data-v-49084b65 {
+  -webkit-animation-delay: 50ms;
+          animation-delay: 50ms;
+}
+.item-2.data-v-49084b65 {
+  -webkit-animation-delay: 100ms;
+          animation-delay: 100ms;
+}
+.item-3.data-v-49084b65 {
+  -webkit-animation-delay: 150ms;
+          animation-delay: 150ms;
+}
+.item-4.data-v-49084b65 {
+  -webkit-animation-delay: 200ms;
+          animation-delay: 200ms;
+}
+.item-5.data-v-49084b65 {
+  -webkit-animation-delay: 250ms;
+          animation-delay: 250ms;
+}
+.item-6.data-v-49084b65 {
+  -webkit-animation-delay: 300ms;
+          animation-delay: 300ms;
+}
+.item-7.data-v-49084b65 {
+  -webkit-animation-delay: 350ms;
+          animation-delay: 350ms;
+}
+.item-8.data-v-49084b65 {
+  -webkit-animation-delay: 400ms;
+          animation-delay: 400ms;
+}
+.item-9.data-v-49084b65 {
+  -webkit-animation-delay: 450ms;
+          animation-delay: 450ms;
+}
+/* 作品管理弹窗 */
+.work-popup-mask.data-v-49084b65 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.work-popup-content.data-v-49084b65 {
+  background: #fff;
+  border-radius: 30rpx;
+  padding: 20rpx 0 20rpx;
+  min-height: 300rpx;
+  margin: 20rpx;
+}
+.wp-handle.data-v-49084b65 {
+  width: 100rpx;
+  height: 15rpx;
+  background: #d3d3d3;
+  border-radius: 10rpx;
+  margin: 10rpx auto 10rpx;
+}
+.wp-title.data-v-49084b65 {
+  font-size: 28rpx;
+  color: #999;
+  margin-left: 40rpx;
+  margin-bottom: 20rpx;
+}
+.wp-section-title.data-v-49084b65 {
+  font-size: 28rpx;
+  color: #999;
+  margin-left: 40rpx;
+  margin-top: 30rpx;
+  margin-bottom: 20rpx;
+}
+.wp-list.data-v-49084b65 {
+  padding: 0 40rpx;
+}
+.wp-item.data-v-49084b65 {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f9f9f9;
+}
+.wp-between.data-v-49084b65 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f9f9f9;
+}
+.wp-right.data-v-49084b65 {
+  font-size: 24rpx;
+  color: #999;
+  margin-left: 20rpx;
+}
+.wp-item.data-v-49084b65:active {
+  opacity: 0.7;
+}
+.wp-icon.data-v-49084b65 {
+  width: 60rpx;
+  height: 60rpx;
+  margin-right: 30rpx;
+}
+.wp-text.data-v-49084b65 {
+  font-size: 32rpx;
+  color: #333;
+}
+.share-btn-reset.data-v-49084b65 {
+  background: transparent;
+  padding: 30rpx 0;
+  margin: 0;
+  line-height: normal;
+  border: none;
+  text-align: left;
+  border-radius: 0;
+  border-bottom: 1rpx solid #f9f9f9;
+}
+.share-btn-reset.data-v-49084b65::after {
+  border: none;
+}
+/* 下载进度条样式 */
+.download-progress.data-v-49084b65 {
+  position: fixed;
+  bottom: 40rpx;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  width: 90%;
+  max-width: 600rpx;
+  z-index: 9999;
+}
+.progress-container.data-v-49084b65 {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16rpx;
+  padding: 24rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.15);
+}
+.progress-header.data-v-49084b65 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+.progress-title.data-v-49084b65 {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+.progress-percent.data-v-49084b65 {
+  font-size: 28rpx;
+  color: #ff7a22;
+  font-weight: bold;
+}
+.progress-bar.data-v-49084b65 {
+  width: 100%;
+  height: 12rpx;
+  background: #f0f0f0;
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+.progress-fill.data-v-49084b65 {
+  height: 100%;
+  background: linear-gradient(90deg, #ff7a22, #ff9a44);
+  border-radius: 6rpx;
+  transition: width 0.3s ease;
+}

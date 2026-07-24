@@ -1,0 +1,126 @@
+
+.reject-popup.data-v-d723a834 {
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index: 9999;
+}
+.reject-mask.data-v-d723a834 {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.28);
+}
+.reject-panel.data-v-d723a834 {
+	position: absolute;
+	left: 24rpx;
+	right: 24rpx;
+	bottom: 24rpx;
+	max-height: 82vh;
+	padding: 34rpx 46rpx 44rpx;
+	border-radius: 40rpx 40rpx 0 0;
+	background: #ffffff;
+	box-sizing: border-box;
+	box-shadow: 0 -16rpx 46rpx rgba(0, 0, 0, 0.08);
+}
+.reject-toolbar.data-v-d723a834 {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	min-height: 64rpx;
+}
+.reject-close.data-v-d723a834 {
+	position: relative;
+	width: 72rpx;
+	height: 72rpx;
+	margin-left: -16rpx;
+}
+.close-line.data-v-d723a834 {
+	position: absolute;
+	left: 21rpx;
+	top: 34rpx;
+	width: 32rpx;
+	height: 4rpx;
+	border-radius: 4rpx;
+	background: #111111;
+}
+.close-line-left.data-v-d723a834 {
+	-webkit-transform: rotate(45deg);
+	        transform: rotate(45deg);
+}
+.close-line-right.data-v-d723a834 {
+	-webkit-transform: rotate(-45deg);
+	        transform: rotate(-45deg);
+}
+.reject-confirm.data-v-d723a834 {
+	min-width: 140rpx;
+	height: 56rpx;
+	padding: 0 34rpx;
+	border-radius: 999rpx;
+	box-sizing: border-box;
+	background: #f37738;
+	line-height: 56rpx;
+	font-size: 28rpx;
+	color: #ffffff;
+	text-align: center;
+}
+.reject-confirm.disabled.data-v-d723a834 {
+	opacity: 0.7;
+}
+.reject-body.data-v-d723a834 {
+	max-height: calc(82vh - 138rpx);
+	margin-top: 42rpx;
+}
+.reject-title.data-v-d723a834 {
+	display: block;
+	line-height: 50rpx;
+	font-size: 36rpx;
+	font-weight: 600;
+	color: #111111;
+}
+.reason-list.data-v-d723a834 {
+	margin-top: 36rpx;
+}
+.reason-item.data-v-d723a834 {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	min-height: 82rpx;
+	box-sizing: border-box;
+}
+.reason-item + .reason-item.data-v-d723a834 {
+	margin-top: 4rpx;
+}
+.reason-text.data-v-d723a834 {
+	flex: 1;
+	padding-right: 30rpx;
+	line-height: 42rpx;
+	font-size: 30rpx;
+	color: #111111;
+	word-break: break-all;
+}
+.reason-radio.data-v-d723a834 {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 39rpx;
+	height: 39rpx;
+	border: 3rpx solid #cfcfcf;
+	border-radius: 50%;
+	box-sizing: border-box;
+	flex-shrink: 0;
+}
+.reason-radio.active.data-v-d723a834 {
+	border-color: #f37738;
+}
+.reason-radio-dot.data-v-d723a834 {
+	width: 21rpx;
+	height: 21rpx;
+	border-radius: 50%;
+	background: #f37738;
+}
+

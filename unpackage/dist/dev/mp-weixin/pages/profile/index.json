@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "我的",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "yun-tabbar": "/components/yun-tabbar",
+    "yun-storage-warning": "/components/yun-storage-warning",
+    "yun-user-switch": "/components/yun-user-switch",
+    "title-bar": "/components/title"
+  }
+}

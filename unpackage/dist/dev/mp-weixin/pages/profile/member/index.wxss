@@ -1,0 +1,339 @@
+@charset "UTF-8";
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+/* 页面整体背景 */
+.page-container.data-v-1d238a3c {
+  min-height: 100vh;
+  background-color: #f5f7fa;
+  padding: 20rpx;
+  box-sizing: border-box;
+}
+/* 顶部卡片 */
+.header-card.data-v-1d238a3c {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+.header-card .user-info-row.data-v-1d238a3c {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header-card .user-info-row .left-info.data-v-1d238a3c {
+  display: flex;
+  align-items: center;
+}
+.header-card .user-info-row .left-info .avatar.data-v-1d238a3c {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background-color: #eee;
+  margin-right: 20rpx;
+}
+.header-card .user-info-row .left-info .info-text.data-v-1d238a3c {
+  display: flex;
+  flex-direction: column;
+}
+.header-card .user-info-row .left-info .info-text .username.data-v-1d238a3c {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+.header-card .user-info-row .left-info .info-text .user-team.data-v-1d238a3c {
+  font-weight: normal;
+  font-size: 32rpx;
+  color: #000000;
+  margin-left: 8rpx;
+}
+.header-card .user-info-row .left-info .info-text .status-tag.data-v-1d238a3c {
+  font-size: 24rpx;
+  color: #999;
+}
+.header-card .user-info-row .left-info .info-text .status-text.orange.data-v-1d238a3c {
+  font-size: 24rpx;
+  color: #ff6b00;
+}
+.header-card .user-info-row .redeem-btn.data-v-1d238a3c {
+  font-size: 24rpx;
+  color: #ff6b00;
+}
+/* 提示条 (状态1) */
+.notice-bar.data-v-1d238a3c {
+  background-color: #fff0e5;
+  padding: 20rpx;
+  border-radius: 12rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+.notice-bar .notice-content.data-v-1d238a3c {
+  display: flex;
+  align-items: center;
+  font-size: 24rpx;
+  color: #333;
+}
+.notice-bar .notice-content .icon.data-v-1d238a3c {
+  background: #333;
+  color: #fff;
+  width: 30rpx;
+  height: 30rpx;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 30rpx;
+  font-size: 20rpx;
+  margin-right: 10rpx;
+}
+.notice-bar .manage-btn.data-v-1d238a3c {
+  font-size: 24rpx;
+  color: #ff6b00;
+}
+/* 套餐列表 */
+.plan-list.data-v-1d238a3c {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+  margin-bottom: 40rpx;
+}
+.plan-item.data-v-1d238a3c {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx 24rpx;
+  margin: 0;
+  text-align: left;
+  box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+  /* 当前等级样式 */
+  /* 当前等级标签 */
+}
+.plan-item.current-level.data-v-1d238a3c {
+  border: 2rpx solid #ff6b00;
+  box-shadow: 0 6rpx 16rpx rgba(255, 107, 0, 0.15);
+}
+.plan-item .level-tag.data-v-1d238a3c {
+  position: absolute;
+  top: -12rpx;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  background: linear-gradient(to right, #ff8c00, #ff5500);
+  color: #fff;
+  font-size: 20rpx;
+  padding: 6rpx 20rpx;
+  border-radius: 20rpx;
+  font-weight: 500;
+  box-shadow: 0 2rpx 8rpx rgba(255, 107, 0, 0.3);
+}
+.plan-item .plan-title.data-v-1d238a3c {
+  font-weight: bold;
+  font-size: 30rpx;
+  margin-bottom: 12rpx;
+  color: #333;
+}
+.plan-item .plan-price.data-v-1d238a3c {
+  color: #e00000;
+  margin-bottom: 24rpx;
+  display: flex;
+  align-items: baseline;
+  /* 差价提示 */
+  /* 原价提示 */
+}
+.plan-item .plan-price .symbol.data-v-1d238a3c {
+  font-size: 28rpx;
+  font-weight: bold;
+  margin-right: 4rpx;
+}
+.plan-item .plan-price .num.data-v-1d238a3c {
+  font-size: 60rpx;
+  font-weight: bold;
+  line-height: 1;
+}
+.plan-item .plan-price .unit.data-v-1d238a3c {
+  font-size: 28rpx;
+  color: #e00000;
+  margin-left: 4rpx;
+  font-weight: bold;
+}
+.plan-item .plan-price .price-hint.data-v-1d238a3c {
+  font-size: 20rpx;
+  color: #999;
+  margin-left: 10rpx;
+}
+.plan-item .plan-price .original-price.data-v-1d238a3c {
+  font-size: 20rpx;
+  color: #666;
+  margin-left: 10rpx;
+}
+.plan-item .feature-list.data-v-1d238a3c {
+  flex-grow: 1;
+  margin-bottom: 28rpx;
+  text-align: left;
+  padding-left: 10rpx;
+}
+.plan-item .feature-list .feature-item.data-v-1d238a3c {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 16rpx;
+  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  word-break: break-word;
+}
+.plan-item .feature-list .feature-item .check.data-v-1d238a3c {
+  width: 28rpx;
+  height: 28rpx;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+.plan-item .buy-btn.data-v-1d238a3c {
+  background: linear-gradient(135deg, #ff6b00, #ff8c00);
+  color: #fff;
+  font-size: 28rpx;
+  font-weight: 500;
+  border-radius: 40rpx;
+  line-height: 70rpx;
+  width: 85%;
+  border: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 0, 0.3);
+  /* 当前等级按钮样式（不可续费） */
+  /* 续费按钮样式 */
+  /* 禁用按钮样式 */
+}
+.plan-item .buy-btn.data-v-1d238a3c:active {
+  -webkit-transform: scale(0.96);
+          transform: scale(0.96);
+  box-shadow: 0 2rpx 6rpx rgba(255, 107, 0, 0.2);
+}
+.plan-item .buy-btn.current-level-btn.data-v-1d238a3c {
+  background: #f5f5f5;
+  color: #999;
+  border: 2rpx solid #e0e0e0;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.plan-item .buy-btn.renew-btn.data-v-1d238a3c {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  box-shadow: 0 4rpx 12rpx rgba(76, 175, 80, 0.3);
+}
+.plan-item .buy-btn.disabled-btn.data-v-1d238a3c {
+  background: #f0f0f0;
+  color: #bdbdbd;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+/* 底部板块 (FAQ) */
+.section-block.data-v-1d238a3c {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 40rpx;
+}
+.section-block .section-title.data-v-1d238a3c {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+}
+.section-block .faq-item.data-v-1d238a3c {
+  margin-bottom: 40rpx;
+}
+.section-block .faq-item.data-v-1d238a3c:last-child {
+  margin-bottom: 0;
+}
+.section-block .faq-item .faq-question-row.data-v-1d238a3c {
+  margin-bottom: 12rpx;
+}
+.section-block .faq-item .q.data-v-1d238a3c {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: bold;
+  line-height: 1.4;
+}
+.section-block .faq-item .a.data-v-1d238a3c {
+  font-size: 26rpx;
+  color: #888;
+  line-height: 1.6;
+  text-align: justify;
+}
+.section-block .privilege-placeholder.data-v-1d238a3c {
+  height: 200rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ccc;
+}
+/* 已过期详情卡片 (状态3) */
+.expired-detail-card.data-v-1d238a3c {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 40rpx;
+}
+.expired-detail-card .card-header.data-v-1d238a3c {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40rpx;
+  border-bottom: 1rpx solid #eee;
+  padding-bottom: 20rpx;
+}
+.expired-detail-card .card-header .card-title.data-v-1d238a3c {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+.expired-detail-card .card-header .expired-badge.data-v-1d238a3c {
+  background: #eee;
+  color: #999;
+  font-size: 24rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+}
+.expired-detail-card .detail-list .detail-item.data-v-1d238a3c {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30rpx;
+  font-size: 28rpx;
+}
+.expired-detail-card .detail-list .detail-item .label.data-v-1d238a3c {
+  color: #666;
+}
+.expired-detail-card .detail-list .detail-item .value.data-v-1d238a3c {
+  color: #333;
+  font-weight: 500;
+}
+.expired-detail-card .detail-list .detail-divider.data-v-1d238a3c {
+  height: 1rpx;
+  background: #eee;
+  margin: 30rpx 0;
+}

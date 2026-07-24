@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "云艺库",
+  "enablePullDownRefresh": true,
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "yun-storage-warning": "/components/yun-storage-warning",
+    "yun-tabbar": "/components/yun-tabbar",
+    "portfolio-select": "/components/portfolio-select"
+  }
+}

@@ -1,0 +1,340 @@
+@charset "UTF-8";
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+.page.data-v-d4e6bb4e {
+  height: 100vh;
+  background: #f7f7f7;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.top-area.data-v-d4e6bb4e {
+  height: 238rpx;
+  padding: 0 21rpx 0 23rpx;
+  box-sizing: border-box;
+  background: #ffffff;
+  position: relative;
+}
+.search-row.data-v-d4e6bb4e {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 66rpx;
+}
+.search-box.data-v-d4e6bb4e {
+  width: 378rpx;
+  height: 66rpx;
+  border-radius: 33rpx;
+  background: #f7f7f7;
+  display: flex;
+  align-items: center;
+  padding: 0 20rpx;
+  box-sizing: border-box;
+}
+.search-icon.data-v-d4e6bb4e {
+  width: 31rpx;
+  height: 31rpx;
+  margin-right: 8rpx;
+  opacity: 0.45;
+}
+.search-input.data-v-d4e6bb4e {
+  flex: 1;
+  height: 66rpx;
+  font-size: 26rpx;
+  line-height: 66rpx;
+  color: #333333;
+}
+.search-placeholder.data-v-d4e6bb4e {
+  font-size: 26rpx;
+  color: #999999;
+}
+.capsule.data-v-d4e6bb4e {
+  width: 197rpx;
+  height: 65rpx;
+  border: 1rpx solid #e8e8e8;
+  border-radius: 33rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  position: absolute;
+  right: 21rpx;
+  top: 12rpx;
+}
+.more.data-v-d4e6bb4e {
+  width: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.more text.data-v-d4e6bb4e {
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background: #000000;
+}
+.capsule-line.data-v-d4e6bb4e {
+  width: 1rpx;
+  height: 36rpx;
+  margin: 0 28rpx;
+  background: #e1e1e1;
+}
+.circle-dot.data-v-d4e6bb4e {
+  width: 31rpx;
+  height: 31rpx;
+  border: 5rpx solid #000000;
+  border-radius: 50%;
+  box-sizing: border-box;
+  position: relative;
+}
+.circle-dot.data-v-d4e6bb4e::after {
+  content: "";
+  position: absolute;
+  left: 8rpx;
+  top: 8rpx;
+  width: 5rpx;
+  height: 5rpx;
+  border-radius: 50%;
+  background: #000000;
+}
+.filter-row.data-v-d4e6bb4e {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 27rpx;
+  padding: 0 6rpx 0 5rpx;
+}
+.filter-picker.data-v-d4e6bb4e {
+  width: 240rpx;
+}
+.filter-picker-right.data-v-d4e6bb4e {
+  display: flex;
+  justify-content: flex-end;
+}
+.filter-item.data-v-d4e6bb4e {
+  display: flex;
+  align-items: center;
+  width: 240rpx;
+  font-size: 24rpx;
+  line-height: 34rpx;
+  color: #979797;
+}
+.filter-item-right.data-v-d4e6bb4e {
+  justify-content: flex-end;
+}
+.filter-text.data-v-d4e6bb4e {
+  max-width: 200rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.arrow.data-v-d4e6bb4e {
+  width: 18rpx;
+  height: 12rpx;
+  margin-left: 14rpx;
+  flex-shrink: 0;
+}
+.task-scroll.data-v-d4e6bb4e {
+  flex: 1;
+  height: 0;
+  min-height: 0;
+  background: #f7f7f7;
+}
+.task-list.data-v-d4e6bb4e {
+  padding: 16rpx 29rpx 34rpx 32rpx;
+  box-sizing: border-box;
+}
+.task-card.data-v-d4e6bb4e {
+  width: 689rpx;
+  margin-bottom: 20rpx;
+  border-radius: 16rpx;
+  background: #ffffff;
+  overflow: hidden;
+}
+button.data-v-d4e6bb4e {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  line-height: normal;
+}
+button.data-v-d4e6bb4e::after {
+  border: 0;
+}
+.task-card-cover.data-v-d4e6bb4e {
+  min-height: 679rpx;
+}
+.task-card-simple.data-v-d4e6bb4e {
+  min-height: 320rpx;
+  padding-bottom: 20rpx;
+}
+.task-head.data-v-d4e6bb4e {
+  height: 120rpx;
+  padding: 19rpx 24rpx 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+}
+.task-avatar.data-v-d4e6bb4e {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  margin-right: 15rpx;
+  background: #d8d8d8;
+  flex-shrink: 0;
+}
+.task-title-wrap.data-v-d4e6bb4e {
+  min-width: 0;
+  flex: 1;
+}
+.task-name.data-v-d4e6bb4e {
+  display: block;
+  font-size: 32rpx;
+  line-height: 46rpx;
+  font-weight: 700;
+  color: #111111;
+}
+.publish-date.data-v-d4e6bb4e {
+  display: block;
+  margin-top: 1rpx;
+  font-size: 20rpx;
+  line-height: 28rpx;
+  color: #b4b4b4;
+}
+.deadline.data-v-d4e6bb4e {
+  position: absolute;
+  right: 24rpx;
+  bottom: 15rpx;
+  font-size: 20rpx;
+  line-height: 28rpx;
+  color: #a8a8a8;
+}
+.cover-image.data-v-d4e6bb4e {
+  display: block;
+  width: 689rpx;
+  height: 380rpx;
+  background: #f0f0f0;
+}
+.dash-divider.data-v-d4e6bb4e {
+  width: 637rpx;
+  margin: 26rpx auto 33rpx;
+  border-top: 2rpx dashed #d4d4d4;
+}
+.desc.data-v-d4e6bb4e {
+  display: block;
+  padding: 22rpx 23rpx 0;
+  font-size: 24rpx;
+  line-height: 38rpx;
+  color: #111111;
+}
+.task-card-cover .desc.data-v-d4e6bb4e {
+  padding-top: 22rpx;
+  text-align: left;
+}
+.budget.data-v-d4e6bb4e {
+  display: block;
+  padding: 2rpx 23rpx 0;
+  font-size: 32rpx;
+  line-height: 45rpx;
+  color: #f37738;
+}
+.bottom-row.data-v-d4e6bb4e {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 20rpx 23rpx 0;
+  padding-top: 18rpx;
+  border-top: 2rpx solid #f1f1f1;
+}
+.task-card-cover .bottom-row.data-v-d4e6bb4e {
+  margin-top: 27rpx;
+}
+.participant-area.data-v-d4e6bb4e {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  height: 54rpx;
+}
+.participant-count.data-v-d4e6bb4e {
+  font-size: 20rpx;
+  line-height: 28rpx;
+  color: #b4b4b4;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+.participant-avatars.data-v-d4e6bb4e {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+.participant-avatar.data-v-d4e6bb4e {
+  width: 42rpx;
+  height: 42rpx;
+  margin-right: 8rpx;
+  border: 2rpx solid #ffffff;
+  border-radius: 50%;
+  background: #f2f2f2;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+.participant-more.data-v-d4e6bb4e {
+  margin-left: 2rpx;
+  font-size: 24rpx;
+  line-height: 32rpx;
+  color: #b4b4b4;
+}
+.task-share-btn.data-v-d4e6bb4e {
+  width: 58rpx;
+  height: 54rpx;
+  margin-left: 18rpx;
+  border-radius: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.share-icon.data-v-d4e6bb4e {
+  width: 34rpx;
+  height: 34rpx;
+  display: block;
+}
+.empty-state.data-v-d4e6bb4e {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 240rpx;
+  font-size: 24rpx;
+  color: #b2b2b2;
+}
+.load-state.data-v-d4e6bb4e {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 116rpx;
+  font-size: 22rpx;
+  color: #b2b2b2;
+}

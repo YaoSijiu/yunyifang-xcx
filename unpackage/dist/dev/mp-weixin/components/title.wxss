@@ -1,0 +1,101 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 状态栏占位 */
+.status-bar.data-v-0e80c22d {
+	width: 100%;
+	background: #ffffff; /* 与标题栏背景色一致 */
+}
+/* 标题栏 */
+.title-bar.data-v-0e80c22d {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	height: 44px; /* 标准导航栏高度 */
+	padding: 0 15rpx;
+	background: #ffffff;
+	position: relative;
+}
+.back-button.data-v-0e80c22d {
+	width: 44px;
+	height: 44px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.back-button image.data-v-0e80c22d {
+	width: 20px;
+	height: 20px;
+}
+.title-text.data-v-0e80c22d {
+	position: absolute;
+	left: 50%;
+	-webkit-transform: translateX(-50%);
+	        transform: translateX(-50%);
+	font-size: 38rpx;
+	font-weight: 500;
+	color: #333333;
+	text-align: center;
+}
+.placeholder.data-v-0e80c22d {
+	width: 44px;
+	height: 44px;
+}
+

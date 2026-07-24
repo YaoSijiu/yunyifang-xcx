@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "新建作品",
+  "usingComponents": {
+    "yun-storage-warning-vue": "/components/yun-storage-warning"
+  }
+}

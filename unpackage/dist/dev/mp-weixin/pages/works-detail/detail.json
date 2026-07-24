@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "作品详情",
+  "enableShareAppMessage": true,
+  "enableShareTimeline": true,
+  "usingComponents": {
+    "yun-share-btn": "/components/yun-share-btn",
+    "yun-storage-warning": "/components/yun-storage-warning",
+    "portfolio-select": "/components/portfolio-select"
+  }
+}

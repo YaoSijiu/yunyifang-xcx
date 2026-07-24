@@ -1,0 +1,1 @@
+<view class="placeholder-page data-v-6909a729"><view class="content data-v-6909a729"><text class="title data-v-6909a729">发布</text><text class="desc data-v-6909a729">快速发布你的作品案例，获取更多曝光。</text></view><yun-tabbar vue-id="8fa88206-1" selected="{{2}}" class="data-v-6909a729" bind:__l="__l"></yun-tabbar></view>

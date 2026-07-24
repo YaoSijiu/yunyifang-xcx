@@ -1,0 +1,121 @@
+
+.refund-reason-mask.data-v-695bcd2d {
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index: 999;
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	padding: 0 24rpx 36rpx;
+	box-sizing: border-box;
+	background: rgba(0, 0, 0, 0.48);
+}
+.refund-reason-panel.data-v-695bcd2d {
+	width: 100%;
+	max-height: 82vh;
+	border-radius: 42rpx;
+	background: #ffffff;
+	overflow: hidden;
+	box-sizing: border-box;
+}
+.refund-reason-toolbar.data-v-695bcd2d {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	height: 112rpx;
+	padding: 24rpx 34rpx 0;
+	box-sizing: border-box;
+}
+.refund-reason-close.data-v-695bcd2d {
+	width: 72rpx;
+	height: 72rpx;
+	line-height: 68rpx;
+	text-align: left;
+	font-size: 48rpx;
+	color: #111111;
+}
+.refund-reason-confirm.data-v-695bcd2d {
+	min-width: 120rpx;
+	height: 60rpx;
+	padding: 0 34rpx;
+	border-radius: 999rpx;
+	background: #000000;
+	line-height: 60rpx;
+	text-align: center;
+	font-size: 28rpx;
+	color: #ffffff;
+	box-sizing: border-box;
+}
+.refund-reason-confirm.disabled.data-v-695bcd2d {
+	opacity: 0.5;
+}
+.refund-reason-content.data-v-695bcd2d {
+	padding: 26rpx 50rpx 40rpx;
+	box-sizing: border-box;
+}
+.refund-reason-title.data-v-695bcd2d {
+	display: block;
+	margin-bottom: 38rpx;
+	line-height: 56rpx;
+	font-size: 40rpx;
+	font-weight: 600;
+	color: #000000;
+}
+.refund-reason-list.data-v-695bcd2d {
+	max-height: 980rpx;
+}
+.refund-reason-item.data-v-695bcd2d {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	min-height: 86rpx;
+	box-sizing: border-box;
+}
+.refund-reason-text.data-v-695bcd2d {
+	line-height: 42rpx;
+	font-size: 30rpx;
+	color: #000000;
+}
+.refund-reason-radio.data-v-695bcd2d {
+	position: relative;
+	width: 39rpx;
+	height: 39rpx;
+	border: 3rpx solid #979797;
+	border-radius: 50%;
+	box-sizing: border-box;
+	background: #ffffff;
+}
+.refund-reason-radio.active.data-v-695bcd2d {
+	border-color: #f37738;
+}
+.refund-reason-dot.data-v-695bcd2d {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 19rpx;
+	height: 19rpx;
+	border-radius: 50%;
+	background: #f37738;
+	-webkit-transform: translate(-50%, -50%);
+	        transform: translate(-50%, -50%);
+}
+.refund-reason-other-input.data-v-695bcd2d {
+	width: 100%;
+	min-height: 128rpx;
+	margin: 14rpx 0 20rpx;
+	padding: 20rpx 24rpx;
+	border: 1rpx solid #e1e1e1;
+	border-radius: 16rpx;
+	box-sizing: border-box;
+	background: #f7f7f7;
+	font-size: 28rpx;
+	color: #000000;
+	line-height: 40rpx;
+}
+.refund-reason-placeholder.data-v-695bcd2d {
+	color: #999999;
+}
+

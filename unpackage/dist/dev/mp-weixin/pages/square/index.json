@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "广场",
+  "enablePullDownRefresh": true,
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "yun-tabbar": "/components/yun-tabbar"
+  }
+}
