@@ -93,35 +93,6 @@ module.exports = _defineProperty, module.exports.__esModule = true, module.expor
 
 /***/ }),
 
-/***/ 116:
-/*!**********************************************************!*\
-  !*** D:/yunyifang/yunyifang-xcx/utils/permissionCode.js ***!
-  \**********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-var roleCode = {
-  CAN_CREATE_TEAM: "can_create_team",
-  //	是否可创建团队
-  TEAM_MEMBER_LIMIT: "team_member_limit",
-  MAX_COLLECTIONS: "max_collections",
-  //可创建作品集数量上限
-  MAX_STORAGE: "max_storage",
-  //最大云储存空间
-  MAX_WORKS: "max_works" //可创建作品数量上限
-};
-var _default = roleCode;
-exports.default = _default;
-
-/***/ }),
-
 /***/ 12:
 /*!**************************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/toPropertyKey.js ***!
@@ -156,6 +127,56 @@ function _typeof(o) {
   }, module.exports.__esModule = true, module.exports["default"] = module.exports), _typeof(o);
 }
 module.exports = _typeof, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ 133:
+/*!************************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/objectWithoutProperties.js ***!
+  \************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var objectWithoutPropertiesLoose = __webpack_require__(/*! ./objectWithoutPropertiesLoose.js */ 134);
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+  var target = objectWithoutPropertiesLoose(source, excluded);
+  var key, i;
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+  return target;
+}
+module.exports = _objectWithoutProperties, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ 134:
+/*!*****************************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/objectWithoutPropertiesLoose.js ***!
+  \*****************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+  return target;
+}
+module.exports = _objectWithoutPropertiesLoose, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 
@@ -216,56 +237,6 @@ function _setPrototypeOf(o, p) {
   return _setPrototypeOf(o, p);
 }
 module.exports = _setPrototypeOf, module.exports.__esModule = true, module.exports["default"] = module.exports;
-
-/***/ }),
-
-/***/ 165:
-/*!************************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/objectWithoutProperties.js ***!
-  \************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var objectWithoutPropertiesLoose = __webpack_require__(/*! ./objectWithoutPropertiesLoose.js */ 166);
-function _objectWithoutProperties(source, excluded) {
-  if (source == null) return {};
-  var target = objectWithoutPropertiesLoose(source, excluded);
-  var key, i;
-  if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-      target[key] = source[key];
-    }
-  }
-  return target;
-}
-module.exports = _objectWithoutProperties, module.exports.__esModule = true, module.exports["default"] = module.exports;
-
-/***/ }),
-
-/***/ 166:
-/*!*****************************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/objectWithoutPropertiesLoose.js ***!
-  \*****************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
-  }
-  return target;
-}
-module.exports = _objectWithoutPropertiesLoose, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 
@@ -20976,194 +20947,210 @@ var _default = {
       "navigationStyle": "custom"
     }
   }, {
-    "path": "pages/login/index",
-    "style": {
-      "navigationBarTitleText": "登录",
-      "navigationStyle": "custom"
-    }
-  }, {
-    "path": "pages/library/works/create",
-    "style": {
-      "navigationBarTitleText": "新建作品"
-    }
-  }, {
-    "path": "pages/library/tags/edit",
-    "style": {
-      "navigationBarTitleText": "我的标签"
-    }
-  }, {
-    "path": "pages/library/collection/create",
-    "style": {
-      "navigationBarTitleText": "新建作品集"
-    }
-  }, {
-    "path": "pages/library/collection/detail",
-    "style": {
-      "navigationBarTitleText": "作品集详情",
-      "enableShareAppMessage": true,
-      "enableShareTimeline": true
-    }
-  }, {
     "path": "pages/profile/index",
     "style": {
       "navigationBarTitleText": "我的",
       "navigationStyle": "custom"
     }
   }, {
-    "path": "pages/profile/storage-management",
-    "style": {
-      "navigationBarTitleText": "空间管理"
-    }
-  }, {
-    "path": "pages/profile/outsourcing/index",
-    "style": {
-      "navigationBarTitleText": "我的外包",
-      "navigationStyle": "custom"
-    }
-  }, {
-    "path": "pages/profile/withdrawalcenter/index",
-    "style": {
-      "navigationBarTitleText": "提现中心",
-      "navigationStyle": "custom"
-    }
-  }, {
-    "path": "pages/profile/withdrawalcenter/detail/index",
-    "style": {
-      "navigationBarTitleText": "订单详情",
-      "navigationStyle": "custom"
-    }
-  }, {
-    "path": "pages/taskOrder/index",
-    "style": {
-      "navigationBarTitleText": "我的订单",
-      "navigationStyle": "custom"
-    }
-  }, {
-    "path": "pages/profile/team/index",
-    "style": {
-      "navigationBarTitleText": "我的团队",
-      "navigationStyle": "custom"
-    }
-  }, {
-    "path": "pages/profile/team/agree",
-    "style": {
-      "navigationBarTitleText": "加入团队"
-    }
-  }, {
-    "path": "pages/profile/edit",
-    "style": {
-      "navigationBarTitleText": "编辑资料"
-    }
-  }, {
-    "path": "pages/works-detail/detail",
-    "style": {
-      "navigationBarTitleText": "作品详情",
-      "enableShareAppMessage": true,
-      "enableShareTimeline": true
-    }
-  }, {
-    "path": "pages/works-detail/image-preview",
-    "style": {
-      "navigationBarTitleText": "",
-      "navigationStyle": "custom",
-      "backgroundColor": "#000000",
-      "pageOrientation": "portrait"
-    }
-  }, {
-    "path": "pages/profile/visitor/index",
-    "style": {
-      "navigationBarTitleText": "我的访客"
-    }
-  }, {
-    "path": "pages/profile/member/index",
-    "style": {
-      "navigationBarTitleText": "会员中心"
-    }
-  }, {
-    "path": "pages/profile/feedback/index",
-    "style": {
-      "navigationBarTitleText": "问题反馈"
-    }
-  }, {
-    "path": "pages/profile/settings/index",
-    "style": {
-      "navigationBarTitleText": "设置"
-    }
-  }, {
-    "path": "pages/profile/follow-list"
-  }, {
-    "path": "pages/library/visitor-home",
-    "style": {
-      "navigationBarTitleText": "用户主页"
-    }
-  }, {
     "path": "pages/publish/index",
     "style": {
       "navigationBarTitleText": "发布"
     }
+  }],
+  "subPackages": [{
+    "root": "subpkg-profile",
+    "pages": [{
+      "path": "pages/edit",
+      "style": {
+        "navigationBarTitleText": "编辑资料"
+      }
+    }, {
+      "path": "pages/storage-management",
+      "style": {
+        "navigationBarTitleText": "空间管理"
+      }
+    }, {
+      "path": "pages/outsourcing/index",
+      "style": {
+        "navigationBarTitleText": "我的外包",
+        "navigationStyle": "custom"
+      }
+    }, {
+      "path": "pages/withdrawalcenter/index",
+      "style": {
+        "navigationBarTitleText": "提现中心",
+        "navigationStyle": "custom"
+      }
+    }, {
+      "path": "pages/withdrawalcenter/detail/index",
+      "style": {
+        "navigationBarTitleText": "订单详情",
+        "navigationStyle": "custom"
+      }
+    }, {
+      "path": "pages/team/index",
+      "style": {
+        "navigationBarTitleText": "我的团队",
+        "navigationStyle": "custom"
+      }
+    }, {
+      "path": "pages/team/agree",
+      "style": {
+        "navigationBarTitleText": "加入团队"
+      }
+    }, {
+      "path": "pages/visitor/index",
+      "style": {
+        "navigationBarTitleText": "我的访客"
+      }
+    }, {
+      "path": "pages/member/index",
+      "style": {
+        "navigationBarTitleText": "会员中心"
+      }
+    }, {
+      "path": "pages/feedback/index",
+      "style": {
+        "navigationBarTitleText": "问题反馈"
+      }
+    }, {
+      "path": "pages/settings/index",
+      "style": {
+        "navigationBarTitleText": "设置"
+      }
+    }, {
+      "path": "pages/follow-list"
+    }]
   }, {
-    "path": "pages/task/index",
-    "style": {
-      "navigationBarTitleText": "发布任务",
-      "navigationStyle": "custom"
-    }
+    "root": "subpkg-library",
+    "pages": [{
+      "path": "pages/works/create",
+      "style": {
+        "navigationBarTitleText": "新建作品"
+      }
+    }, {
+      "path": "pages/tags/edit",
+      "style": {
+        "navigationBarTitleText": "我的标签"
+      }
+    }, {
+      "path": "pages/collection/create",
+      "style": {
+        "navigationBarTitleText": "新建作品集"
+      }
+    }, {
+      "path": "pages/collection/detail",
+      "style": {
+        "navigationBarTitleText": "作品集详情",
+        "enableShareAppMessage": true,
+        "enableShareTimeline": true
+      }
+    }, {
+      "path": "pages/visitor-home",
+      "style": {
+        "navigationBarTitleText": "用户主页"
+      }
+    }, {
+      "path": "pages/portfolio-sort/portfolio-sort",
+      "style": {
+        "navigationBarTitleText": "按住拖拽排序"
+      }
+    }]
   }, {
-    "path": "pages/task/detail/index",
-    "style": {
-      "navigationBarTitleText": "任务详情",
-      "navigationStyle": "custom",
-      "enableShareAppMessage": true,
-      "enableShareTimeline": true
-    }
+    "root": "subpkg-showcase",
+    "pages": [{
+      "path": "pages/index",
+      "style": {
+        "navigationBarTitleText": "发布橱窗",
+        "navigationStyle": "custom"
+      }
+    }, {
+      "path": "pages/my/index",
+      "style": {
+        "navigationBarTitleText": "我的橱窗",
+        "navigationStyle": "custom",
+        "enableShareAppMessage": true
+      }
+    }, {
+      "path": "pages/favorite/index",
+      "style": {
+        "navigationBarTitleText": "我的收藏",
+        "navigationStyle": "custom"
+      }
+    }, {
+      "path": "pages/detail/index",
+      "style": {
+        "navigationBarTitleText": "橱窗详情",
+        "navigationStyle": "custom",
+        "enableShareAppMessage": true,
+        "enableShareTimeline": true
+      }
+    }]
   }, {
-    "path": "pages/showCase/index",
-    "style": {
-      "navigationBarTitleText": "发布橱窗",
-      "navigationStyle": "custom"
-    }
+    "root": "subpkg-task",
+    "pages": [{
+      "path": "pages/index",
+      "style": {
+        "navigationBarTitleText": "发布任务",
+        "navigationStyle": "custom"
+      }
+    }, {
+      "path": "pages/detail/index",
+      "style": {
+        "navigationBarTitleText": "任务详情",
+        "navigationStyle": "custom",
+        "enableShareAppMessage": true,
+        "enableShareTimeline": true
+      }
+    }, {
+      "path": "pages/taskOrder/index",
+      "style": {
+        "navigationBarTitleText": "我的订单",
+        "navigationStyle": "custom"
+      }
+    }]
   }, {
-    "path": "pages/showCase/my/index",
-    "style": {
-      "navigationBarTitleText": "我的橱窗",
-      "navigationStyle": "custom",
-      "enableShareAppMessage": true
-    }
-  }, {
-    "path": "pages/showCase/favorite/index",
-    "style": {
-      "navigationBarTitleText": "我的收藏",
-      "navigationStyle": "custom"
-    }
-  }, {
-    "path": "pages/showCase/detail/index",
-    "style": {
-      "navigationBarTitleText": "橱窗详情",
-      "navigationStyle": "custom",
-      "enableShareAppMessage": true,
-      "enableShareTimeline": true
-    }
-  }, {
-    "path": "pages/professionCategory/select",
-    "style": {
-      "navigationBarTitleText": "选择",
-      "navigationStyle": "custom"
-    }
-  }, {
-    "path": "pages/professionCategory/push",
-    "style": {
-      "navigationBarTitleText": "专业推送",
-      "navigationStyle": "custom"
-    }
-  }, {
-    "path": "pages/library/portfolio-sort/portfolio-sort",
-    "style": {
-      "navigationBarTitleText": "按住拖拽排序"
-    }
-  }, {
-    "path": "pages/login/aggrement",
-    "style": {
-      "navigationBarTitleText": ""
-    }
+    "root": "subpkg-others",
+    "pages": [{
+      "path": "pages/works-detail/detail",
+      "style": {
+        "navigationBarTitleText": "作品详情",
+        "enableShareAppMessage": true,
+        "enableShareTimeline": true
+      }
+    }, {
+      "path": "pages/works-detail/image-preview",
+      "style": {
+        "navigationBarTitleText": "",
+        "navigationStyle": "custom",
+        "backgroundColor": "#000000",
+        "pageOrientation": "portrait"
+      }
+    }, {
+      "path": "pages/login/index",
+      "style": {
+        "navigationBarTitleText": "登录",
+        "navigationStyle": "custom"
+      }
+    }, {
+      "path": "pages/login/aggrement",
+      "style": {
+        "navigationBarTitleText": ""
+      }
+    }, {
+      "path": "pages/professionCategory/select",
+      "style": {
+        "navigationBarTitleText": "选择",
+        "navigationStyle": "custom"
+      }
+    }, {
+      "path": "pages/professionCategory/push",
+      "style": {
+        "navigationBarTitleText": "专业推送",
+        "navigationStyle": "custom"
+      }
+    }]
   }],
   "globalStyle": {
     "navigationBarTextStyle": "black",
@@ -29747,7 +29734,7 @@ exports.default = _default;
 
 /***/ }),
 
-/***/ 430:
+/***/ 416:
 /*!*******************************************************************************************!*\
   !*** D:/yunyifang/yunyifang-xcx/uni_modules/uni-calendar/components/uni-calendar/util.js ***!
   \*******************************************************************************************/
@@ -29765,7 +29752,7 @@ exports.default = void 0;
 var _typeof2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/typeof */ 13));
 var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ 23));
 var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ 24));
-var _calendar = _interopRequireDefault(__webpack_require__(/*! ./calendar.js */ 431));
+var _calendar = _interopRequireDefault(__webpack_require__(/*! ./calendar.js */ 417));
 var Calendar = /*#__PURE__*/function () {
   function Calendar() {
     var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -30163,7 +30150,7 @@ exports.default = _default;
 
 /***/ }),
 
-/***/ 431:
+/***/ 417:
 /*!***********************************************************************************************!*\
   !*** D:/yunyifang/yunyifang-xcx/uni_modules/uni-calendar/components/uni-calendar/calendar.js ***!
   \***********************************************************************************************/
@@ -31249,6 +31236,35 @@ function _iterableToArrayLimit(r, l) {
   }
 }
 module.exports = _iterableToArrayLimit, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ 76:
+/*!**********************************************************!*\
+  !*** D:/yunyifang/yunyifang-xcx/utils/permissionCode.js ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var roleCode = {
+  CAN_CREATE_TEAM: "can_create_team",
+  //	是否可创建团队
+  TEAM_MEMBER_LIMIT: "team_member_limit",
+  MAX_COLLECTIONS: "max_collections",
+  //可创建作品集数量上限
+  MAX_STORAGE: "max_storage",
+  //最大云储存空间
+  MAX_WORKS: "max_works" //可创建作品数量上限
+};
+var _default = roleCode;
+exports.default = _default;
 
 /***/ }),
 

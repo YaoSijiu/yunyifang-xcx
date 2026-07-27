@@ -774,7 +774,7 @@ var _default = {
         return;
       }
       uni.navigateTo({
-        url: "/pages/task/detail/index?id=".concat(item.channelId, "&channelId=").concat(item.channelId, "&taskId=").concat(item.taskId)
+        url: "/subpkg-task/pages/detail/index?id=".concat(item.channelId, "&channelId=").concat(item.channelId, "&taskId=").concat(item.taskId)
       });
     },
     handleParticipantClick: function handleParticipantClick(participant) {
@@ -786,7 +786,7 @@ var _default = {
         return;
       }
       uni.navigateTo({
-        url: "/pages/library/visitor-home?userId=".concat(encodeURIComponent(participant.userId))
+        url: "/subpkg-library/pages/visitor-home?userId=".concat(encodeURIComponent(participant.userId))
       });
     },
     handleParticipantMore: function handleParticipantMore(item) {
@@ -805,7 +805,7 @@ var _default = {
     var title = dataset.taskTitle || '广场任务';
     return {
       title: title,
-      path: channelId ? "/pages/task/detail/index?id=".concat(channelId, "&channelId=").concat(channelId, "&fromShare=1") : '/pages/square/index'
+      path: channelId ? "/subpkg-task/pages/detail/index?id=".concat(channelId, "&channelId=").concat(channelId, "&fromShare=1") : '/pages/square/index'
     };
   }
 };

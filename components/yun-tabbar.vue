@@ -1,4 +1,4 @@
-<template>
+﻿<template>
 	<view class="tabbar-container">
 		<view class="tabbar">
 			<view
@@ -69,25 +69,25 @@ export default {
 					title: '发布任务',
 					desc: '找设计师，发定制需求',
 					icon: '/static/publish/发布任务.png',
-					url: '/pages/task/index'
+					url: '/subpkg-task/pages/index'
 				},
 				{
 					title: '发布橱窗',
 					desc: '上架橱窗赚取佣金',
 					icon: '/static/publish/上架橱窗.png',
-					url: '/pages/showCase/index'
+					url: '/subpkg-showcase/pages/index'
 				},
 				{
 					title: '新建作品',
 					desc: '你可以在作品中添加图片/视频/简介',
 					icon: '/static/publish/新建作品.png',
-					url: '/pages/library/works/create'
+					url: '/subpkg-library/pages/works/create'
 				},
 				{
 					title: '新建作品集',
 					desc: '作品集用于打包分享全部或多个作品，你可以在\n作品集中将作品分组',
 					icon: '/static/publish/新建作品集.png',
-					url: '/pages/library/collection/create'
+					url: '/subpkg-library/pages/collection/create'
 				}
 			],
 			list: [
@@ -175,7 +175,7 @@ export default {
 			const path = url.split('?')[0];
 			const isLoggedIn = this.hasLoginToken();
 			const routeHandlerMap = {
-				'/pages/library/works/create': async () => {
+				'/subpkg-library/pages/works/create': async () => {
 					try {
 						const isTeamMode = uni.getStorageSync('isTeamMode') || false;
 						if (isTeamMode) {
@@ -193,7 +193,7 @@ export default {
 						return false;
 					}
 				},
-				'/pages/library/collection/create': async () => {
+				'/subpkg-library/pages/collection/create': async () => {
 					try {
 						const isTeamMode = uni.getStorageSync('isTeamMode') || false;
 						if (isTeamMode) {
@@ -225,7 +225,7 @@ export default {
 			const isTeamMode = uni.getStorageSync('isTeamMode') || false;
 			const storedUserInfo = uni.getStorageSync('userInfo') || {};
 			const isTeam = storedUserInfo.vipLevel == 'team' || false;
-			if (isLoggedIn && (isTeamMode || isTeam) && (path === '/pages/library/works/create' || path === '/pages/library/collection/create')) {
+			if (isLoggedIn && (isTeamMode || isTeam) && (path === '/subpkg-library/pages/works/create' || path === '/subpkg-library/pages/collection/create')) {
 				finalUrl += url.includes('?') ? '&workType=1' : '?workType=1';
 			}
 
@@ -256,7 +256,7 @@ export default {
 				success: (res) => {
 					if (res.confirm) {
 						uni.navigateTo({
-							url: '/pages/login/index'
+							url: '/subpkg-others/pages/login/index'
 						});
 					}
 				}

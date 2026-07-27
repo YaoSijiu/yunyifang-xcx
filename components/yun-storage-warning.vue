@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <view class="storage-warning-container" v-if="isVisible">
     <view class="modal-overlay" @click="handleCancel"></view>
     <view class="modal-content">
@@ -185,7 +185,7 @@ export default {
       if (this.type === 'flowout') {
         // 跳转到流量购买页面
         uni.navigateTo({
-          url: '/pages/profile/storage-management'
+          url: '/subpkg-profile/pages/storage-management'
         });
         this.$emit('cancel');
         return;

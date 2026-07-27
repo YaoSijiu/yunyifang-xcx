@@ -1,4 +1,4 @@
-<template>
+﻿<template>
 	<view class="page">
 		<TitleBar title="我的" :show-back="false" />
 		<view class="user-info">
@@ -115,57 +115,57 @@
 				menuItems: [{
 						icon: '/static/profile/标签.png',
 						text: '标签',
-						url: '/pages/library/tags/edit'
+						url: '/subpkg-library/pages/tags/edit'
 					},
 					{
 						icon: '/static/profile/访客.png',
 						text: '访客',
-						url: '/pages/profile/visitor/index'
+						url: '/subpkg-profile/pages/visitor/index'
 					},
 					{
 						icon: '/static/profile/外包.svg',
 						text: '我的外包',
-						url: '/pages/profile/outsourcing/index'
+						url: '/subpkg-profile/pages/outsourcing/index'
 					},
 					{
 						icon: '/static/profile/订单.svg',
 						text: '我的订单',
-						url: '/pages/taskOrder/index'
+						url: '/subpkg-task/pages/taskOrder/index'
 					},
 					{
 						icon: '/static/profile/钱包.svg',
 						text: '提现中心',
-						url: '/pages/profile/withdrawalcenter/index'
+						url: '/subpkg-profile/pages/withdrawalcenter/index'
 					},
 					{
 						icon: '/static/profile/团队.png',
 						text: '团队',
-						url: '/pages/profile/team/index'
+						url: '/subpkg-profile/pages/team/index'
 					},
 					{
 						icon: '/static/profile/橱窗.png',
 						text: '我的橱窗',
-						url: '/pages/showCase/my/index'
+						url: '/subpkg-showcase/pages/my/index'
 					},
 					{
 						icon: '/static/profile/收藏.svg',
 						text: '收藏',
-						url: '/pages/showCase/favorite/index'
+						url: '/subpkg-showcase/pages/favorite/index'
 					},
 					{
 						icon: '/static/profile/会员中心.png',
 						text: '会员中心',
-						url: '/pages/profile/member/index'
+						url: '/subpkg-profile/pages/member/index'
 					},
 					{
 						icon: '/static/profile/问题反馈.png',
 						text: '问题反馈',
-						url: '/pages/profile/feedback/index'
+						url: '/subpkg-profile/pages/feedback/index'
 					},
 					{
 						icon: '/static/profile/设置.png',
 						text: '设置',
-						url: '/pages/profile/settings/index'
+						url: '/subpkg-profile/pages/settings/index'
 					},
 				],
 			};
@@ -222,7 +222,7 @@
 					success: (res) => {
 						if (res.confirm) {
 							uni.navigateTo({
-								url: '/pages/login/index'
+								url: '/subpkg-others/pages/login/index'
 							});
 						}
 					}
@@ -243,14 +243,14 @@
 				})
 			},
 			gotoVistor() {
-				if (!this.ensureLoggedIn('/pages/profile/visitor/index')) {
+				if (!this.ensureLoggedIn('/subpkg-profile/pages/visitor/index')) {
 					return;
 				}
 				if(this.isTeamMode){
 					return;
 				}
 				uni.navigateTo({
-					url: '/pages/profile/visitor/index'
+					url: '/subpkg-profile/pages/visitor/index'
 				})
 			},
 			async fetchTeamInfo() {
@@ -377,15 +377,15 @@
 				});
 			},
 			gotoMember(){
-				if (!this.ensureLoggedIn('/pages/profile/member/index')) {
+				if (!this.ensureLoggedIn('/subpkg-profile/pages/member/index')) {
 					return;
 				}
 				uni.navigateTo({
-					url:'/pages/profile/member/index'
+					url:'/subpkg-profile/pages/member/index'
 				});
 			},
 			goToEdit() {
-				if (!this.ensureLoggedIn('/pages/profile/edit')) {
+				if (!this.ensureLoggedIn('/subpkg-profile/pages/edit')) {
 					return;
 				}
 				if (this.isTeamMode) {
@@ -396,23 +396,23 @@
 					return
 				}
 				uni.navigateTo({
-					url: '/pages/profile/edit'
+					url: '/subpkg-profile/pages/edit'
 				});
 			},
 			goToStorageManagement() {
-				if (!this.ensureLoggedIn('/pages/profile/storage-management')) {
+				if (!this.ensureLoggedIn('/subpkg-profile/pages/storage-management')) {
 					return;
 				}
 				if (this.isTeamMode) {
 					return
 				}
 				uni.navigateTo({
-					url: '/pages/profile/storage-management'
+					url: '/subpkg-profile/pages/storage-management'
 				});
 			},
 			goToFollowList(type) {
 				uni.navigateTo({
-					url: `/pages/profile/follow-list?type=${type}`
+					url: `/subpkg-profile/pages/follow-list?type=${type}`
 				});
 			},
 			formatStorage(mb) {

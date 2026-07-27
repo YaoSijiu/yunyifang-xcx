@@ -1,0 +1,449 @@
+
+.page.data-v-7def37ae {
+	background-color: #f5f5f5;
+	min-height: 100vh;
+	padding: 40rpx 30rpx;
+	box-sizing: border-box;
+}
+.storage-card.data-v-7def37ae {
+	background-color: #ffffff;
+	border-radius: 20rpx;
+	padding: 30rpx;
+	margin-bottom: 30rpx;
+	box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
+	transition: box-shadow 0.3s ease, -webkit-transform 0.3s ease;
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+	transition: transform 0.3s ease, box-shadow 0.3s ease, -webkit-transform 0.3s ease;
+}
+.storage-card.data-v-7def37ae:active {
+	-webkit-transform: translateY(-2rpx);
+	        transform: translateY(-2rpx);
+	box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.08);
+}
+
+/* 卡片头部 */
+.card-header.data-v-7def37ae {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20rpx;
+}
+.header-left.data-v-7def37ae {
+	display: flex;
+	align-items: center;
+	gap: 12rpx;
+}
+.header-icon.data-v-7def37ae {
+	width: 32rpx;
+	height: 32rpx;
+}
+.header-title.data-v-7def37ae {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+}
+.header-usage.data-v-7def37ae {
+	font-size: 24rpx;
+	color: #999;
+}
+
+/* 进度条部分 */
+.progress-section.data-v-7def37ae {
+	margin-bottom: 30rpx;
+	text-align: center;
+}
+.progress-bar.data-v-7def37ae {
+	width: 100%;
+	height: 12rpx;
+	background-color: #f0f0f0;
+	border-radius: 6rpx;
+	overflow: hidden;
+	margin-bottom: 12rpx;
+}
+.progress-fill.data-v-7def37ae {
+	height: 100%;
+	border-radius: 6rpx;
+	transition: width 0.3s ease;
+}
+.progress-fill.blue.data-v-7def37ae {
+	background-color: rgba(243, 119, 56,0.7);
+}
+.progress-fill.red.data-v-7def37ae {
+	background-color: rgba(255, 0, 0, 0.7);
+	box-shadow: 0 0 8rpx rgba(255, 0, 0, 0.3);
+}
+.progress-text.data-v-7def37ae {
+	font-size: 28rpx;
+	color: #444444;
+	text-align: center;
+}
+.warning-text.data-v-7def37ae {
+	color: #ff0000;
+	font-weight: bold;
+}
+
+/* 存储详情 */
+.storage-details.data-v-7def37ae {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 30rpx;
+}
+.detail-item.data-v-7def37ae {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8rpx;
+}
+.detail-label.data-v-7def37ae {
+	font-size: 28rpx;
+	color: #999;
+}
+.detail-value.data-v-7def37ae {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333;
+}
+.detail-value.negative.data-v-7def37ae {
+	color: #ff6b6b;
+}
+.detail-link.data-v-7def37ae {
+	font-size: 24rpx;
+	color: #F37738;
+	margin-top: 4rpx;
+}
+
+/* 操作按钮 */
+.action-btn.data-v-7def37ae {
+	width: 50%;
+	height: 80rpx;
+	line-height: 80rpx;
+	text-align: center;
+	border-radius: 40rpx;
+	color: #ffffff;
+	font-size: 30rpx;
+	font-weight: 600;
+	border: none;
+	transition: all 0.3s ease;
+	background-color:rgba(243, 119, 56)
+}
+.action-btn.data-v-7def37ae:active {
+	-webkit-transform: translateY(2rpx);
+	        transform: translateY(2rpx);
+	opacity: 0.9;
+}
+
+/* 弹窗样式 */
+.modal-overlay.data-v-7def37ae {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+	z-index: 999;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+}
+.modal-content.data-v-7def37ae {
+	background: #fff;
+	border-radius: 30rpx;
+	padding: 10rpx 0 10rpx;
+	min-height: 200rpx;
+	margin: 10rpx;
+}
+.wp-handle.data-v-7def37ae {
+	width: 100rpx;
+	height: 15rpx;
+	background: #d3d3d3;
+	border-radius: 10rpx;
+	margin: 10rpx auto 10rpx;
+}
+.modal-header.data-v-7def37ae {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 20rpx;
+	border-bottom: 1rpx solid #f0f0f0;
+	position: relative;
+}
+.modal-title.data-v-7def37ae {
+	font-size: 34rpx;
+	font-weight: bold;
+	color: #333;
+}
+.modal-close.data-v-7def37ae {
+	position: absolute;
+	right: 30rpx;
+	font-size: 40rpx;
+	color: #999;
+	line-height: 1;
+}
+.modal-body.data-v-7def37ae {
+	padding: 20rpx;
+	max-height: 85vh;
+	overflow-y: auto;
+}
+.flow-info-card.data-v-7def37ae {
+	margin-bottom: 20rpx;
+	padding: 20rpx;
+	background-color: #f9f9f9;
+	border-radius: 10rpx;
+}
+.flow-info-card.highlighted.data-v-7def37ae {
+	background-color:rgba(243, 119, 56, 0.2);
+}
+.flow-info-content.data-v-7def37ae {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+}
+.flow-info-text.data-v-7def37ae {
+	flex: 1;
+	padding-right: 20rpx;
+}
+.flow-info-value-container.data-v-7def37ae {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+}
+.flow-info-title.data-v-7def37ae {
+	font-size: 30rpx;
+	font-weight: 600;
+	color: #333;
+	margin-bottom: 12rpx;
+}
+.flow-info-subtitle.data-v-7def37ae {
+	font-size: 24rpx;
+	color: #666;
+	margin-bottom: 4rpx;
+	white-space: normal;
+	word-break: break-all;
+}
+.flow-info-value.data-v-7def37ae {
+	font-size: 40rpx;
+	font-weight: bold;
+	color: rgba(243, 119, 56,0.7);
+	margin-bottom: 8rpx;
+}
+.flow-info-text.data-v-7def37ae {
+	font-size: 26rpx;
+	color: #666;
+	line-height: 40rpx;
+	margin-bottom: 12rpx;
+	white-space: normal;
+	word-break: break-all;
+}
+.flow-history.data-v-7def37ae {
+	margin-top: 10rpx;
+}
+.flow-history-item.data-v-7def37ae {
+	display: flex;
+	flex-direction: column;
+	padding: 10rpx 0;
+	border-bottom: 1rpx solid #f0f0f0;
+}
+.flow-history-header.data-v-7def37ae {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	margin-bottom: 10rpx;
+	padding-bottom: 10rpx;
+	/* border-bottom: 1rpx solid #f0f0f0; */
+}
+.flow-history-date.data-v-7def37ae {
+	font-size: 28rpx;
+	color: #666;
+	font-weight: 500;
+}
+.flow-history-right.data-v-7def37ae {
+	display: flex;
+	align-items: center;
+	gap: 20rpx;
+}
+.flow-history-value.data-v-7def37ae {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333;
+}
+.flow-history-detail.data-v-7def37ae {
+	font-size: 22rpx;
+	color: rgba(243, 119, 56,0.7);
+	background-color:rgba(243, 119, 56, 0.2);
+	padding: 6rpx 20rpx;
+	border-radius: 20rpx;
+}
+.flow-info-card.flow-description.data-v-7def37ae {
+	border-left: 4rpx solid rgba(243, 119, 56);
+	border-top: 1rpx solid #e6f7ff;
+	border-right: 1rpx solid #e6f7ff;
+	border-bottom: 1rpx solid #e6f7ff;
+	border-radius: 10rpx;
+	background-color: #ffffff;
+}
+.flow-info-card.flow-used.data-v-7def37ae {
+	background:rgba(243, 119, 56, 0.2);
+	/* border: 1rpx solid #007aff; */
+	border-radius: 16rpx;
+	padding: 24rpx;
+	/* box-shadow: 0 4rpx 16rpx rgba(0, 122, 255, 0.1); */
+	margin-bottom: 10rpx;
+}
+.flow-history-item.flow-history-card.data-v-7def37ae {
+	border-radius: 10rpx;
+	padding: 20rpx;
+	margin-bottom: 20rpx;
+	background-color: #ffffff;
+	box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+/* 流量趋势图 - 修改样式 */
+.flow-trend.data-v-7def37ae {
+	padding: 10rpx;
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	width: 100%;
+	box-sizing: border-box;
+}
+.flow-trend-title.data-v-7def37ae {
+	font-size: 28rpx;
+	font-weight: 500;
+	color: #333;
+	margin-bottom: 20rpx;
+	padding-left: 24rpx;
+	position: relative;
+	text-align: center;
+}
+.flow-trend-chart.data-v-7def37ae {
+	width: 100%;
+	position: relative;
+	min-height: 260rpx;
+	box-sizing: border-box;
+}
+
+/* Y轴刻度 */
+.flow-trend-y-axis.data-v-7def37ae {
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 180rpx;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	font-size: 24rpx;
+	color: #999;
+	z-index: 5;
+	text-align: right;
+	width: 60rpx;
+	padding: 5rpx 0;
+}
+.flow-trend-y-axis text.data-v-7def37ae {
+	line-height: 1;
+	font-weight: 400;
+}
+
+/* SVG容器 */
+.flow-trend-line.data-v-7def37ae {
+	width: 100%;
+	height: 180rpx;
+	display: block;
+	margin-left: 60rpx;
+	background-color: transparent;
+	overflow: visible;
+}
+
+/* X轴刻度 */
+.flow-trend-x-axis.data-v-7def37ae {
+	display: flex;
+	justify-content: space-between;
+	margin-left: 60rpx;
+	margin-top: 16rpx;
+	padding: 0 20rpx;
+	font-size: 24rpx;
+	color: #999;
+	width: calc(100% - 90rpx);
+	box-sizing: border-box;
+}
+.flow-trend-x-axis text.data-v-7def37ae {
+	text-align: center;
+	white-space: nowrap;
+	-webkit-transform: translateX(-10rpx);
+	        transform: translateX(-10rpx);
+	/* 微调对齐 */
+}
+
+/* 添加cover-view相关样式 */
+.simple-chart-container.data-v-7def37ae {
+	position: relative;
+	width: 100%;
+	min-height: 400rpx;
+	margin-top: 20rpx;
+	padding-bottom: 20rpx;
+	display: block;
+}
+.simple-y-axis.data-v-7def37ae {
+	position: absolute;
+	left: 0;
+	top: 10rpx;
+	height: 340rpx;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	font-size: 24rpx;
+	color: #999;
+	width: 80rpx;
+	text-align: right;
+	padding: 10rpx 0;
+	z-index: 5;
+}
+.canvas-wrapper.data-v-7def37ae {
+	margin-left: 80rpx;
+	width: calc(100% - 80rpx);
+	height: 360rpx;
+}
+.simple-x-axis.data-v-7def37ae {
+	display: flex;
+	justify-content: space-between;
+	margin-left: 60rpx;
+	margin-top: 5rpx;
+	padding: 0 20rpx;
+	font-size: 24rpx;
+	color: #999;
+	width: calc(100% - 100rpx);
+	box-sizing: border-box;
+}
+.y-axis-text.data-v-7def37ae,
+.x-axis-text.data-v-7def37ae {
+	line-height: 1;
+	white-space: nowrap;
+}
+.charts-box.data-v-7def37ae {
+	width: 100%;
+	height: 300rpx;
+	margin-top: 20rpx;
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 10rpx 0;
+	box-sizing: border-box;
+}
+.charts-container.data-v-7def37ae {
+	position: relative;
+	width: 100%;
+}
+.y-axis-unit.data-v-7def37ae {
+	position: absolute;
+	top: 30rpx;
+	right: 20rpx;
+	font-size: 24rpx;
+	color: #999999;
+	font-weight: 400;
+}
+
+/* 为了让Y轴坐标显示单位，尝试修改图表边距，为单位留出空间 */
+.charts-box.data-v-7def37ae {
+	padding-right: 40rpx;
+}
+

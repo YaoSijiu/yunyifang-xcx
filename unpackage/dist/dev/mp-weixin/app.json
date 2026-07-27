@@ -3,41 +3,67 @@
     "pages/library/home",
     "pages/square/index",
     "pages/library/index",
-    "pages/login/index",
-    "pages/library/works/create",
-    "pages/library/tags/edit",
-    "pages/library/collection/create",
-    "pages/library/collection/detail",
     "pages/profile/index",
-    "pages/profile/storage-management",
-    "pages/profile/outsourcing/index",
-    "pages/profile/withdrawalcenter/index",
-    "pages/profile/withdrawalcenter/detail/index",
-    "pages/taskOrder/index",
-    "pages/profile/team/index",
-    "pages/profile/team/agree",
-    "pages/profile/edit",
-    "pages/works-detail/detail",
-    "pages/works-detail/image-preview",
-    "pages/profile/visitor/index",
-    "pages/profile/member/index",
-    "pages/profile/feedback/index",
-    "pages/profile/settings/index",
-    "pages/profile/follow-list",
-    "pages/library/visitor-home",
-    "pages/publish/index",
-    "pages/task/index",
-    "pages/task/detail/index",
-    "pages/showCase/index",
-    "pages/showCase/my/index",
-    "pages/showCase/favorite/index",
-    "pages/showCase/detail/index",
-    "pages/professionCategory/select",
-    "pages/professionCategory/push",
-    "pages/library/portfolio-sort/portfolio-sort",
-    "pages/login/aggrement"
+    "pages/publish/index"
   ],
-  "subPackages": [],
+  "subPackages": [
+    {
+      "root": "subpkg-profile",
+      "pages": [
+        "pages/edit",
+        "pages/storage-management",
+        "pages/outsourcing/index",
+        "pages/withdrawalcenter/index",
+        "pages/withdrawalcenter/detail/index",
+        "pages/team/index",
+        "pages/team/agree",
+        "pages/visitor/index",
+        "pages/member/index",
+        "pages/feedback/index",
+        "pages/settings/index",
+        "pages/follow-list"
+      ]
+    },
+    {
+      "root": "subpkg-library",
+      "pages": [
+        "pages/works/create",
+        "pages/tags/edit",
+        "pages/collection/create",
+        "pages/collection/detail",
+        "pages/visitor-home",
+        "pages/portfolio-sort/portfolio-sort"
+      ]
+    },
+    {
+      "root": "subpkg-showcase",
+      "pages": [
+        "pages/index",
+        "pages/my/index",
+        "pages/favorite/index",
+        "pages/detail/index"
+      ]
+    },
+    {
+      "root": "subpkg-task",
+      "pages": [
+        "pages/index",
+        "pages/detail/index",
+        "pages/taskOrder/index"
+      ]
+    },
+    {
+      "root": "subpkg-others",
+      "pages": [
+        "pages/works-detail/detail",
+        "pages/works-detail/image-preview",
+        "pages/login/index",
+        "pages/login/aggrement",
+        "pages/professionCategory/select",
+        "pages/professionCategory/push"
+      ]
+    }
+  ],
   "window": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "云艺坊",
@@ -82,5 +108,6 @@
       }
     ]
   },
+  "lazyCodeLoading": "requiredComponents",
   "usingComponents": {}
 }

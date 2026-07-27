@@ -1,0 +1,305 @@
+@charset "UTF-8";
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+.push-page.data-v-1f9477fb {
+  position: relative;
+  width: 750rpx;
+  min-height: 1624rpx;
+  background: #ffffff;
+  color: #000000;
+  overflow: hidden;
+}
+.mock-status.data-v-1f9477fb {
+  position: absolute;
+  left: 40rpx;
+  top: 16rpx;
+  width: 670rpx;
+  height: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mock-time.data-v-1f9477fb {
+  font-size: 24rpx;
+  line-height: 24rpx;
+  color: #000000;
+}
+.mock-signal.data-v-1f9477fb {
+  height: 24rpx;
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+}
+.signal-bar.data-v-1f9477fb {
+  width: 6rpx;
+  border-radius: 3rpx;
+  background: #000000;
+  align-self: flex-end;
+}
+.signal-bar.one.data-v-1f9477fb {
+  height: 9rpx;
+}
+.signal-bar.two.data-v-1f9477fb {
+  height: 12rpx;
+}
+.signal-bar.three.data-v-1f9477fb {
+  height: 16rpx;
+}
+.signal-bar.four.data-v-1f9477fb {
+  height: 20rpx;
+  margin-right: 8rpx;
+}
+.wifi-dot.data-v-1f9477fb {
+  width: 24rpx;
+  height: 18rpx;
+  border-top: 4rpx solid #000000;
+  border-radius: 20rpx 20rpx 0 0;
+  margin-right: 10rpx;
+}
+.battery.data-v-1f9477fb {
+  width: 48rpx;
+  height: 24rpx;
+  border: 4rpx solid #000000;
+  border-radius: 3rpx;
+  box-sizing: border-box;
+  position: relative;
+}
+.battery.data-v-1f9477fb::after {
+  content: "";
+  position: absolute;
+  right: -8rpx;
+  top: 6rpx;
+  width: 4rpx;
+  height: 10rpx;
+  background: #000000;
+  border-radius: 2rpx;
+}
+.top-nav.data-v-1f9477fb {
+  position: absolute;
+  left: 24rpx;
+  top: 76rpx;
+  width: 702rpx;
+  height: 82rpx;
+}
+.back-icon.data-v-1f9477fb {
+  position: absolute;
+  left: 9rpx;
+  top: 35rpx;
+  width: 28rpx;
+  height: 28rpx;
+  border-left: 5rpx solid #000000;
+  border-bottom: 5rpx solid #000000;
+  -webkit-transform: rotate(45deg);
+          transform: rotate(45deg);
+}
+.capsule.data-v-1f9477fb {
+  position: absolute;
+  right: -3rpx;
+  top: 17rpx;
+  width: 197rpx;
+  height: 65rpx;
+  border: 1rpx solid #e1e1e1;
+  border-radius: 33rpx;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.dot-group.data-v-1f9477fb {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+.dot-group text.data-v-1f9477fb {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: #000000;
+}
+.capsule-line.data-v-1f9477fb {
+  width: 1rpx;
+  height: 38rpx;
+  background: #e1e1e1;
+}
+.circle-icon.data-v-1f9477fb {
+  width: 35rpx;
+  height: 35rpx;
+  border-radius: 50%;
+  border: 4rpx solid #000000;
+  box-sizing: border-box;
+  position: relative;
+}
+.circle-icon.data-v-1f9477fb::after {
+  content: "";
+  position: absolute;
+  left: 8rpx;
+  top: 8rpx;
+  width: 11rpx;
+  height: 11rpx;
+  border-radius: 50%;
+  background: #000000;
+}
+.page-title.data-v-1f9477fb {
+  position: absolute;
+  left: 105rpx;
+  top: 192rpx;
+  width: 540rpx;
+  height: 132rpx;
+  font-size: 36rpx;
+  line-height: 66rpx;
+  color: #000000;
+  text-align: center;
+  white-space: pre-line;
+}
+.divider.data-v-1f9477fb {
+  position: absolute;
+  left: 0;
+  width: 750rpx;
+  height: 1rpx;
+  background: #e5e5e5;
+}
+.divider.top.data-v-1f9477fb {
+  top: 347rpx;
+}
+.divider.bottom.data-v-1f9477fb {
+  top: 1517rpx;
+}
+.category-panel.data-v-1f9477fb {
+  position: absolute;
+  left: 0;
+  top: 348rpx;
+  width: 750rpx;
+  height: 1169rpx;
+  display: flex;
+}
+.category-panel.empty.data-v-1f9477fb {
+  align-items: center;
+  justify-content: center;
+}
+.loading-text.data-v-1f9477fb {
+  font-size: 28rpx;
+  color: #999999;
+}
+.left-scroll.data-v-1f9477fb {
+  width: 311rpx;
+  height: 1169rpx;
+}
+.left-item.data-v-1f9477fb {
+  position: relative;
+  height: 104rpx;
+  display: flex;
+  align-items: center;
+  padding-left: 27rpx;
+  box-sizing: border-box;
+  font-size: 26rpx;
+  line-height: 40rpx;
+  color: #000000;
+}
+.left-item.active.data-v-1f9477fb {
+  color: #f37738;
+}
+.active-bar.data-v-1f9477fb {
+  position: absolute;
+  left: 0;
+  top: 42rpx;
+  width: 8rpx;
+  height: 27rpx;
+  background: #f37738;
+}
+.vertical-line.data-v-1f9477fb {
+  width: 1rpx;
+  height: 1169rpx;
+  background: #dddddd;
+}
+.right-scroll.data-v-1f9477fb {
+  flex: 1;
+  height: 1169rpx;
+}
+.chip-wrap.data-v-1f9477fb {
+  padding: 40rpx 20rpx 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx 18rpx;
+  box-sizing: border-box;
+}
+.profession-chip.data-v-1f9477fb {
+  min-width: 188rpx;
+  height: 64rpx;
+  padding: 0 24rpx;
+  border-radius: 8rpx;
+  background: #f7f7f7;
+  color: #000000;
+  font-size: 26rpx;
+  line-height: 64rpx;
+  text-align: center;
+  box-sizing: border-box;
+  border: 1rpx solid #f7f7f7;
+  transition: color 160ms ease, border-color 160ms ease, background 160ms ease, -webkit-transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1), color 160ms ease, border-color 160ms ease, background 160ms ease;
+  transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1), color 160ms ease, border-color 160ms ease, background 160ms ease, -webkit-transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.profession-chip.active.data-v-1f9477fb {
+  color: #f37738;
+  background: #ffffff;
+  border-color: #f37738;
+}
+.profession-chip.data-v-1f9477fb:active {
+  -webkit-transform: scale(0.96);
+          transform: scale(0.96);
+}
+.bottom-actions.data-v-1f9477fb {
+  position: absolute;
+  left: 38rpx;
+  top: 1539rpx;
+  width: 681rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.skip-btn.data-v-1f9477fb,
+.continue-btn.data-v-1f9477fb {
+  height: 64rpx;
+  border-radius: 36rpx;
+  font-size: 28rpx;
+  line-height: 64rpx;
+  padding: 0;
+  margin: 0;
+}
+.skip-btn.data-v-1f9477fb {
+  width: 236rpx;
+  background: #f7f7f7;
+  color: #000000;
+}
+.continue-btn.data-v-1f9477fb {
+  width: 407rpx;
+  background: #f37738;
+  color: #ffffff;
+}
+.skip-btn.data-v-1f9477fb::after,
+.continue-btn.data-v-1f9477fb::after {
+  border: 0;
+}

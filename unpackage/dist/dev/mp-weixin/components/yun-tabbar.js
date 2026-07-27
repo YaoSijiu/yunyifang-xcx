@@ -197,22 +197,22 @@ var _default = {
         title: '发布任务',
         desc: '找设计师，发定制需求',
         icon: '/static/publish/发布任务.png',
-        url: '/pages/task/index'
+        url: '/subpkg-task/pages/index'
       }, {
         title: '发布橱窗',
         desc: '上架橱窗赚取佣金',
         icon: '/static/publish/上架橱窗.png',
-        url: '/pages/showCase/index'
+        url: '/subpkg-showcase/pages/index'
       }, {
         title: '新建作品',
         desc: '你可以在作品中添加图片/视频/简介',
         icon: '/static/publish/新建作品.png',
-        url: '/pages/library/works/create'
+        url: '/subpkg-library/pages/works/create'
       }, {
         title: '新建作品集',
         desc: '作品集用于打包分享全部或多个作品，你可以在\n作品集中将作品分组',
         icon: '/static/publish/新建作品集.png',
-        url: '/pages/library/collection/create'
+        url: '/subpkg-library/pages/collection/create'
       }],
       list: [{
         pagePath: '/pages/library/home',
@@ -295,8 +295,8 @@ var _default = {
                 path = url.split('?')[0];
                 isLoggedIn = _this.hasLoginToken();
                 routeHandlerMap = {
-                  '/pages/library/works/create': function () {
-                    var _pagesLibraryWorksCreate = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
+                  '/subpkg-library/pages/works/create': function () {
+                    var _subpkgLibraryPagesWorksCreate = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
                       var _isTeamMode;
                       return _regenerator.default.wrap(function _callee$(_context) {
                         while (1) {
@@ -334,13 +334,13 @@ var _default = {
                         }
                       }, _callee, null, [[0, 12]]);
                     }));
-                    function pagesLibraryWorksCreate() {
-                      return _pagesLibraryWorksCreate.apply(this, arguments);
+                    function subpkgLibraryPagesWorksCreate() {
+                      return _subpkgLibraryPagesWorksCreate.apply(this, arguments);
                     }
-                    return pagesLibraryWorksCreate;
+                    return subpkgLibraryPagesWorksCreate;
                   }(),
-                  '/pages/library/collection/create': function () {
-                    var _pagesLibraryCollectionCreate = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee2() {
+                  '/subpkg-library/pages/collection/create': function () {
+                    var _subpkgLibraryPagesCollectionCreate = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee2() {
                       var _isTeamMode2;
                       return _regenerator.default.wrap(function _callee2$(_context2) {
                         while (1) {
@@ -378,10 +378,10 @@ var _default = {
                         }
                       }, _callee2, null, [[0, 12]]);
                     }));
-                    function pagesLibraryCollectionCreate() {
-                      return _pagesLibraryCollectionCreate.apply(this, arguments);
+                    function subpkgLibraryPagesCollectionCreate() {
+                      return _subpkgLibraryPagesCollectionCreate.apply(this, arguments);
                     }
-                    return pagesLibraryCollectionCreate;
+                    return subpkgLibraryPagesCollectionCreate;
                   }()
                 };
                 if (!(isLoggedIn && routeHandlerMap[path])) {
@@ -403,7 +403,7 @@ var _default = {
                 isTeamMode = uni.getStorageSync('isTeamMode') || false;
                 storedUserInfo = uni.getStorageSync('userInfo') || {};
                 isTeam = storedUserInfo.vipLevel == 'team' || false;
-                if (isLoggedIn && (isTeamMode || isTeam) && (path === '/pages/library/works/create' || path === '/pages/library/collection/create')) {
+                if (isLoggedIn && (isTeamMode || isTeam) && (path === '/subpkg-library/pages/works/create' || path === '/subpkg-library/pages/collection/create')) {
                   finalUrl += url.includes('?') ? '&workType=1' : '?workType=1';
                 }
                 uni.navigateTo({
@@ -441,7 +441,7 @@ var _default = {
         success: function success(res) {
           if (res.confirm) {
             uni.navigateTo({
-              url: '/pages/login/index'
+              url: '/subpkg-others/pages/login/index'
             });
           }
         }

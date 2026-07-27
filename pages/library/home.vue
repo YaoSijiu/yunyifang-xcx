@@ -1,4 +1,4 @@
-<template>
+﻿<template>
 	<view class="page">
 		<view class="condition-panel">
 			<view class="status-bar" :style="{ height: statusBarHeight + 'px' }"></view>
@@ -265,7 +265,7 @@ export default {
 					return;
 				}
 				uni.navigateTo({
-					url: '/pages/professionCategory/select'
+					url: '/subpkg-others/pages/professionCategory/select'
 				});
 			} catch (e) {
 				this.hasCheckedProfessionPush = false;
@@ -588,7 +588,7 @@ export default {
 				return;
 			}
 			uni.navigateTo({
-				url: `/pages/showCase/detail/index?id=${card.id}`
+				url: `/subpkg-showcase/pages/detail/index?id=${card.id}`
 			});
 		}
 	}

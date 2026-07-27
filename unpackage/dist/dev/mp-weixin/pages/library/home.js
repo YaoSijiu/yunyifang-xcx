@@ -487,7 +487,7 @@ var _default = {
                 return _context.abrupt("return");
               case 11:
                 uni.navigateTo({
-                  url: '/pages/professionCategory/select'
+                  url: '/subpkg-others/pages/professionCategory/select'
                 });
                 _context.next = 17;
                 break;
@@ -904,7 +904,7 @@ var _default = {
         return;
       }
       uni.navigateTo({
-        url: "/pages/showCase/detail/index?id=".concat(card.id)
+        url: "/subpkg-showcase/pages/detail/index?id=".concat(card.id)
       });
     }
   }

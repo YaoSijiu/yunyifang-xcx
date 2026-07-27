@@ -1,4 +1,4 @@
-<template>
+﻿<template>
 	<view class="container">
 		<yun-storage-warning :visible="false" type="flowout" @cancel="() => {}" @confirm="() => {}" />
 		<!-- 2. 顶部 Tab 导航栏 -->
@@ -199,7 +199,7 @@
 							<view v-if="allWorks.total === 0" class="work-item create-card-wrapper"
 								:class="{ 'single-col': isSingleColumn }">
 								<view class="create-card-inner" :class="{ 'single-img': currentIsSingleColumn }"
-									@click="navigateTo(isTeamMode ? '/pages/library/works/create?workType=1' : '/pages/library/works/create')">
+									@click="navigateTo(isTeamMode ? '/subpkg-library/pages/works/create?workType=1' : '/subpkg-library/pages/works/create')">
 									<!-- 顶部信息 -->
 									<view class="cc-header">
 										<view class="cc-left">
@@ -222,7 +222,7 @@
 									<!-- 如果是create类型 -->
 									<view v-if="item.type === 'create'" class="create-card-inner"
 										:class="{ 'single-img': isSingleColumn }"
-										@click="navigateTo(isTeamMode ? '/pages/library/works/create?workType=1' : '/pages/library/works/create')">
+										@click="navigateTo(isTeamMode ? '/subpkg-library/pages/works/create?workType=1' : '/subpkg-library/pages/works/create')">
 										<view class="cc-header">
 											<view class="cc-left">
 												<text class="cc-title">新建作品</text>
@@ -305,7 +305,7 @@
 								:class="{ 'single-col': portfolioLayout.isSingleColumn }">
 								<view class="create-card-inner"
 									:class="{ 'single-img': portfolioLayout.isSingleColumn }"
-									@click="navigateTo(isTeamMode ? '/pages/library/collection/create?workType=1' : '/pages/library/collection/create')">
+									@click="navigateTo(isTeamMode ? '/subpkg-library/pages/collection/create?workType=1' : '/subpkg-library/pages/collection/create')">
 									<view class="cc-header">
 										<view class="cc-left">
 											<text class="cc-title">{{ isTeamMode ? '团队第一个作品集' : '我的第一个作品集' }}</text>
@@ -1151,7 +1151,7 @@
 					success: (res) => {
 						if (res.confirm) {
 							uni.navigateTo({
-								url: '/pages/login/index'
+								url: '/subpkg-others/pages/login/index'
 							});
 						}
 					}
@@ -1189,7 +1189,7 @@
 						if (remainingFlow <= 0 && !this.isFlowWarningShown) {
 							uni.$emit('show-storage-warning', {
 								msg: '您的流量已用完，请及时购买流量包，否则将影响账户正常使用。',
-								data: '/pages/profile/storage-management'
+								data: '/subpkg-profile/pages/storage-management'
 							});
 						}
 					}
@@ -1325,7 +1325,7 @@
 						this.isFlowWarningShown = true;
 						uni.$emit('show-storage-warning', {
 							msg: '您的流量已用完，请及时购买流量包，否则将影响账户正常使用。',
-							data: '/pages/profile/storage-management'
+							data: '/subpkg-profile/pages/storage-management'
 						});
 					}
 				} catch (error) {
@@ -1405,7 +1405,7 @@
 					return;
 				}
 				uni.navigateTo({
-					url: `/pages/showCase/detail/index?id=${showcaseId}`
+					url: `/subpkg-showcase/pages/detail/index?id=${showcaseId}`
 				});
 			},
 			// 从主页移除作品集
@@ -1442,7 +1442,7 @@
 			handlePortfolio() {
 				this.saveHomeTab();
 				uni.navigateTo({
-					url: '/pages/library/portfolio-sort/portfolio-sort'
+					url: '/subpkg-library/pages/portfolio-sort/portfolio-sort'
 				})
 				this.showHomeCollectionPopup = false
 			},
@@ -2069,7 +2069,7 @@
 				}
 			},
 			goToEditProfile() {
-				if (!this.ensureLoggedIn('/pages/profile/edit')) {
+				if (!this.ensureLoggedIn('/subpkg-profile/pages/edit')) {
 					return;
 				}
 				if (this.isTeamMode) {
@@ -2077,7 +2077,7 @@
 				}
 				this.saveHomeTab();
 				uni.navigateTo({
-					url: '/pages/profile/edit'
+					url: '/subpkg-profile/pages/edit'
 				});
 			},
 			updateUserInfo(data) {
@@ -2134,7 +2134,7 @@
 						this.isFlowWarningShown = true;
 						uni.$emit('show-storage-warning', {
 							msg: '您的流量已用完，请及时购买流量包，否则将影响账户正常使用。',
-							data: '/pages/profile/storage-management'
+							data: '/subpkg-profile/pages/storage-management'
 						});
 					}
 				} catch (e) {
@@ -2158,7 +2158,7 @@
 					this.isFlowWarningShown = true;
 					uni.$emit('show-storage-warning', {
 						msg: '您的流量已用完，请及时购买流量包，否则将影响账户正常使用。',
-						data: '/pages/profile/storage-management'
+						data: '/subpkg-profile/pages/storage-management'
 					});
 				}
 			},
@@ -2207,7 +2207,7 @@
 					// 流量不足，显示流量不足弹窗
 					uni.$emit('show-storage-warning', {
 						msg: '您的流量已用完，请及时购买流量包，否则将影响账户正常使用。',
-						data: '/pages/profile/storage-management'
+						data: '/subpkg-profile/pages/storage-management'
 					});
 				}
 				this.worksLoadingMore = false;
@@ -2272,7 +2272,7 @@
 					// 流量不足，显示流量不足弹窗
 					uni.$emit('show-storage-warning', {
 						msg: '您的流量已用完，请及时购买流量包，否则将影响账户正常使用。',
-						data: '/pages/profile/storage-management'
+						data: '/subpkg-profile/pages/storage-management'
 					});
 				}
 				this.collectionsLoadingMore = false;
@@ -2335,7 +2335,7 @@
 					// 流量不足，显示流量不足弹窗
 					uni.$emit('show-storage-warning', {
 						msg: '您的流量已用完，请及时购买流量包，否则将影响账户正常使用。',
-						data: '/pages/profile/storage-management'
+						data: '/subpkg-profile/pages/storage-management'
 					});
 				}
 				this.worksLoadingMore = false;
@@ -2399,7 +2399,7 @@
 					// 流量不足，显示流量不足弹窗
 					uni.$emit('show-storage-warning', {
 						msg: '您的流量已用完，请及时购买流量包，否则将影响账户正常使用。',
-						data: '/pages/profile/storage-management'
+						data: '/subpkg-profile/pages/storage-management'
 					});
 				}
 				this.collectionsLoadingMore = false;
@@ -2489,12 +2489,12 @@
 				const path = url.split('?')[0];
 				const isLoggedIn = this.loggedIn || this.hasLoginToken();
 				const checkMap = {
-					'/pages/library/works/create': {
+					'/subpkg-library/pages/works/create': {
 						role: 'canManageWorks',
 						operateType: 0,
 						type: 0
 					},
-					'/pages/library/collection/create': {
+					'/subpkg-library/pages/collection/create': {
 						role: 'canManageCollections',
 						operateType: 0,
 						type: 1
@@ -2523,8 +2523,8 @@
 
 				// 如果是团队模式，添加 workType=1 参数
 				let finalUrl = url;
-				if (this.isTeamMode && (path === '/pages/library/works/create' || path ===
-						'/pages/library/collection/create')) {
+				if (this.isTeamMode && (path === '/subpkg-library/pages/works/create' || path ===
+						'/subpkg-library/pages/collection/create')) {
 					if (url.includes('?')) {
 						finalUrl += '&workType=1';
 					} else {
@@ -2554,14 +2554,14 @@
 			goToWorkDetail(item) {
 				this.saveHomeTab();
 				uni.navigateTo({
-					url: `/pages/works-detail/detail?id=${item.id}`
+					url: `/subpkg-others/pages/works-detail/detail?id=${item.id}`
 				});
 			},
 
 			goToWorkListDetail(item) {
 				this.saveHomeTab();
 				uni.navigateTo({
-					url: `/pages/library/collection/detail?id=${item.id}`
+					url: `/subpkg-library/pages/collection/detail?id=${item.id}`
 				});
 			},
 
@@ -2592,7 +2592,7 @@
 				}
 				this.saveHomeTab();
 				uni.navigateTo({
-					url: `/pages/library/works/create?id=${this.currentWorkItem.id}&title=${this.currentWorkItem.title}${this.isTeamMode ? '&workType=1' : ''}`
+					url: `/subpkg-library/pages/works/create?id=${this.currentWorkItem.id}&title=${this.currentWorkItem.title}${this.isTeamMode ? '&workType=1' : ''}`
 				});
 			},
 			async handleVisableWork() {
@@ -3194,7 +3194,7 @@
 						const bgImg = this.bannerList.length > 0 ? this.bannerList[0] : '/static/yunyiku/bg.png';
 						return {
 							title: `${this.userInfo.nickName || '用户'}的主页`,
-							path: `/pages/library/visitor-home?userId=${this.userInfo.id}&isTeamMode=${this.isTeamMode}`,
+							path: `/subpkg-library/pages/visitor-home?userId=${this.userInfo.id}&isTeamMode=${this.isTeamMode}`,
 							imageUrl: bgImg
 						};
 					}
@@ -3213,7 +3213,7 @@
 						}
 						return {
 							title: work.title || '我的作品',
-							path: `/pages/works-detail/detail?id=${work.id}&isTeamMode=${this.isTeamMode}`,
+							path: `/subpkg-others/pages/works-detail/detail?id=${work.id}&isTeamMode=${this.isTeamMode}`,
 							imageUrl: this.resolveUrl(this.getFirstImageUrl(work.imageUrls)) || '/static/yunyiku/bg.png'
 						};
 					} else if (this.currentCollectionItem) {
@@ -3225,7 +3225,7 @@
 						}
 						return {
 							title: collection.name || '我的作品集',
-							path: `/pages/library/collection/detail?id=${collection.id}&title=${collection.name}&isTeamMode=${this.isTeamMode}`,
+							path: `/subpkg-library/pages/collection/detail?id=${collection.id}&title=${collection.name}&isTeamMode=${this.isTeamMode}`,
 							imageUrl: this.resolveUrl(imageUrl) || '/static/yunyiku/bg.png'
 						};
 					}
@@ -3243,7 +3243,7 @@
 					const bgImg = this.bannerList.length > 0 ? this.bannerList[0] : '/static/yunyiku/bg.png';
 					return {
 						title: `${this.userInfo.nickName || '用户'}的主页`,
-						path: `/pages/library/visitor-home?userId=${this.userInfo.id}&isTeamMode=${this.isTeamMode}`,
+						path: `/subpkg-library/pages/visitor-home?userId=${this.userInfo.id}&isTeamMode=${this.isTeamMode}`,
 						imageUrl: bgImg
 					};
 				}
@@ -3311,7 +3311,7 @@
 				}
 				this.saveHomeTab();
 				uni.navigateTo({
-					url: `/pages/library/collection/create?id=${this.currentCollectionItem.id}&title=${this.currentCollectionItem.name}&workType=${this.isTeamMode ? 1 : 0}`
+					url: `/subpkg-library/pages/collection/create?id=${this.currentCollectionItem.id}&title=${this.currentCollectionItem.name}&workType=${this.isTeamMode ? 1 : 0}`
 				});
 			},
 			async handleDeleteCollection() {

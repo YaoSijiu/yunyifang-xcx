@@ -1,4 +1,4 @@
-<template>
+﻿<template>
 	<view class="user-action-bar-wrapper">
 
 		<!-- 1. 占位块：防止内容被底部固定栏遮挡 (在文档流中占据空间) -->
@@ -92,7 +92,7 @@
 				<!-- 菜单列表 -->
 				<view class="menu-list">
 					<!-- 新建作品 -->
-					<view class="menu-item" @click="navigateTo('/pages/library/works/create')">
+					<view class="menu-item" @click="navigateTo('/subpkg-library/pages/works/create')">
 						<image src="/static/publish/新建作品.png" class="menu-icon"></image>
 						<view class="menu-text">
 							<text class="menu-title">新建作品</text>
@@ -101,7 +101,7 @@
 					</view>
 
 					<!-- 新建作品集 -->
-					<view class="menu-item" @click="navigateTo('/pages/library/collection/create')">
+					<view class="menu-item" @click="navigateTo('/subpkg-library/pages/collection/create')">
 						<image src="/static/publish/新建作品集.png" class="menu-icon"></image>
 						<view class="menu-text">
 							<text class="menu-title">新建作品集</text>
@@ -622,7 +622,7 @@
 								
 								// 跳转到作品修改页面
 								uni.navigateTo({
-									url: `/pages/library/works/create?id=${this.workId}&isShowUploadPopup=${1}`
+									url: `/subpkg-library/pages/works/create?id=${this.workId}&isShowUploadPopup=${1}`
 								});
 				
 				
@@ -631,7 +631,7 @@
 				const path = (url || '').split('?')[0];
 				const isLoggedIn = this.hasLoginToken();
 				const routeHandlerMap = {
-					"/pages/library/works/create": async () => {
+					"/subpkg-library/pages/works/create": async () => {
 						try {
 							await this.$request.get('/wechat/basic/hasRight', {
 								operateType: 0,
@@ -642,7 +642,7 @@
 							return false;
 						}
 					},
-					"/pages/library/collection/create": async () => {
+					"/subpkg-library/pages/collection/create": async () => {
 						try {
 							await this.$request.get('/wechat/basic/hasRight', {
 								operateType: 0,
@@ -692,7 +692,7 @@
 							if (res.confirm) {
 								// 跳转到个人中心页进行登录
 								uni.navigateTo({
-									url: '/pages/login/index'
+									url: '/subpkg-others/pages/login/index'
 								});
 							}
 						}
@@ -719,7 +719,7 @@
 							if (res.confirm) {
 								// 跳转到个人信息编辑页面
 								uni.navigateTo({
-									url: '/pages/profile/edit'
+									url: '/subpkg-profile/pages/edit'
 								});
 							}
 						}
@@ -728,7 +728,7 @@
 			},
 			navigateToVisitorHome() {
 				uni.navigateTo({
-					url: `/pages/library/visitor-home?userId=${this.userId}&isTeamMode=${this.isTeamMode}`
+					url: `/subpkg-library/pages/visitor-home?userId=${this.userId}&isTeamMode=${this.isTeamMode}`
 				})
 				this.$emit('user-click');
 			},
@@ -753,7 +753,7 @@
 
 				// 跳转到创建页面，传递作品ID和标题
 				uni.navigateTo({
-					url: `/pages/library/works/create?id=${this.workId}`
+					url: `/subpkg-library/pages/works/create?id=${this.workId}`
 				});
 
 			},

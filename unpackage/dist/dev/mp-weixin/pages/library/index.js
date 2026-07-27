@@ -973,7 +973,7 @@ var _default = {
         success: function success(res) {
           if (res.confirm) {
             uni.navigateTo({
-              url: '/pages/login/index'
+              url: '/subpkg-others/pages/login/index'
             });
           }
         }
@@ -1020,7 +1020,7 @@ var _default = {
                   if (remainingFlow <= 0 && !_this6.isFlowWarningShown) {
                     uni.$emit('show-storage-warning', {
                       msg: '您的流量已用完，请及时购买流量包，否则将影响账户正常使用。',
-                      data: '/pages/profile/storage-management'
+                      data: '/subpkg-profile/pages/storage-management'
                     });
                   }
                 }
@@ -1224,7 +1224,7 @@ var _default = {
                   _this10.isFlowWarningShown = true;
                   uni.$emit('show-storage-warning', {
                     msg: '您的流量已用完，请及时购买流量包，否则将影响账户正常使用。',
-                    data: '/pages/profile/storage-management'
+                    data: '/subpkg-profile/pages/storage-management'
                   });
                 }
                 _context6.next = 18;
@@ -1342,7 +1342,7 @@ var _default = {
         return;
       }
       uni.navigateTo({
-        url: "/pages/showCase/detail/index?id=".concat(showcaseId)
+        url: "/subpkg-showcase/pages/detail/index?id=".concat(showcaseId)
       });
     },
     // 从主页移除作品集
@@ -1379,7 +1379,7 @@ var _default = {
     handlePortfolio: function handlePortfolio() {
       this.saveHomeTab();
       uni.navigateTo({
-        url: '/pages/library/portfolio-sort/portfolio-sort'
+        url: '/subpkg-library/pages/portfolio-sort/portfolio-sort'
       });
       this.showHomeCollectionPopup = false;
     },
@@ -2182,7 +2182,7 @@ var _default = {
       }))();
     },
     goToEditProfile: function goToEditProfile() {
-      if (!this.ensureLoggedIn('/pages/profile/edit')) {
+      if (!this.ensureLoggedIn('/subpkg-profile/pages/edit')) {
         return;
       }
       if (this.isTeamMode) {
@@ -2190,7 +2190,7 @@ var _default = {
       }
       this.saveHomeTab();
       uni.navigateTo({
-        url: '/pages/profile/edit'
+        url: '/subpkg-profile/pages/edit'
       });
     },
     updateUserInfo: function updateUserInfo(data) {
@@ -2264,7 +2264,7 @@ var _default = {
                   _this24.isFlowWarningShown = true;
                   uni.$emit('show-storage-warning', {
                     msg: '您的流量已用完，请及时购买流量包，否则将影响账户正常使用。',
-                    data: '/pages/profile/storage-management'
+                    data: '/subpkg-profile/pages/storage-management'
                   });
                 }
               case 22:
@@ -2306,7 +2306,7 @@ var _default = {
                   _this25.isFlowWarningShown = true;
                   uni.$emit('show-storage-warning', {
                     msg: '您的流量已用完，请及时购买流量包，否则将影响账户正常使用。',
-                    data: '/pages/profile/storage-management'
+                    data: '/subpkg-profile/pages/storage-management'
                   });
                 }
               case 7:
@@ -2383,7 +2383,7 @@ var _default = {
                   // 流量不足，显示流量不足弹窗
                   uni.$emit('show-storage-warning', {
                     msg: '您的流量已用完，请及时购买流量包，否则将影响账户正常使用。',
-                    data: '/pages/profile/storage-management'
+                    data: '/subpkg-profile/pages/storage-management'
                   });
                 }
                 _this26.worksLoadingMore = false;
@@ -2497,7 +2497,7 @@ var _default = {
                   // 流量不足，显示流量不足弹窗
                   uni.$emit('show-storage-warning', {
                     msg: '您的流量已用完，请及时购买流量包，否则将影响账户正常使用。',
-                    data: '/pages/profile/storage-management'
+                    data: '/subpkg-profile/pages/storage-management'
                   });
                 }
                 _this28.collectionsLoadingMore = false;
@@ -2587,7 +2587,7 @@ var _default = {
                   // 流量不足，显示流量不足弹窗
                   uni.$emit('show-storage-warning', {
                     msg: '您的流量已用完，请及时购买流量包，否则将影响账户正常使用。',
-                    data: '/pages/profile/storage-management'
+                    data: '/subpkg-profile/pages/storage-management'
                   });
                 }
                 _this29.worksLoadingMore = false;
@@ -2678,7 +2678,7 @@ var _default = {
                   // 流量不足，显示流量不足弹窗
                   uni.$emit('show-storage-warning', {
                     msg: '您的流量已用完，请及时购买流量包，否则将影响账户正常使用。',
-                    data: '/pages/profile/storage-management'
+                    data: '/subpkg-profile/pages/storage-management'
                   });
                 }
                 _this30.collectionsLoadingMore = false;
@@ -2805,12 +2805,12 @@ var _default = {
                 path = url.split('?')[0];
                 isLoggedIn = _this33.loggedIn || _this33.hasLoginToken();
                 checkMap = {
-                  '/pages/library/works/create': {
+                  '/subpkg-library/pages/works/create': {
                     role: 'canManageWorks',
                     operateType: 0,
                     type: 0
                   },
-                  '/pages/library/collection/create': {
+                  '/subpkg-library/pages/collection/create': {
                     role: 'canManageCollections',
                     operateType: 0,
                     type: 1
@@ -2852,7 +2852,7 @@ var _default = {
               case 19:
                 // 如果是团队模式，添加 workType=1 参数
                 finalUrl = url;
-                if (_this33.isTeamMode && (path === '/pages/library/works/create' || path === '/pages/library/collection/create')) {
+                if (_this33.isTeamMode && (path === '/subpkg-library/pages/works/create' || path === '/subpkg-library/pages/collection/create')) {
                   if (url.includes('?')) {
                     finalUrl += '&workType=1';
                   } else {
@@ -2887,13 +2887,13 @@ var _default = {
     goToWorkDetail: function goToWorkDetail(item) {
       this.saveHomeTab();
       uni.navigateTo({
-        url: "/pages/works-detail/detail?id=".concat(item.id)
+        url: "/subpkg-others/pages/works-detail/detail?id=".concat(item.id)
       });
     },
     goToWorkListDetail: function goToWorkListDetail(item) {
       this.saveHomeTab();
       uni.navigateTo({
-        url: "/pages/library/collection/detail?id=".concat(item.id)
+        url: "/subpkg-library/pages/collection/detail?id=".concat(item.id)
       });
     },
     // 作品管理选项
@@ -2945,7 +2945,7 @@ var _default = {
               case 9:
                 _this34.saveHomeTab();
                 uni.navigateTo({
-                  url: "/pages/library/works/create?id=".concat(_this34.currentWorkItem.id, "&title=").concat(_this34.currentWorkItem.title).concat(_this34.isTeamMode ? '&workType=1' : '')
+                  url: "/subpkg-library/pages/works/create?id=".concat(_this34.currentWorkItem.id, "&title=").concat(_this34.currentWorkItem.title).concat(_this34.isTeamMode ? '&workType=1' : '')
                 });
               case 11:
               case "end":
@@ -3877,7 +3877,7 @@ var _default = {
           var bgImg = this.bannerList.length > 0 ? this.bannerList[0] : '/static/yunyiku/bg.png';
           return {
             title: "".concat(this.userInfo.nickName || '用户', "\u7684\u4E3B\u9875"),
-            path: "/pages/library/visitor-home?userId=".concat(this.userInfo.id, "&isTeamMode=").concat(this.isTeamMode),
+            path: "/subpkg-library/pages/visitor-home?userId=".concat(this.userInfo.id, "&isTeamMode=").concat(this.isTeamMode),
             imageUrl: bgImg
           };
         }
@@ -3896,7 +3896,7 @@ var _default = {
           }
           return {
             title: work.title || '我的作品',
-            path: "/pages/works-detail/detail?id=".concat(work.id, "&isTeamMode=").concat(this.isTeamMode),
+            path: "/subpkg-others/pages/works-detail/detail?id=".concat(work.id, "&isTeamMode=").concat(this.isTeamMode),
             imageUrl: this.resolveUrl(this.getFirstImageUrl(work.imageUrls)) || '/static/yunyiku/bg.png'
           };
         } else if (this.currentCollectionItem) {
@@ -3908,7 +3908,7 @@ var _default = {
           }
           return {
             title: collection.name || '我的作品集',
-            path: "/pages/library/collection/detail?id=".concat(collection.id, "&title=").concat(collection.name, "&isTeamMode=").concat(this.isTeamMode),
+            path: "/subpkg-library/pages/collection/detail?id=".concat(collection.id, "&title=").concat(collection.name, "&isTeamMode=").concat(this.isTeamMode),
             imageUrl: this.resolveUrl(imageUrl) || '/static/yunyiku/bg.png'
           };
         }
@@ -3925,7 +3925,7 @@ var _default = {
         var _bgImg = this.bannerList.length > 0 ? this.bannerList[0] : '/static/yunyiku/bg.png';
         return {
           title: "".concat(this.userInfo.nickName || '用户', "\u7684\u4E3B\u9875"),
-          path: "/pages/library/visitor-home?userId=".concat(this.userInfo.id, "&isTeamMode=").concat(this.isTeamMode),
+          path: "/subpkg-library/pages/visitor-home?userId=".concat(this.userInfo.id, "&isTeamMode=").concat(this.isTeamMode),
           imageUrl: _bgImg
         };
       }
@@ -4007,7 +4007,7 @@ var _default = {
               case 7:
                 _this46.saveHomeTab();
                 uni.navigateTo({
-                  url: "/pages/library/collection/create?id=".concat(_this46.currentCollectionItem.id, "&title=").concat(_this46.currentCollectionItem.name, "&workType=").concat(_this46.isTeamMode ? 1 : 0)
+                  url: "/subpkg-library/pages/collection/create?id=".concat(_this46.currentCollectionItem.id, "&title=").concat(_this46.currentCollectionItem.name, "&workType=").concat(_this46.isTeamMode ? 1 : 0)
                 });
               case 9:
               case "end":

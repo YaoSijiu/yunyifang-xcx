@@ -1,4 +1,4 @@
-<template>
+﻿<template>
 	<view class="page">
 		<view class="top-area" :style="{ paddingTop: (statusBarHeight + 8) + 'px' }">
 			<view class="search-row">
@@ -516,7 +516,7 @@ export default {
 				return;
 			}
 			uni.navigateTo({
-				url: `/pages/task/detail/index?id=${item.channelId}&channelId=${item.channelId}&taskId=${item.taskId}`
+				url: `/subpkg-task/pages/detail/index?id=${item.channelId}&channelId=${item.channelId}&taskId=${item.taskId}`
 			});
 		},
 		handleParticipantClick(participant) {
@@ -528,7 +528,7 @@ export default {
 				return;
 			}
 			uni.navigateTo({
-				url: `/pages/library/visitor-home?userId=${encodeURIComponent(participant.userId)}`
+				url: `/subpkg-library/pages/visitor-home?userId=${encodeURIComponent(participant.userId)}`
 			});
 		},
 		handleParticipantMore(item) {
@@ -547,7 +547,7 @@ export default {
 		const title = dataset.taskTitle || '广场任务';
 		return {
 			title,
-			path: channelId ? `/pages/task/detail/index?id=${channelId}&channelId=${channelId}&fromShare=1` : '/pages/square/index'
+			path: channelId ? `/subpkg-task/pages/detail/index?id=${channelId}&channelId=${channelId}&fromShare=1` : '/pages/square/index'
 		};
 	}
 };
