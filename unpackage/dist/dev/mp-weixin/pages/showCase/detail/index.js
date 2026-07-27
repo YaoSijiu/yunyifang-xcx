@@ -1123,6 +1123,7 @@ var _default = {
     handleFollow: function handleFollow() {
       var _this9 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee7() {
+        var url;
         return _regenerator.default.wrap(function _callee7$(_context7) {
           while (1) {
             switch (_context7.prev = _context7.next) {
@@ -1145,32 +1146,33 @@ var _default = {
               case 5:
                 _this9.followLoading = true;
                 _context7.prev = 6;
-                _context7.next = 9;
-                return _request.default.post('/wechat/userFollow/clickFollow', {
+                url = _this9.isFollowed ? '/wechat/userFollow/cancelFollow' : '/wechat/userFollow/clickFollow';
+                _context7.next = 10;
+                return _request.default.post(url, {
                   followUserId: _this9.followUserId
                 });
-              case 9:
+              case 10:
                 _this9.isFollowed = !_this9.isFollowed;
                 uni.showToast({
                   title: _this9.isFollowed ? '关注成功' : '已取消关注',
                   icon: 'none'
                 });
-                _context7.next = 16;
+                _context7.next = 17;
                 break;
-              case 13:
-                _context7.prev = 13;
+              case 14:
+                _context7.prev = 14;
                 _context7.t0 = _context7["catch"](6);
                 console.error('更新关注状态失败', _context7.t0);
-              case 16:
-                _context7.prev = 16;
+              case 17:
+                _context7.prev = 17;
                 _this9.followLoading = false;
-                return _context7.finish(16);
-              case 19:
+                return _context7.finish(17);
+              case 20:
               case "end":
                 return _context7.stop();
             }
           }
-        }, _callee7, null, [[6, 13, 16, 19]]);
+        }, _callee7, null, [[6, 14, 17, 20]]);
       }))();
     },
     handleHire: function handleHire() {

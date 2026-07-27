@@ -771,7 +771,8 @@ export default {
 			}
 			this.followLoading = true;
 			try {
-				await request.post('/wechat/userFollow/clickFollow', {
+				const url = this.isFollowed ? '/wechat/userFollow/cancelFollow' : '/wechat/userFollow/clickFollow';
+				await request.post(url, {
 					followUserId: this.followUserId
 				});
 				this.isFollowed = !this.isFollowed;
