@@ -87,7 +87,12 @@
 									<text class="guarantee-info-icon" v-if="item.description" @click.stop="showGuaranteeDescription(item)">!</text>
 								</view>
 							</view>
-							<switch :checked="isGuaranteeSelected(item)" :disabled="item.isRequired == 1" color="#f37738" @change="toggleGuarantee(item, $event)" />
+							<switch 
+									class="small-switch"
+									:checked="isGuaranteeSelected(item)" 
+									:disabled="item.isRequired == 1" 
+									color="#f37738" 
+									@change="toggleGuarantee(item, $event)" />
 						</view>
 						<view class="empty-line" v-if="!guaranteeLoading && guarantees.length === 0">暂无服务保障配置</view>
 					</view>
@@ -1127,5 +1132,10 @@ export default {
 	margin-left: 20rpx;
 	font-size: 28rpx;
 	color: #f37738;
+}
+
+.small-switch {
+	transform: scale(0.8);
+	transform-origin: right center;
 }
 </style>

@@ -420,3 +420,9 @@
   font-size: 28rpx;
   color: #f37738;
 }
+.small-switch.data-v-343ecbe8 {
+  -webkit-transform: scale(0.8);
+          transform: scale(0.8);
+  -webkit-transform-origin: right center;
+          transform-origin: right center;
+}

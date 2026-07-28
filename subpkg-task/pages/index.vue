@@ -46,12 +46,12 @@
 				</view>
 
 				<view class="form-card detail-card">
-					<view class="line-field category-field" @click="openCategoryPopup">
+					<view class="budget-row line-field" @click="openCategoryPopup">
 						<text class="line-label">类目</text>
 						<view class="line-control">
 							<text class="line-placeholder" v-if="selectedCategoryNames.length === 0">选择类目，确认商品信息</text>
 							<text class="line-value" v-else>{{ selectedCategoryNames.join('、') }}</text>
-							<text class="line-arrow">⌄</text>
+							<image class="line-arrow" src="/static/icon/xiangxia.svg" mode="aspectFit"></image>
 						</view>
 					</view>
 
@@ -67,26 +67,31 @@
 							@input="handleBudgetInput"
 						/>
 						<text class="quote-label" :class="{ disabled: hasBudgetInput }">对方报价</text>
-						<switch class="small-switch" :checked="form.allowQuote" :disabled="hasBudgetInput" color="#0DC71E" @change="toggleQuote" />
+						<switch class="small-switch" :checked="form.allowQuote" :disabled="hasBudgetInput" color="#f37738" @change="toggleQuote" />
 					</view>
 
-					<view class="line-field deadline-field" @click="openCalendar">
+					<view class="budget-row line-field deadline-field" @click="openCalendar">
 						<text class="line-label deadline-label">截稿日期</text>
 						<view class="line-control">
 							<text class="line-placeholder" v-if="!form.deadline">请选择</text>
 							<text class="line-value" v-else>{{ deadlineText }}</text>
-							<text class="line-arrow">⌄</text>
+							<image class="line-arrow" src="/static/icon/xiangxia.svg" mode="aspectFit"></image>
 						</view>
 					</view>
 
 					<view class="guarantee-list">
 						<view class="guarantee-row" v-for="item in guarantees" :key="item.id">
-							<text class="guarantee-name">{{ item.guaranteeName }}</text>
+							<view class="guarantee-text">
+								<view class="guarantee-name-row">
+									<text class="guarantee-name">{{ item.guaranteeName }}</text>
+									<text class="guarantee-info-icon" v-if="item.description" @click.stop="showGuaranteeDescription(item)">!</text>
+								</view>
+							</view>
 							<switch
 								class="small-switch"
 								:checked="isGuaranteeSelected(item)"
 								:disabled="item.isRequired == 1"
-								color="#0DC71E"
+								color="#f37738"
 								@change="toggleGuarantee(item, $event)"
 							/>
 						</view>
@@ -766,6 +771,17 @@ export default {
 				this.selectedGuaranteeIds.splice(index, 1);
 			}
 		},
+		showGuaranteeDescription(item) {
+			if (!item.description) {
+				return;
+			}
+			uni.showModal({
+				title: item.guaranteeName || '服务保障',
+				content: item.description,
+				showCancel: false,
+				confirmText: '知道了'
+			});
+		},
 		toggleAgreement() {
 			this.form.agreementChecked = !this.form.agreementChecked;
 		},
@@ -1155,24 +1171,26 @@ export default {
 	width: 100%;
 	height: 86rpx;
 	margin-top: 18rpx;
-	font-size: 30rpx;
-	line-height: 42rpx;
+	font-size: 28rpx;
+	line-height: 40rpx;
 	color: #222222;
+	border-bottom: 1rpx solid #eeeeee;
 }
 
 .plain-textarea {
 	width: 100%;
 	height: 220rpx;
 	margin-top: 18rpx;
-	font-size: 30rpx;
-	line-height: 42rpx;
+	font-size: 28rpx;
+	line-height: 40rpx;
 	color: #222222;
+	border-bottom: 1rpx solid #eeeeee;
 	box-sizing: border-box;
 }
 
 .placeholder-text {
-	color: #999999;
-	font-size: 30rpx;
+	color: #D4D4D4;
+	font-size: 28rpx;
 }
 
 .field-count {
@@ -1260,98 +1278,99 @@ export default {
 }
 
 .line-field {
-	height: 68rpx;
+	height: 98rpx;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 }
 
-.category-field {
-	margin-bottom: 25rpx;
-}
-
 .deadline-field {
-	margin-bottom: 49rpx;
+	margin-bottom: 39rpx;
 }
 
 .line-label {
-	width: 128rpx;
+	width: 140rpx;
 	font-size: 28rpx;
 	line-height: 40rpx;
 	color: #000000;
 }
 
 .deadline-label {
-	width: 128rpx;
+	width: 140rpx;
 }
 
 .line-control {
-	width: 468rpx;
-	height: 68rpx;
-	border: 1rpx solid #d9d9d9;
+	flex: 1;
+	min-width: 0;
+	min-height: 68rpx;
+	border: 1rpx solid #979797;
 	border-radius: 6rpx;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 0 22rpx 0 24rpx;
+	padding: 0 24rpx 0 30rpx;
 	box-sizing: border-box;
 }
 
 .line-placeholder,
 .line-value {
 	flex: 1;
+	min-width: 0;
+	display: block;
 	font-size: 28rpx;
-	line-height: 40rpx;
+	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	white-space: nowrap;
 }
 
 .line-placeholder {
-	color: rgba(0, 0, 0, 0.2);
+	color: #D4D4D4;
 }
 
 .line-value {
-	color: #222222;
+	color: #333333;
 }
 
 .line-arrow {
-	width: 32rpx;
-	font-size: 30rpx;
-	color: #979797;
-	text-align: right;
-	transform: translateY(-4rpx);
+	flex-shrink: 0;
+	width: 18rpx;
+	height: 12rpx;
+	margin-left: 16rpx;
+	display: block;
 }
 
 .budget-row {
-	height: 50rpx;
-	margin-bottom: 44rpx;
+	min-height: 98rpx;
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
+	border-bottom: 1rpx solid #eeeeee;
 }
 
 .budget-label {
-	width: 168rpx;
+	width: 140rpx;
 	font-size: 28rpx;
 	line-height: 40rpx;
 	color: #000000;
 }
 
 .budget-input {
-	width: 124rpx;
-	height: 50rpx;
-	font-size: 30rpx;
-	line-height: 42rpx;
-	color: #222222;
+	flex: 1;
+	height: 68rpx;
+	border: 1rpx solid #979797;
+	border-radius: 6rpx;
+	padding: 0 30rpx;
+	box-sizing: border-box;
+	font-size: 28rpx;
+	color: #333333;
 }
 
 .budget-placeholder {
-	color: rgba(0, 0, 0, 0.2);
+	color: #D4D4D4;
 }
 
 .quote-label {
-	margin-left: 22rpx;
-	width: 168rpx;
+	margin-left: 24rpx;
 	font-size: 28rpx;
 	line-height: 40rpx;
 	color: #000000;
@@ -1367,20 +1386,52 @@ export default {
 }
 
 .guarantee-list {
-	padding-top: 0;
+	padding-top: 24rpx;
 }
 
 .guarantee-row {
-	height: 80rpx;
+	min-height: 72rpx;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	padding: 12rpx 0;
+}
+
+.guarantee-text {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	padding-right: 24rpx;
+}
+
+.guarantee-name-row {
+	display: flex;
+	align-items: center;
+	min-width: 0;
 }
 
 .guarantee-name {
-	font-size: 28rpx;
-	line-height: 40rpx;
-	color: #000000;
+	font-size: 24rpx;
+	line-height: 34rpx;
+	color: #999999;
+	max-width: 480rpx;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.guarantee-info-icon {
+	width: 28rpx;
+	height: 28rpx;
+	margin-left: 10rpx;
+	border-radius: 50%;
+	background: #f0f0f0;
+	color: #b0b0b0;
+	font-size: 20rpx;
+	line-height: 28rpx;
+	text-align: center;
+	font-weight: 600;
+	flex-shrink: 0;
 }
 
 .empty-line {

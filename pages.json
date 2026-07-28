@@ -287,32 +287,32 @@
 		"list": [{
 				"pagePath": "pages/library/home",
 				"text": "首页",
-				"iconPath": "static/tabbar/首页.png",
-				"selectedIconPath": "static/tabbar/首页.png"
+				"iconPath": "static/tabbar/home_unselected.png",
+				"selectedIconPath": "static/tabbar/home_selected.png"
 			},
 			{
 				"pagePath": "pages/square/index",
 				"text": "广场",
-				"iconPath": "static/tabbar/square.png",
-				"selectedIconPath": "static/tabbar/square=sleect.png"
+				"iconPath": "static/tabbar/square_unselected.png",
+				"selectedIconPath": "static/tabbar/square_selected.png"
 			},
 			{
 				"pagePath": "pages/publish/index",
 				"text": "发布",
-				"iconPath": "static/tabbar/发布.png",
-				"selectedIconPath": "static/tabbar/发布.png"
+				"iconPath": "static/tabbar/publish.png",
+				"selectedIconPath": "static/tabbar/publish.png"
 			},
 			{
 				"pagePath": "pages/library/index",
 				"text": "云艺库",
-				"iconPath": "static/tabbar/云艺库未选中.png",
-				"selectedIconPath": "static/tabbar/云艺库选中.png"
+				"iconPath": "static/tabbar/yunyiku_unselected.png",
+				"selectedIconPath": "static/tabbar/yunyiku_selected.png"
 			},
 			{
 				"pagePath": "pages/profile/index",
 				"text": "我的",
-				"iconPath": "static/tabbar/我的未选中.png",
-				"selectedIconPath": "static/tabbar/我的选中.png"
+				"iconPath": "static/tabbar/my_unselected.png",
+				"selectedIconPath": "static/tabbar/my_selected.png"
 			}
 		]
 	},

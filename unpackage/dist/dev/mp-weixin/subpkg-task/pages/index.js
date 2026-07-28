@@ -1072,6 +1072,17 @@ var _default = {
         this.selectedGuaranteeIds.splice(index, 1);
       }
     },
+    showGuaranteeDescription: function showGuaranteeDescription(item) {
+      if (!item.description) {
+        return;
+      }
+      uni.showModal({
+        title: item.guaranteeName || '服务保障',
+        content: item.description,
+        showCancel: false,
+        confirmText: '知道了'
+      });
+    },
     toggleAgreement: function toggleAgreement() {
       this.form.agreementChecked = !this.form.agreementChecked;
     },
