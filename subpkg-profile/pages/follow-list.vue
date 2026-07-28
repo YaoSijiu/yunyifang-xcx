@@ -13,7 +13,7 @@
 		</view>
 
 		<!-- 列表内容 -->
-		<view class="list-container">
+		<view class="list-container" @scrolltolower="loadMore">
 			<view class="list-item" v-for="item in currentList" :key="item.id" @click="goToUserHome(item)">
 				<image class="avatar" :src="item.avatar" mode="aspectFill"></image>
 				<view class="info">
@@ -23,6 +23,16 @@
 				<view class="action-btn" :class="{ following: item.isFollowing }" @click.stop="handleFollow(item)">
 					<text>{{ getBtnText(item) }}</text>
 				</view>
+			</view>
+
+			<!-- 加载中 -->
+			<view v-if="loadingMore" class="load-tip">
+				<text>加载中...</text>
+			</view>
+
+			<!-- 没有更多数据 -->
+			<view v-if="!loadingMore && !currentHasMore && currentList.length > 0" class="load-tip">
+				<text>没有更多了</text>
 			</view>
 		</view>
 
@@ -39,110 +49,137 @@ import config from '@/config/env.js';
 export default {
 	data() {
 		return {
-			currentTab: 0,          // 0=关注列表, 1=粉丝列表
-			followingList: [],       // 关注列表数据
-			fansList: [],             // 粉丝列表数据
-			followingLoaded: false,   // 关注列表是否已加载
-			fansLoaded: false,        // 粉丝列表是否已加载
-			loading: false
+			currentTab: 0,
+			pageSize: 20,
+			loading: false,
+			loadingMore: false,
+
+			followingList: [],
+			followingPageNum: 1,
+			followingTotal: 0,
+			followingHasMore: true,
+
+			fansList: [],
+			fansPageNum: 1,
+			fansTotal: 0,
+			fansHasMore: true
 		};
 	},
 	computed: {
 		currentList() {
 			return this.currentTab === 0 ? this.followingList : this.fansList;
+		},
+		currentHasMore() {
+			return this.currentTab === 0 ? this.followingHasMore : this.fansHasMore;
 		}
 	},
 	onLoad(options) {
 		this.currentTab = options.tab === 'followers' ? 1 : 0;
-		this.loadCurrentList();
+		this.loadFirstPage();
 	},
 	onShow() {
-		// 从其他页面返回时，重新加载当前 tab 数据
 		this.refreshCurrentList();
 	},
 	methods: {
 		switchTab(index) {
 			if (this.currentTab === index) return;
 			this.currentTab = index;
-			if (this.currentTab === 0) {
-				this.followingLoaded = false;
-				this.loadFollowingList();
-			} else {
-				this.fansLoaded = false;
-				this.loadFansList();
-			}
+			this.resetPagination(this.currentTab);
+			this.loadFirstPage();
 		},
 
 		refreshCurrentList() {
-			if (this.currentTab === 0) {
-				this.followingLoaded = false;
+			this.resetPagination(this.currentTab);
+			this.loadFirstPage();
+		},
+
+		resetPagination(tab) {
+			if (tab === 0) {
+				this.followingList = [];
+				this.followingPageNum = 1;
+				this.followingTotal = 0;
+				this.followingHasMore = true;
 			} else {
-				this.fansLoaded = false;
-			}
-			this.loadCurrentList();
-		},
-
-		loadCurrentList() {
-			if (this.currentTab === 0 && !this.followingLoaded) {
-				this.loadFollowingList();
-			} else if (this.currentTab === 1 && !this.fansLoaded) {
-				this.loadFansList();
+				this.fansList = [];
+				this.fansPageNum = 1;
+				this.fansTotal = 0;
+				this.fansHasMore = true;
 			}
 		},
 
-		async loadFollowingList() {
-			this.loading = true;
-			uni.showLoading({ title: '加载中...' });
+		loadFirstPage() {
+			if (this.currentTab === 0) {
+				this.fetchList(0, 1, true);
+			} else {
+				this.fetchList(1, 1, true);
+			}
+		},
+
+		loadMore() {
+			if (this.loading || this.loadingMore || !this.currentHasMore) return;
+			const nextPage = this.currentTab === 0 ? this.followingPageNum + 1 : this.fansPageNum + 1;
+			this.fetchList(this.currentTab, nextPage, false);
+		},
+
+		async fetchList(tab, pageNum, isRefresh) {
+			if (isRefresh) {
+				this.loading = true;
+				uni.showLoading({ title: '加载中...' });
+			} else {
+				this.loadingMore = true;
+			}
+
 			try {
-				const res = await this.$request.get('/wechat/userFollow/follows/page', {
-					pageNum: 1,
-					pageSize: 50
+				const url = tab === 0
+					? '/wechat/userFollow/follows/page'
+					: '/wechat/userFollow/fans/page';
+				const res = await this.$request.get(url, {
+					pageNum: pageNum,
+					pageSize: this.pageSize
 				});
+
 				if (res.code === 200) {
 					const rows = res.rows || res.data || [];
-					this.followingList = rows.map(item => ({
-						id: item.userId,
-						name: item.nickName || '用户',
-						avatar: this.resolveAvatar(item.avatarUrl),
-						bio: this.formatTime(item.followTime),
-						isFollowing: item.isFollowing !== false
-					}));
-				}
-				this.followingLoaded = true;
-			} catch (error) {
-				console.error('加载关注列表失败:', error);
-				uni.showToast({ title: '加载失败', icon: 'none' });
-			} finally {
-				this.loading = false;
-				uni.hideLoading();
-			}
-		},
+					const total = res.total || 0;
+					const mapped = rows.map(item => tab === 0
+						? {
+							id: item.userId,
+							name: item.nickName || '用户',
+							avatar: this.resolveAvatar(item.avatarUrl),
+							bio: this.formatTime(item.followTime),
+							isFollowing: true
+						}
+						: {
+							id: item.userId,
+							name: item.nickName || '用户',
+							avatar: this.resolveAvatar(item.avatarUrl),
+							bio: this.formatTime(item.followTime),
+							isFollowing: item.isFollowing || false
+						}
+					);
 
-		async loadFansList() {
-			this.loading = true;
-			uni.showLoading({ title: '加载中...' });
-			try {
-				const res = await this.$request.get('/wechat/userFollow/fans/page', {
-					pageNum: 1,
-					pageSize: 50
-				});
-				if (res.code === 200) {
-					const rows = res.rows || res.data || [];
-					this.fansList = rows.map(item => ({
-						id: item.userId,
-						name: item.nickName || '用户',
-						avatar: this.resolveAvatar(item.avatarUrl),
-						bio: this.formatTime(item.followTime),
-						isFollowing: item.isFollowing || false
-					}));
+					if (tab === 0) {
+						this.followingPageNum = pageNum;
+						this.followingTotal = total;
+						this.followingHasMore = (pageNum * this.pageSize) < total;
+						this.followingList = isRefresh ? mapped : this.followingList.concat(mapped);
+					} else {
+						this.fansPageNum = pageNum;
+						this.fansTotal = total;
+						this.fansHasMore = (pageNum * this.pageSize) < total;
+						this.fansList = isRefresh ? mapped : this.fansList.concat(mapped);
+					}
 				}
-				this.fansLoaded = true;
 			} catch (error) {
-				console.error('加载粉丝列表失败:', error);
+				console.error('加载列表失败:', error);
 				uni.showToast({ title: '加载失败', icon: 'none' });
 			} finally {
-				this.loading = false;
-				uni.hideLoading();
+				if (isRefresh) {
+					this.loading = false;
+					uni.hideLoading();
+				} else {
+					this.loadingMore = false;
+				}
 			}
 		},
 
@@ -305,5 +342,12 @@ export default {
 	text-align: center;
 	color: #999999;
 	font-size: 28rpx;
+}
+
+.load-tip {
+	padding: 30rpx;
+	text-align: center;
+	color: #999999;
+	font-size: 26rpx;
 }
 </style>
