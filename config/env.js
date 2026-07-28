@@ -3,7 +3,7 @@ const env = {
 	// 开发环境http://192.168.199.203:9999
 	development: {
 		// baseUrl: "http://192.168.199.106:9999", // 替换为你的开发环境API地址
-		// baseUrl:"https://45b1daa9.r17.cpolar.top",
+		// baseUrl:"https://kkm.hnpuyuan.com/prod-api",
 		baseUrl: "https://kkm.hnpuyuan.com/prod-api", // 替换为你的开发环境API地址
 		aliyunUrl: "https://yunyifang-test.oss-cn-beijing.aliyuncs.com/",
 		merchantTransfer: {

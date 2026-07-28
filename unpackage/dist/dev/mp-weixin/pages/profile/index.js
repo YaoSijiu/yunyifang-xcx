@@ -556,9 +556,12 @@ var _default = {
         url: '/subpkg-profile/pages/storage-management'
       });
     },
-    goToFollowList: function goToFollowList(type) {
+    goToFollowList: function goToFollowList(tab) {
+      if (!this.ensureLoggedIn('/subpkg-profile/pages/follow-list')) {
+        return;
+      }
       uni.navigateTo({
-        url: "/subpkg-profile/pages/follow-list?type=".concat(type)
+        url: "/subpkg-profile/pages/follow-list?tab=".concat(tab)
       });
     },
     formatStorage: function formatStorage(mb) {

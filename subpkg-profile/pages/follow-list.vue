@@ -1,103 +1,206 @@
-﻿<template>
+<template>
 	<view class="page">
+		<!-- 顶部 tab 切换 -->
+		<view class="tab-header">
+			<view class="tab-item" :class="{ active: currentTab === 0 }" @click="switchTab(0)">
+				<text>我的关注</text>
+				<view v-if="currentTab === 0" class="tab-underline"></view>
+			</view>
+			<view class="tab-item" :class="{ active: currentTab === 1 }" @click="switchTab(1)">
+				<text>我的粉丝</text>
+				<view v-if="currentTab === 1" class="tab-underline"></view>
+			</view>
+		</view>
+
+		<!-- 列表内容 -->
 		<view class="list-container">
-			<view class="list-item" v-for="item in list" :key="item.id" @click="goToUserHome(item)">
+			<view class="list-item" v-for="item in currentList" :key="item.id" @click="goToUserHome(item)">
 				<image class="avatar" :src="item.avatar" mode="aspectFill"></image>
 				<view class="info">
 					<text class="name">{{ item.name }}</text>
 					<text class="bio">{{ item.bio }}</text>
 				</view>
-				<view class="action-btn" :class="{ 'following': item.isFollowing }" @click.stop="handleFollow(item)">
+				<view class="action-btn" :class="{ following: item.isFollowing }" @click.stop="handleFollow(item)">
 					<text>{{ getBtnText(item) }}</text>
 				</view>
 			</view>
 		</view>
-		<view v-if="list.length === 0" class="empty-state">
+
+		<!-- 空状态 -->
+		<view v-if="currentList.length === 0 && !loading" class="empty-state">
 			<text>暂无数据</text>
 		</view>
 	</view>
 </template>
 
 <script>
+import config from '@/config/env.js';
+
 export default {
 	data() {
 		return {
-			type: 'following', // following | followers
-			list: []
+			currentTab: 0,          // 0=关注列表, 1=粉丝列表
+			followingList: [],       // 关注列表数据
+			fansList: [],             // 粉丝列表数据
+			followingLoaded: false,   // 关注列表是否已加载
+			fansLoaded: false,        // 粉丝列表是否已加载
+			loading: false
 		};
 	},
+	computed: {
+		currentList() {
+			return this.currentTab === 0 ? this.followingList : this.fansList;
+		}
+	},
 	onLoad(options) {
-		this.type = options.type || 'following';
-		uni.setNavigationBarTitle({
-			title: this.type === 'following' ? '我的关注' : '我的粉丝'
-		});
-		this.loadData();
+		this.currentTab = options.tab === 'followers' ? 1 : 0;
+		this.loadCurrentList();
+	},
+	onShow() {
+		// 从其他页面返回时，重新加载当前 tab 数据
+		this.refreshCurrentList();
 	},
 	methods: {
-		loadData() {
-			// Mock data
-			const mockAvatar =
-				'https://lanhu-dds-backend.oss-cn-beijing.aliyuncs.com/merge_image/imgs/2c99cd2af8464fd3aef4d91e69e2012c_mergeImage.png';
+		switchTab(index) {
+			if (this.currentTab === index) return;
+			this.currentTab = index;
+			if (this.currentTab === 0) {
+				this.followingLoaded = false;
+				this.loadFollowingList();
+			} else {
+				this.fansLoaded = false;
+				this.loadFansList();
+			}
+		},
 
-			if (this.type === 'following') {
-				this.list = Array.from({
-					length: 10
-				}, (_, i) => ({
-					id: i + 1,
-					name: `关注用户${i + 1}`,
-					bio: '这是一段个性签名...',
-					avatar: mockAvatar,
-					isFollowing: true
-				}));
+		refreshCurrentList() {
+			if (this.currentTab === 0) {
+				this.followingLoaded = false;
 			} else {
-				this.list = Array.from({
-					length: 15
-				}, (_, i) => ({
-					id: i + 100,
-					name: `粉丝用户${i + 1}`,
-					bio: '感谢关注...',
-					avatar: mockAvatar,
-					isFollowing: i % 3 === 0 // 模拟部分已回关
-				}));
+				this.fansLoaded = false;
+			}
+			this.loadCurrentList();
+		},
+
+		loadCurrentList() {
+			if (this.currentTab === 0 && !this.followingLoaded) {
+				this.loadFollowingList();
+			} else if (this.currentTab === 1 && !this.fansLoaded) {
+				this.loadFansList();
 			}
 		},
+
+		async loadFollowingList() {
+			this.loading = true;
+			uni.showLoading({ title: '加载中...' });
+			try {
+				const res = await this.$request.get('/wechat/userFollow/follows/page', {
+					pageNum: 1,
+					pageSize: 50
+				});
+				if (res.code === 200) {
+					const rows = res.rows || res.data || [];
+					this.followingList = rows.map(item => ({
+						id: item.userId,
+						name: item.nickName || '用户',
+						avatar: this.resolveAvatar(item.avatarUrl),
+						bio: this.formatTime(item.followTime),
+						isFollowing: item.isFollowing !== false
+					}));
+				}
+				this.followingLoaded = true;
+			} catch (error) {
+				console.error('加载关注列表失败:', error);
+				uni.showToast({ title: '加载失败', icon: 'none' });
+			} finally {
+				this.loading = false;
+				uni.hideLoading();
+			}
+		},
+
+		async loadFansList() {
+			this.loading = true;
+			uni.showLoading({ title: '加载中...' });
+			try {
+				const res = await this.$request.get('/wechat/userFollow/fans/page', {
+					pageNum: 1,
+					pageSize: 50
+				});
+				if (res.code === 200) {
+					const rows = res.rows || res.data || [];
+					this.fansList = rows.map(item => ({
+						id: item.userId,
+						name: item.nickName || '用户',
+						avatar: this.resolveAvatar(item.avatarUrl),
+						bio: this.formatTime(item.followTime),
+						isFollowing: item.isFollowing || false
+					}));
+				}
+				this.fansLoaded = true;
+			} catch (error) {
+				console.error('加载粉丝列表失败:', error);
+				uni.showToast({ title: '加载失败', icon: 'none' });
+			} finally {
+				this.loading = false;
+				uni.hideLoading();
+			}
+		},
+
+		async handleFollow(item) {
+			try {
+				if (item.isFollowing) {
+					await this.$request.post('/wechat/userFollow/cancelFollow', {
+						followUserId: item.id
+					});
+					item.isFollowing = false;
+					uni.showToast({ title: '已取消关注', icon: 'none' });
+				} else {
+					await this.$request.post('/wechat/userFollow/clickFollow', {
+						followUserId: item.id
+					});
+					item.isFollowing = true;
+					uni.showToast({ title: '已关注', icon: 'none' });
+				}
+			} catch (e) {
+				console.error('关注操作失败:', e);
+				uni.showToast({ title: '操作失败', icon: 'none' });
+			}
+		},
+
 		getBtnText(item) {
-			if (this.type === 'following') {
-				return '已关注';
-			} else {
-				return item.isFollowing ? '互关' : '关注'; // 粉丝列表显示状态
-			}
+			return item.isFollowing ? '已关注' : '关注';
 		},
-		handleFollow(item) {
-			if (this.type === 'following') {
-				// 取消关注逻辑
-				uni.showModal({
-					title: '提示',
-					content: `确定要取消关注 ${item.name} 吗？`,
-					success: (res) => {
-						if (res.confirm) {
-							this.list = this.list.filter(i => i.id !== item.id);
-							uni.showToast({
-								title: '已取消关注',
-								icon: 'none'
-							});
-						}
-					}
-				});
-			} else {
-				// 粉丝列表：关注/取消关注逻辑
-				item.isFollowing = !item.isFollowing;
-				uni.showToast({
-					title: item.isFollowing ? '已关注' : '已取消关注',
-					icon: 'none'
-				});
-			}
-		},
+
 		goToUserHome(item) {
-			// 跳转到复用的云艺库页面，开启访客模式
 			uni.navigateTo({
-				url: `/subpkg-library/pages/visitor-home?userId=${item.id}&name=${item.name}`
+				url: `/subpkg-library/pages/visitor-home?userId=${item.id}`
 			});
+		},
+
+		resolveAvatar(avatar) {
+			if (!avatar || avatar === '/static/default-avatar.png') {
+				return '/static/default-avatar.png';
+			}
+			if (/^(http|https|wxfile|data):/.test(avatar)) {
+				return avatar;
+			}
+			return config.aliyunUrl + avatar;
+		},
+
+		formatTime(time) {
+			if (!time) return '';
+			const date = new Date(time);
+			if (isNaN(date.getTime())) return '';
+			const now = new Date();
+			const diff = now - date;
+			const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+			if (days === 0) return '今天关注';
+			if (days === 1) return '昨天关注';
+			if (days < 30) return `${days}天前关注`;
+			const months = Math.floor(days / 30);
+			if (months < 12) return `${months}个月前关注`;
+			const years = Math.floor(months / 12);
+			return `${years}年前关注`;
 		}
 	}
 };
@@ -107,6 +210,40 @@ export default {
 .page {
 	background-color: #F8F8F8;
 	min-height: 100vh;
+}
+
+.tab-header {
+	display: flex;
+	background-color: #FFFFFF;
+	border-bottom: 1rpx solid #EEEEEE;
+}
+
+.tab-item {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 30rpx 0;
+	position: relative;
+}
+
+.tab-item text {
+	font-size: 30rpx;
+	color: #999999;
+}
+
+.tab-item.active text {
+	font-size: 32rpx;
+	color: #333333;
+	font-weight: 600;
+}
+
+.tab-underline {
+	width: 60rpx;
+	height: 6rpx;
+	background-color: #F37738;
+	border-radius: 3rpx;
+	margin-top: 12rpx;
 }
 
 .list-container {
@@ -167,5 +304,6 @@ export default {
 	padding: 100rpx;
 	text-align: center;
 	color: #999999;
+	font-size: 28rpx;
 }
 </style>

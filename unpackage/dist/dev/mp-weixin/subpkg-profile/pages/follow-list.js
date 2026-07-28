@@ -102,7 +102,7 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  var l0 = _vm.__map(_vm.list, function (item, __i0__) {
+  var l0 = _vm.__map(_vm.currentList, function (item, __i0__) {
     var $orig = _vm.__get_orig(item)
     var m0 = _vm.getBtnText(item)
     return {
@@ -110,7 +110,7 @@ var render = function () {
       m0: m0,
     }
   })
-  var g0 = _vm.list.length
+  var g0 = _vm.currentList.length === 0 && !_vm.loading
   _vm.$mp.data = Object.assign(
     {},
     {
@@ -155,10 +155,29 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 /* WEBPACK VAR INJECTION */(function(uni) {
 
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ 47));
+var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ 49));
+var _env = _interopRequireDefault(__webpack_require__(/*! @/config/env.js */ 40));
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -182,88 +201,256 @@ exports.default = void 0;
 var _default = {
   data: function data() {
     return {
-      type: 'following',
-      // following | followers
-      list: []
+      currentTab: 0,
+      // 0=关注列表, 1=粉丝列表
+      followingList: [],
+      // 关注列表数据
+      fansList: [],
+      // 粉丝列表数据
+      followingLoaded: false,
+      // 关注列表是否已加载
+      fansLoaded: false,
+      // 粉丝列表是否已加载
+      loading: false
     };
   },
+  computed: {
+    currentList: function currentList() {
+      return this.currentTab === 0 ? this.followingList : this.fansList;
+    }
+  },
   onLoad: function onLoad(options) {
-    this.type = options.type || 'following';
-    uni.setNavigationBarTitle({
-      title: this.type === 'following' ? '我的关注' : '我的粉丝'
-    });
-    this.loadData();
+    this.currentTab = options.tab === 'followers' ? 1 : 0;
+    this.loadCurrentList();
+  },
+  onShow: function onShow() {
+    // 从其他页面返回时，重新加载当前 tab 数据
+    this.refreshCurrentList();
   },
   methods: {
-    loadData: function loadData() {
-      // Mock data
-      var mockAvatar = 'https://lanhu-dds-backend.oss-cn-beijing.aliyuncs.com/merge_image/imgs/2c99cd2af8464fd3aef4d91e69e2012c_mergeImage.png';
-      if (this.type === 'following') {
-        this.list = Array.from({
-          length: 10
-        }, function (_, i) {
-          return {
-            id: i + 1,
-            name: "\u5173\u6CE8\u7528\u6237".concat(i + 1),
-            bio: '这是一段个性签名...',
-            avatar: mockAvatar,
-            isFollowing: true
-          };
-        });
+    switchTab: function switchTab(index) {
+      if (this.currentTab === index) return;
+      this.currentTab = index;
+      if (this.currentTab === 0) {
+        this.followingLoaded = false;
+        this.loadFollowingList();
       } else {
-        this.list = Array.from({
-          length: 15
-        }, function (_, i) {
-          return {
-            id: i + 100,
-            name: "\u7C89\u4E1D\u7528\u6237".concat(i + 1),
-            bio: '感谢关注...',
-            avatar: mockAvatar,
-            isFollowing: i % 3 === 0 // 模拟部分已回关
-          };
-        });
+        this.fansLoaded = false;
+        this.loadFansList();
       }
     },
-    getBtnText: function getBtnText(item) {
-      if (this.type === 'following') {
-        return '已关注';
+    refreshCurrentList: function refreshCurrentList() {
+      if (this.currentTab === 0) {
+        this.followingLoaded = false;
       } else {
-        return item.isFollowing ? '互关' : '关注'; // 粉丝列表显示状态
+        this.fansLoaded = false;
+      }
+      this.loadCurrentList();
+    },
+    loadCurrentList: function loadCurrentList() {
+      if (this.currentTab === 0 && !this.followingLoaded) {
+        this.loadFollowingList();
+      } else if (this.currentTab === 1 && !this.fansLoaded) {
+        this.loadFansList();
       }
     },
-    handleFollow: function handleFollow(item) {
+    loadFollowingList: function loadFollowingList() {
       var _this = this;
-      if (this.type === 'following') {
-        // 取消关注逻辑
-        uni.showModal({
-          title: '提示',
-          content: "\u786E\u5B9A\u8981\u53D6\u6D88\u5173\u6CE8 ".concat(item.name, " \u5417\uFF1F"),
-          success: function success(res) {
-            if (res.confirm) {
-              _this.list = _this.list.filter(function (i) {
-                return i.id !== item.id;
-              });
-              uni.showToast({
-                title: '已取消关注',
-                icon: 'none'
-              });
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
+        var res, rows;
+        return _regenerator.default.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _this.loading = true;
+                uni.showLoading({
+                  title: '加载中...'
+                });
+                _context.prev = 2;
+                _context.next = 5;
+                return _this.$request.get('/wechat/userFollow/follows/page', {
+                  pageNum: 1,
+                  pageSize: 50
+                });
+              case 5:
+                res = _context.sent;
+                if (res.code === 200) {
+                  rows = res.rows || res.data || [];
+                  _this.followingList = rows.map(function (item) {
+                    return {
+                      id: item.userId,
+                      name: item.nickName || '用户',
+                      avatar: _this.resolveAvatar(item.avatarUrl),
+                      bio: _this.formatTime(item.followTime),
+                      isFollowing: item.isFollowing !== false
+                    };
+                  });
+                }
+                _this.followingLoaded = true;
+                _context.next = 14;
+                break;
+              case 10:
+                _context.prev = 10;
+                _context.t0 = _context["catch"](2);
+                console.error('加载关注列表失败:', _context.t0);
+                uni.showToast({
+                  title: '加载失败',
+                  icon: 'none'
+                });
+              case 14:
+                _context.prev = 14;
+                _this.loading = false;
+                uni.hideLoading();
+                return _context.finish(14);
+              case 18:
+              case "end":
+                return _context.stop();
             }
           }
-        });
-      } else {
-        // 粉丝列表：关注/取消关注逻辑
-        item.isFollowing = !item.isFollowing;
-        uni.showToast({
-          title: item.isFollowing ? '已关注' : '已取消关注',
-          icon: 'none'
-        });
-      }
+        }, _callee, null, [[2, 10, 14, 18]]);
+      }))();
+    },
+    loadFansList: function loadFansList() {
+      var _this2 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee2() {
+        var res, rows;
+        return _regenerator.default.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _this2.loading = true;
+                uni.showLoading({
+                  title: '加载中...'
+                });
+                _context2.prev = 2;
+                _context2.next = 5;
+                return _this2.$request.get('/wechat/userFollow/fans/page', {
+                  pageNum: 1,
+                  pageSize: 50
+                });
+              case 5:
+                res = _context2.sent;
+                if (res.code === 200) {
+                  rows = res.rows || res.data || [];
+                  _this2.fansList = rows.map(function (item) {
+                    return {
+                      id: item.userId,
+                      name: item.nickName || '用户',
+                      avatar: _this2.resolveAvatar(item.avatarUrl),
+                      bio: _this2.formatTime(item.followTime),
+                      isFollowing: item.isFollowing || false
+                    };
+                  });
+                }
+                _this2.fansLoaded = true;
+                _context2.next = 14;
+                break;
+              case 10:
+                _context2.prev = 10;
+                _context2.t0 = _context2["catch"](2);
+                console.error('加载粉丝列表失败:', _context2.t0);
+                uni.showToast({
+                  title: '加载失败',
+                  icon: 'none'
+                });
+              case 14:
+                _context2.prev = 14;
+                _this2.loading = false;
+                uni.hideLoading();
+                return _context2.finish(14);
+              case 18:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, null, [[2, 10, 14, 18]]);
+      }))();
+    },
+    handleFollow: function handleFollow(item) {
+      var _this3 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee3() {
+        return _regenerator.default.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.prev = 0;
+                if (!item.isFollowing) {
+                  _context3.next = 8;
+                  break;
+                }
+                _context3.next = 4;
+                return _this3.$request.post('/wechat/userFollow/cancelFollow', {
+                  followUserId: item.id
+                });
+              case 4:
+                item.isFollowing = false;
+                uni.showToast({
+                  title: '已取消关注',
+                  icon: 'none'
+                });
+                _context3.next = 12;
+                break;
+              case 8:
+                _context3.next = 10;
+                return _this3.$request.post('/wechat/userFollow/clickFollow', {
+                  followUserId: item.id
+                });
+              case 10:
+                item.isFollowing = true;
+                uni.showToast({
+                  title: '已关注',
+                  icon: 'none'
+                });
+              case 12:
+                _context3.next = 18;
+                break;
+              case 14:
+                _context3.prev = 14;
+                _context3.t0 = _context3["catch"](0);
+                console.error('关注操作失败:', _context3.t0);
+                uni.showToast({
+                  title: '操作失败',
+                  icon: 'none'
+                });
+              case 18:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, null, [[0, 14]]);
+      }))();
+    },
+    getBtnText: function getBtnText(item) {
+      return item.isFollowing ? '已关注' : '关注';
     },
     goToUserHome: function goToUserHome(item) {
-      // 跳转到复用的云艺库页面，开启访客模式
       uni.navigateTo({
-        url: "/subpkg-library/pages/visitor-home?userId=".concat(item.id, "&name=").concat(item.name)
+        url: "/subpkg-library/pages/visitor-home?userId=".concat(item.id)
       });
+    },
+    resolveAvatar: function resolveAvatar(avatar) {
+      if (!avatar || avatar === '/static/default-avatar.png') {
+        return '/static/default-avatar.png';
+      }
+      if (/^(http|https|wxfile|data):/.test(avatar)) {
+        return avatar;
+      }
+      return _env.default.aliyunUrl + avatar;
+    },
+    formatTime: function formatTime(time) {
+      if (!time) return '';
+      var date = new Date(time);
+      if (isNaN(date.getTime())) return '';
+      var now = new Date();
+      var diff = now - date;
+      var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      if (days === 0) return '今天关注';
+      if (days === 1) return '昨天关注';
+      if (days < 30) return "".concat(days, "\u5929\u524D\u5173\u6CE8");
+      var months = Math.floor(days / 30);
+      if (months < 12) return "".concat(months, "\u4E2A\u6708\u524D\u5173\u6CE8");
+      var years = Math.floor(months / 12);
+      return "".concat(years, "\u5E74\u524D\u5173\u6CE8");
     }
   }
 };

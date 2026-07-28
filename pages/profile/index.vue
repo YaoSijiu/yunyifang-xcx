@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 	<view class="page">
 		<TitleBar title="我的" :show-back="false" />
 		<view class="user-info">
@@ -32,12 +32,12 @@
 					<text class="stat-label">案例</text>
 				</view>
 				<!-- <view class="stat-divider"></view> -->
-				<view class="stat-item">
+				<view class="stat-item" @click="goToFollowList('following')">
 					<text class="stat-number">{{ userInfo.followCount || 0 }}</text>
 					<text class="stat-label">关注</text>
 				</view>
 				<!-- <view class="stat-divider"></view> -->
-				<view class="stat-item">
+				<view class="stat-item" @click="goToFollowList('followers')">
 					<text class="stat-number">{{ userInfo.fansCount || 0 }}</text>
 					<text class="stat-label">粉丝</text>
 				</view>
@@ -410,9 +410,12 @@
 					url: '/subpkg-profile/pages/storage-management'
 				});
 			},
-			goToFollowList(type) {
+			goToFollowList(tab) {
+				if (!this.ensureLoggedIn('/subpkg-profile/pages/follow-list')) {
+					return;
+				}
 				uni.navigateTo({
-					url: `/subpkg-profile/pages/follow-list?type=${type}`
+					url: `/subpkg-profile/pages/follow-list?tab=${tab}`
 				});
 			},
 			formatStorage(mb) {
