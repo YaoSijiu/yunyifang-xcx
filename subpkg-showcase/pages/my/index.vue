@@ -531,7 +531,7 @@ button::after {
 .tab-line {
 	position: absolute;
 	left: 50%;
-	bottom: 0;
+	bottom: 20%;
 	width: 45rpx;
 	height: 12rpx;
 	transform: translateX(-50%);

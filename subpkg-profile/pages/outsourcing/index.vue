@@ -2462,73 +2462,71 @@ page {
 
 .nav-row {
 	position: relative;
-	height: 170rpx;
+	height: 150rpx;
 }
 
 .back-btn {
 	position: absolute;
-	left: 20rpx;
-	top: 102rpx;
-	width: 48rpx;
-	height: 48rpx;
+	left: 18rpx;
+	top: 0;
+	width: 72rpx;
+	height: 172rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .back-icon {
-	width: 22rpx;
-	height: 22rpx;
-	margin: 13rpx 0 0 12rpx;
-	border-left: 5rpx solid #000000;
-	border-bottom: 5rpx solid #000000;
+	width: 24rpx;
+	height: 24rpx;
+	border-left: 4rpx solid #000000;
+	border-bottom: 4rpx solid #000000;
 	transform: rotate(45deg);
 }
 
 .page-title {
-	position: absolute;
-	left: 295rpx;
-	top: 98rpx;
-	width: 160rpx;
-	height: 56rpx;
-	line-height: 56rpx;
+	display: block;
+	line-height: 174rpx;
 	font-size: 40rpx;
+	font-weight: 500;
 	color: #000000;
 	text-align: center;
 }
 
 .tabs {
-	height: 82rpx;
-	display: flex;
-	align-items: flex-start;
-	padding: 15rpx 18rpx 0 30rpx;
-	box-sizing: border-box;
+	display: inline-flex;
+	align-items: center;
+	padding: 0 24rpx 0 28rpx;
 }
 
 .tab-item {
 	position: relative;
-	height: 62rpx;
-	line-height: 40rpx;
+	flex-shrink: 0;
+	height: 78rpx;
+	line-height: 44rpx;
 	font-size: 28rpx;
 	color: #363636;
-	text-align: center;
+	padding: 0 10rpx;
 }
 
 .tab-item + .tab-item {
-	margin-left: 72rpx;
+	margin-left: 30rpx;
 }
 
 .tab-item.active {
 	font-size: 32rpx;
-	line-height: 45rpx;
+	font-weight: 500;
 	color: #000000;
 }
 
 .active-mark {
 	position: absolute;
 	left: 50%;
-	bottom: 0;
-	width: 45rpx;
-	height: 12rpx;
-	background: #f37738;
+	bottom: 20%;
+	width: 46rpx;
+	height: 10rpx;
 	border-radius: 999rpx;
+	background: #f37738;
 	transform: translateX(-50%);
 }
 

@@ -397,7 +397,7 @@ export default {
 	width: 50rpx;
 	height: 12rpx;
 	position: absolute;
-	bottom: 0;
+	bottom: 10%;
 	left: 50%;
 	transform: translateX(-50%);
 	border-radius: 6rpx;

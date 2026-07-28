@@ -70,7 +70,7 @@ page.data-v-7e43740c {
 .active-mark.data-v-7e43740c {
 	position: absolute;
 	left: 50%;
-	bottom: 8rpx;
+	bottom: 20%;
 	width: 46rpx;
 	height: 10rpx;
 	border-radius: 999rpx;

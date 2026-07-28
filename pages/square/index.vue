@@ -485,7 +485,7 @@ export default {
 		formatPrice(budgetAmount, isOtherPartyQuote) {
 			const hasAmount = budgetAmount !== '' && budgetAmount !== null && budgetAmount !== undefined;
 			if (Number(isOtherPartyQuote) === 1) {
-				return hasAmount ? `￥${budgetAmount}` : '？';
+				return hasAmount ? `￥${budgetAmount}` : '等待报价';
 			}
 			if (!hasAmount) {
 				return '预算待定';

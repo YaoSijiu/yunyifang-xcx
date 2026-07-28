@@ -1489,7 +1489,7 @@ page {
 .active-mark {
 	position: absolute;
 	left: 50%;
-	bottom: 8rpx;
+	bottom: 20%;
 	width: 46rpx;
 	height: 10rpx;
 	border-radius: 999rpx;

@@ -10,7 +10,7 @@
 					<view class="label">访问限制</view>
 					<view class="desc">开启后，将记录访客信息，且访客需填写手机号才能访问您的主页</view>
 				</view>
-				<switch :checked="visit.login" @change="handleLoginSwitchChange" color="#F37738"/>
+				<switch class="small-switch" :checked="visit.login" @change="handleLoginSwitchChange" color="#F37738"/>
 			</view>
 
 			<view class="item" style="display: block;">
@@ -72,21 +72,21 @@
 				<view class="left">
 					<view class="label">有水印小图（1200像素宽）</view>
 				</view>
-				<switch :checked="save.watermarkImage" data-key="watermarkImage" @change="handleSaveSwitchChange" color="#F37738" />
+				<switch class="small-switch" :checked="save.watermarkImage" data-key="watermarkImage" @change="handleSaveSwitchChange" color="#F37738" />
 			</view>
 
 			<view class="item">
 				<view class="left">
 					<view class="label">无水印小图（1200像素宽）</view>
 				</view>
-				<switch :checked="save.noWatermarkSmall" data-key="noWatermarkSmall" @change="handleSaveSwitchChange" color="#F37738" />
+				<switch class="small-switch" :checked="save.noWatermarkSmall" data-key="noWatermarkSmall" @change="handleSaveSwitchChange" color="#F37738" />
 			</view>
 
 			<view class="item">
 				<view class="left">
 					<view class="label">无水印原图</view>
 				</view>
-				<switch :checked="save.noWatermarkOrigin" data-key="noWatermarkOrigin"
+				<switch class="small-switch" :checked="save.noWatermarkOrigin" data-key="noWatermarkOrigin"
 					@change="handleSaveSwitchChange" color="#F37738" />
 			</view>
 
@@ -94,7 +94,7 @@
 				<view class="left">
 					<view class="label">视频下载</view>
 				</view>
-				<switch :checked="save.video" data-key="video" @change="handleSaveSwitchChange" color="#F37738" />
+				<switch class="small-switch" :checked="save.video" data-key="video" @change="handleSaveSwitchChange" color="#F37738" />
 			</view>
 		</view>
 		<view class="card-title">下载案例</view>
@@ -103,7 +103,7 @@
 				<view class="left">
 					<view class="label">作品和作品集下载</view>
 				</view>
-				<switch :checked="save.downloadWorks" data-key="downloadWorks" @change="handleSaveSwitchChange" color="#F37738" />
+				<switch class="small-switch" :checked="save.downloadWorks" data-key="downloadWorks" @change="handleSaveSwitchChange" color="#F37738" />
 			</view>
 		</view>
 
@@ -733,5 +733,10 @@ switch {
 
 	.save-btn[disabled] {
 		opacity: 0.7;
+	}
+	
+	.small-switch {
+		transform: scale(0.8);
+		transform-origin: right center;
 	}
 </style>
