@@ -287,6 +287,7 @@ var _default = {
     },
     // 微信一键登录
     handleWechatLogin: function handleWechatLogin() {
+      var _this = this;
       if (!this.isAgreed) {
         uni.showToast({
           title: '请先同意用户协议',
@@ -294,11 +295,75 @@ var _default = {
         });
         return;
       }
-      // 打开授权弹窗
-      this.showAuthPopup = true;
+      // 先尝试直接登录（仅传 code，不传头像昵称）
+      // 如果是老用户，后端直接返回 token 和用户信息，无需弹窗
+      // 如果是新用户，后端返回 isNewUser=true，再弹出完善信息弹窗
+      uni.showLoading({
+        title: '登录中...'
+      });
+      uni.login({
+        provider: 'weixin',
+        success: function success(loginRes) {
+          _this.$request.post('/wechat/user/login', {
+            code: loginRes.code
+          }).then(function (res) {
+            uni.hideLoading();
+            var data = res.data || {};
+            // 老用户：直接登录成功，跳转到主页
+            if (data.token && data.isNewUser === false) {
+              // 清除可能残留的登录重定向地址，老用户直接回主页
+              uni.removeStorageSync('login_redirect');
+              // 保存 token 和用户信息
+              uni.setStorageSync('token', data.token);
+              if (data.wxUser) {
+                uni.setStorageSync('userInfo', data.wxUser);
+              }
+              // 请求权限字符
+              _this.$request.get("/wechat/user/getUserPermission").then(function (res) {
+                var data = res.data,
+                  code = res.code;
+                if (code == 200) {
+                  uni.setStorageSync('permission', data);
+                }
+              }).catch(function (err) {
+                console.error('获取用户信息失败', err);
+              });
+              uni.showToast({
+                title: '登录成功',
+                icon: 'success'
+              });
+              setTimeout(function () {
+                uni.switchTab({
+                  url: '/pages/library/home'
+                });
+              }, 1500);
+            } else if (data.isNewUser === true) {
+              // 新用户：打开完善信息弹窗
+              _this.showAuthPopup = true;
+            } else {
+              uni.showToast({
+                title: '登录失败，请重试',
+                icon: 'none'
+              });
+            }
+          }).catch(function (err) {
+            uni.hideLoading();
+            console.error('预检查登录失败', err);
+            // 网络异常等情况，兜底也打开弹窗让用户尝试
+            _this.showAuthPopup = true;
+          });
+        },
+        fail: function fail(err) {
+          uni.hideLoading();
+          uni.showToast({
+            title: '获取登录凭证失败',
+            icon: 'none'
+          });
+        }
+      });
     },
     onChooseAvatar: function onChooseAvatar(e) {
-      var _this = this;
+      var _this2 = this;
       var avatarUrl = e.detail.avatarUrl;
 
       // 先显示临时头像，提升体验
@@ -326,7 +391,7 @@ var _default = {
             var res = JSON.parse(uploadFileRes.data);
             if (res.code === 200) {
               // 上传成功，将返回的路径赋值给表单
-              _this.authForm.avatarUrl = res.msg;
+              _this2.authForm.avatarUrl = res.msg;
               uni.showToast({
                 title: '头像上传成功',
                 icon: 'success'
@@ -363,7 +428,7 @@ var _default = {
       this.showAuthPopup = false;
     },
     confirmWechatLogin: function confirmWechatLogin() {
-      var _this2 = this;
+      var _this3 = this;
       if (this.isLoading) return;
       if (!this.authForm.avatarUrl) {
         uni.showToast({
@@ -388,13 +453,13 @@ var _default = {
         provider: 'weixin',
         success: function success(loginRes) {
           // 2. 调用后端登录接口
-          _this2.$request.post('/wechat/user/login', {
+          _this3.$request.post('/wechat/user/login', {
             code: loginRes.code,
-            avatarUrl: _this2.authForm.avatarUrl,
-            nickName: _this2.authForm.nickName
+            avatarUrl: _this3.authForm.avatarUrl,
+            nickName: _this3.authForm.nickName
           }).then(function (res) {
             uni.hideLoading();
-            _this2.showAuthPopup = false;
+            _this3.showAuthPopup = false;
             // 保存 token 和用户信息
             if (res.data.token) {
               uni.setStorageSync('token', res.data.token);
@@ -403,7 +468,7 @@ var _default = {
               uni.setStorageSync('userInfo', res.data.wxUser);
             }
             // 请求权限字符
-            _this2.$request.get("/wechat/user/getUserPermission").then(function (res) {
+            _this3.$request.get("/wechat/user/getUserPermission").then(function (res) {
               var data = res.data,
                 code = res.code;
               if (code == 200) {
@@ -419,16 +484,16 @@ var _default = {
 
             // 跳转
             setTimeout(function () {
-              _this2.redirectAfterLogin();
+              _this3.redirectAfterLogin();
             }, 1500);
           }).catch(function (err) {
-            _this2.isLoading = false;
+            _this3.isLoading = false;
             uni.hideLoading();
             console.error('登录失败', err);
           });
         },
         fail: function fail(err) {
-          _this2.isLoading = false;
+          _this3.isLoading = false;
           uni.hideLoading();
           uni.showToast({
             title: '获取登录凭证失败',
@@ -439,7 +504,7 @@ var _default = {
     },
     // 非微信环境模拟登录
     mockLogin: function mockLogin() {
-      var _this3 = this;
+      var _this4 = this;
       if (!this.isAgreed) {
         uni.showToast({
           title: '请先同意用户协议',
@@ -453,7 +518,7 @@ var _default = {
       setTimeout(function () {
         uni.hideLoading();
         uni.setStorageSync('token', 'mock-token-123456');
-        _this3.redirectAfterLogin();
+        _this4.redirectAfterLogin();
       }, 1000);
     },
     goVisitor: function goVisitor() {

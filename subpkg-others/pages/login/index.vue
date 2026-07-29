@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 	<view class="login-container">
 		<!-- Logo区域 -->
 		<view class="logo-box">
@@ -148,8 +148,74 @@
 					});
 					return;
 				}
-				// 打开授权弹窗
-				this.showAuthPopup = true;
+				// 先尝试直接登录（仅传 code，不传头像昵称）
+				// 如果是老用户，后端直接返回 token 和用户信息，无需弹窗
+				// 如果是新用户，后端返回 isNewUser=true，再弹出完善信息弹窗
+				uni.showLoading({
+					title: '登录中...'
+				});
+				uni.login({
+					provider: 'weixin',
+					success: (loginRes) => {
+						this.$request.post('/wechat/user/login', {
+							code: loginRes.code
+						}).then(res => {
+							uni.hideLoading();
+							const data = res.data || {};
+							// 老用户：直接登录成功，跳转到主页
+							if (data.token && data.isNewUser === false) {
+								// 清除可能残留的登录重定向地址，老用户直接回主页
+								uni.removeStorageSync('login_redirect');
+								// 保存 token 和用户信息
+								uni.setStorageSync('token', data.token);
+								if (data.wxUser) {
+									uni.setStorageSync('userInfo', data.wxUser);
+								}
+								// 请求权限字符
+								this.$request.get(`/wechat/user/getUserPermission`).then(res => {
+									const {
+										data,
+										code
+									} = res
+									if (code == 200) {
+										uni.setStorageSync('permission', data);
+									}
+								}).catch(err => {
+									console.error('获取用户信息失败', err);
+								});
+								uni.showToast({
+									title: '登录成功',
+									icon: 'success'
+								});
+								setTimeout(() => {
+									uni.switchTab({
+										url: '/pages/library/home'
+									});
+								}, 1500);
+							} else if (data.isNewUser === true) {
+								// 新用户：打开完善信息弹窗
+								this.showAuthPopup = true;
+							} else {
+								uni.showToast({
+									title: '登录失败，请重试',
+									icon: 'none'
+								});
+							}
+						}).catch(err => {
+							uni.hideLoading();
+							console.error('预检查登录失败', err);
+							// 网络异常等情况，兜底也打开弹窗让用户尝试
+							this.showAuthPopup = true;
+						});
+					},
+					fail: (err) => {
+						uni.hideLoading();
+						uni.showToast({
+							title: '获取登录凭证失败',
+							icon: 'none'
+						});
+					}
+				});
 			},
 
 			onChooseAvatar(e) {
