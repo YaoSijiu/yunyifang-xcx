@@ -1,13 +1,6 @@
 ﻿<template>
 	<view class="task-order-page">
 		<view class="header-panel">
-			<view class="nav-row">
-				<view class="back-btn" @click="goBack">
-					<view class="back-icon"></view>
-				</view>
-				<text class="page-title">我的订单</text>
-			</view>
-
 			<scroll-view class="tab-scroll" scroll-x enable-flex :show-scrollbar="false">
 				<view class="tabs">
 					<view
@@ -1412,46 +1405,15 @@ page {
 }
 
 .task-order-page {
-	min-height: 100vh;
+	height: 100vh;
 	background: #f7f7f7;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
 }
 
 .header-panel {
-	padding-top: 98rpx;
 	background: #ffffff;
-}
-
-.nav-row {
-	position: relative;
-	height: 74rpx;
-}
-
-.back-btn {
-	position: absolute;
-	left: 18rpx;
-	top: 0;
-	width: 72rpx;
-	height: 72rpx;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.back-icon {
-	width: 24rpx;
-	height: 24rpx;
-	border-left: 4rpx solid #000000;
-	border-bottom: 4rpx solid #000000;
-	transform: rotate(45deg);
-}
-
-.page-title {
-	display: block;
-	line-height: 74rpx;
-	font-size: 40rpx;
-	font-weight: 500;
-	color: #000000;
-	text-align: center;
 }
 
 .tab-scroll {
@@ -1463,17 +1425,15 @@ page {
 .tabs {
 	display: inline-flex;
 	align-items: center;
-	padding: 0 24rpx 0 28rpx;
+	padding: 0 8rpx 0 12rpx;
 }
 
 .tab-item {
 	position: relative;
 	flex-shrink: 0;
-	height: 78rpx;
-	line-height: 44rpx;
-	font-size: 28rpx;
-	color: #363636;
-	padding: 0 10rpx;
+	font-size: 30rpx;
+	color: #434343;
+	padding: 14rpx 22rpx 21rpx;
 }
 
 .tab-item + .tab-item {
@@ -1481,19 +1441,18 @@ page {
 }
 
 .tab-item.active {
-	font-size: 32rpx;
-	font-weight: 500;
-	color: #000000;
+	font-weight: 700;
+	color: #1a1a1a;
 }
 
 .active-mark {
 	position: absolute;
 	left: 50%;
-	bottom: 20%;
-	width: 46rpx;
-	height: 10rpx;
+	bottom: 6rpx;
+	width: 34rpx;
+	height: 6rpx;
 	border-radius: 999rpx;
-	background: #f37738;
+	background: #ff7a22;
 	transform: translateX(-50%);
 }
 
@@ -1502,7 +1461,7 @@ page {
 	align-items: center;
 	width: 706rpx;
 	height: 66rpx;
-	margin: 0 auto 18rpx;
+	margin: 0 auto 10rpx;
 	border-radius: 33rpx;
 	background: #f7f7f7;
 }
@@ -1543,7 +1502,8 @@ page {
 }
 
 .page-scroll {
-	height: calc(100vh - 286rpx);
+	flex: 1;
+	height: 0;
 }
 
 .order-list {

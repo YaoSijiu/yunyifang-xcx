@@ -88,16 +88,16 @@
   background-color: transparent !important;
 }
 .tab-item1.data-v-44ee474d {
-  display: inline-block;
-  margin-right: 20rpx;
-  padding-bottom: 20rpx;
   position: relative;
-  width: 140rpx;
+  font-size: 30rpx;
+  color: #434343;
+  padding: 14rpx 22rpx 21rpx;
+  display: inline-block;
+  margin-right: 30rpx;
 }
 .tab-item1 .tab-text.data-v-44ee474d {
   font-size: 30rpx;
-  color: #666;
-  font-weight: 500;
+  color: #434343;
 }
 .tab-item1 .badge.data-v-44ee474d {
   display: inline-block;
@@ -110,30 +110,35 @@
   vertical-align: middle;
 }
 .tab-item1.active .tab-text.data-v-44ee474d {
-  color: #333;
-  font-weight: bold;
-  font-size: 32rpx;
+  font-weight: 700;
+  color: #1a1a1a;
 }
 .tab-item1.active .yellow-underline.data-v-44ee474d {
-  width: 50rpx;
-  height: 12rpx;
   position: absolute;
-  bottom: 0;
-  left: 21%;
+  left: 50%;
+  bottom: 6rpx;
+  width: 34rpx;
+  height: 6rpx;
+  border-radius: 999rpx;
+  background: #ff7a22;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
-  border-radius: 6rpx;
 }
 .tab-item.data-v-44ee474d {
-  display: inline-block;
-  margin-right: 40rpx;
-  padding-bottom: 20rpx;
   position: relative;
+  font-size: 30rpx;
+  color: #434343;
+  padding: 14rpx 22rpx 21rpx;
+  display: inline-block;
+  margin-right: 30rpx;
 }
 .tab-item .tab-text.data-v-44ee474d {
   font-size: 30rpx;
-  color: #666;
-  font-weight: 500;
+  color: #434343;
+}
+.tab-item.active .tab-text.data-v-44ee474d {
+  font-weight: 700;
+  color: #1a1a1a;
 }
 .tab-item .badge.data-v-44ee474d {
   display: inline-block;
@@ -145,36 +150,16 @@
   margin-left: 8rpx;
   vertical-align: middle;
 }
-.tab-item.active.data-v-44ee474d {
-  /* 橙色弧线指示器 */
-}
-.tab-item.active .tab-text.data-v-44ee474d {
-  color: #333;
-  font-weight: bold;
-  font-size: 32rpx;
-}
-.tab-item.active .active-line.data-v-44ee474d {
-  position: absolute;
-  bottom: 10rpx;
-  left: 50%;
-  -webkit-transform: translateX(-50%);
-          transform: translateX(-50%);
-  width: 40rpx;
-  height: 6rpx;
-  background-color: #ff6b00;
-  border-radius: 6rpx;
-  /* 这里的 box-shadow 模拟弧形光晕效果 */
-  box-shadow: 0 2rpx 4rpx rgba(255, 107, 0, 0.3);
-}
 .yellow-underline.data-v-44ee474d {
-  width: 50rpx;
-  height: 12rpx;
   position: absolute;
-  bottom: 0;
-  left: 32%;
+  left: 50%;
+  bottom: 6rpx;
+  width: 34rpx;
+  height: 6rpx;
+  border-radius: 999rpx;
+  background: #ff7a22;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
-  border-radius: 6rpx;
 }
 .expand-btn.data-v-44ee474d {
   padding: 0 10rpx;

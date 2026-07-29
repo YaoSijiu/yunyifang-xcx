@@ -246,24 +246,24 @@ to {
   padding-bottom: 10rpx;
 }
 .nav-item text.data-v-6f148560 {
-  font-size: 32rpx;
-  color: #666;
+  font-size: 30rpx;
+  color: #434343;
   transition: all 0.3s;
 }
-.active.data-v-6f148560 {
-  color: #333 !important;
-  font-weight: bold;
-  font-size: 36rpx !important;
+.nav-item text.active.data-v-6f148560 {
+  font-weight: 700;
+  color: #1a1a1a;
 }
 .yellow-underline.data-v-6f148560 {
-  width: 50rpx;
-  height: 12rpx;
   position: absolute;
-  bottom: 0;
   left: 50%;
+  bottom: -6rpx;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
-  border-radius: 6rpx;
+  width: 34rpx;
+  height: 6rpx;
+  border-radius: 999rpx;
+  background: #ff7a22;
 }
 /* tab-content */
 .tab-content.data-v-6f148560 {

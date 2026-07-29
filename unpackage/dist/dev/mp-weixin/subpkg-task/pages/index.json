@@ -1,6 +1,5 @@
 {
   "navigationBarTitleText": "发布任务",
-  "navigationStyle": "custom",
   "usingComponents": {
     "uni-calendar": "/uni_modules/uni-calendar/components/uni-calendar/uni-calendar"
   }

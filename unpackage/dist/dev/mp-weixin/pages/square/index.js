@@ -745,7 +745,7 @@ var _default = {
     formatPrice: function formatPrice(budgetAmount, isOtherPartyQuote) {
       var hasAmount = budgetAmount !== '' && budgetAmount !== null && budgetAmount !== undefined;
       if (Number(isOtherPartyQuote) === 1) {
-        return hasAmount ? "\uFFE5".concat(budgetAmount) : '等待报价';
+        return hasAmount ? "\uFFE5".concat(budgetAmount) : '设计师报价';
       }
       if (!hasAmount) {
         return '预算待定';

@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 	<view class="portfolio-sort-page" :class="{ 'drag-lock': isDragging }">
 
 		<!-- 作品集列表（可拖拽） -->
@@ -852,15 +852,6 @@
 		background: #fff;
 		padding: 20rpx 32rpx;
 		border-bottom: 1rpx solid #eee;
-	}
-
-	.header-left {
-		width: 80rpx;
-	}
-
-	.back-icon {
-		width: 48rpx;
-		height: 48rpx;
 	}
 
 	.header-title {

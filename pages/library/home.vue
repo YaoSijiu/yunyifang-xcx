@@ -3,7 +3,7 @@
 		<view class="condition-panel">
 			<view class="status-bar" :style="{ height: statusBarHeight + 'px' }"></view>
 			<view class="top-shell">
-				<view class="search-bar">
+				<view class="search-box">
 					<image class="search-icon" src="/static/home/搜索.png" mode="aspectFit"></image>
 					<input
 						class="search-input"
@@ -619,11 +619,11 @@ export default {
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
-	padding: 14rpx 24rpx 12rpx;
+	padding: 18rpx 24rpx 12rpx;
 	background: #ffffff;
 }
 
-.search-bar {
+.search-box {
 	width: 346rpx;
 	height: 66rpx;
 	border-radius: 33rpx;
@@ -631,6 +631,7 @@ export default {
 	display: flex;
 	align-items: center;
 	padding: 0 20rpx;
+	box-sizing: border-box;
 }
 
 .search-icon {
@@ -708,6 +709,7 @@ export default {
 
 .secondary-tab.active {
 	color: #8a8a8a;
+	font-weight: 600;
 }
 
 .secondary-tab.filter {

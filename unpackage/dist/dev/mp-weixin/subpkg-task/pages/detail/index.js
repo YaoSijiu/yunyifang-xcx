@@ -181,6 +181,11 @@ var _request = _interopRequireDefault(__webpack_require__(/*! @/utils/request.js
 var _env = _interopRequireDefault(__webpack_require__(/*! @/config/env.js */ 40));
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2.default)(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+var TitleBar = function TitleBar() {
+  __webpack_require__.e(/*! require.ensure | components/title */ "components/title").then((function () {
+    return resolve(__webpack_require__(/*! @/components/title.vue */ 365));
+  }).bind(null, __webpack_require__)).catch(__webpack_require__.oe);
+};
 var DEFAULT_AVATAR = '/static/yunyiku/avatar.png';
 var createDefaultDetail = function createDefaultDetail() {
   return {
@@ -206,6 +211,9 @@ var createDefaultDetail = function createDefaultDetail() {
   };
 };
 var _default = {
+  components: {
+    TitleBar: TitleBar
+  },
   data: function data() {
     return {
       statusBarHeight: 0,
@@ -231,7 +239,7 @@ var _default = {
   computed: {
     pageScrollStyle: function pageScrollStyle() {
       return {
-        height: "calc(100vh - ".concat(this.statusBarHeight, "px - 90rpx)")
+        height: "calc(100vh - ".concat(this.statusBarHeight, "px - 44px)")
       };
     },
     posterIndexText: function posterIndexText() {

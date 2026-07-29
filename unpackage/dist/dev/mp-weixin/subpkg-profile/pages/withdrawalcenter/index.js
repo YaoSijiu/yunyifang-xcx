@@ -232,25 +232,6 @@ var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/r
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 var WITHDRAWAL_STATUS_MAP = {
   pending_settlement: '待结算',
@@ -258,6 +239,7 @@ var WITHDRAWAL_STATUS_MAP = {
   withdrawn: '已提现'
 };
 var _default = {
+  components: {},
   data: function data() {
     return {
       pendingAmount: '0',

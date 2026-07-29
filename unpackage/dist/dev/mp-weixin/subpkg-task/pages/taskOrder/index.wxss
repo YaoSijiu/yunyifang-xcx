@@ -3,42 +3,14 @@ page.data-v-7e43740c {
 	background: #f7f7f7;
 }
 .task-order-page.data-v-7e43740c {
-	min-height: 100vh;
+	height: 100vh;
 	background: #f7f7f7;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
 }
 .header-panel.data-v-7e43740c {
-	padding-top: 98rpx;
 	background: #ffffff;
-}
-.nav-row.data-v-7e43740c {
-	position: relative;
-	height: 74rpx;
-}
-.back-btn.data-v-7e43740c {
-	position: absolute;
-	left: 18rpx;
-	top: 0;
-	width: 72rpx;
-	height: 72rpx;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-.back-icon.data-v-7e43740c {
-	width: 24rpx;
-	height: 24rpx;
-	border-left: 4rpx solid #000000;
-	border-bottom: 4rpx solid #000000;
-	-webkit-transform: rotate(45deg);
-	        transform: rotate(45deg);
-}
-.page-title.data-v-7e43740c {
-	display: block;
-	line-height: 74rpx;
-	font-size: 40rpx;
-	font-weight: 500;
-	color: #000000;
-	text-align: center;
 }
 .tab-scroll.data-v-7e43740c {
 	width: 100%;
@@ -48,33 +20,30 @@ page.data-v-7e43740c {
 .tabs.data-v-7e43740c {
 	display: inline-flex;
 	align-items: center;
-	padding: 0 24rpx 0 28rpx;
+	padding: 0 8rpx 0 12rpx;
 }
 .tab-item.data-v-7e43740c {
 	position: relative;
 	flex-shrink: 0;
-	height: 78rpx;
-	line-height: 44rpx;
-	font-size: 28rpx;
-	color: #363636;
-	padding: 0 10rpx;
+	font-size: 30rpx;
+	color: #434343;
+	padding: 14rpx 22rpx 21rpx;
 }
 .tab-item + .tab-item.data-v-7e43740c {
 	margin-left: 30rpx;
 }
 .tab-item.active.data-v-7e43740c {
-	font-size: 32rpx;
-	font-weight: 500;
-	color: #000000;
+	font-weight: 700;
+	color: #1a1a1a;
 }
 .active-mark.data-v-7e43740c {
 	position: absolute;
 	left: 50%;
-	bottom: 20%;
-	width: 46rpx;
-	height: 10rpx;
+	bottom: 6rpx;
+	width: 34rpx;
+	height: 6rpx;
 	border-radius: 999rpx;
-	background: #f37738;
+	background: #ff7a22;
 	-webkit-transform: translateX(-50%);
 	        transform: translateX(-50%);
 }
@@ -83,7 +52,7 @@ page.data-v-7e43740c {
 	align-items: center;
 	width: 706rpx;
 	height: 66rpx;
-	margin: 0 auto 18rpx;
+	margin: 0 auto 10rpx;
 	border-radius: 33rpx;
 	background: #f7f7f7;
 }
@@ -120,7 +89,8 @@ page.data-v-7e43740c {
 	color: #b1b1b1;
 }
 .page-scroll.data-v-7e43740c {
-	height: calc(100vh - 286rpx);
+	flex: 1;
+	height: 0;
 }
 .order-list.data-v-7e43740c {
 	padding: 30rpx 20rpx 60rpx;

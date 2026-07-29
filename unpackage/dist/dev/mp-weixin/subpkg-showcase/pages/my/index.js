@@ -240,12 +240,11 @@ var _env = _interopRequireDefault(__webpack_require__(/*! @/config/env.js */ 40)
 //
 //
 //
-//
-//
-//
 var _default = {
+  components: {},
   data: function data() {
     return {
+      statusBarHeight: 20,
       tabs: [{
         label: '出售中',
         status: 1

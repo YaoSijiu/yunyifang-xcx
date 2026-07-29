@@ -25,7 +25,9 @@
 /* 透明度 */
 /* 文章场景相关 */
 .favorite-page.data-v-3e3afc0e {
-  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
   background: #f7f7f7;
   color: #000000;
 }
@@ -38,47 +40,9 @@ button.data-v-3e3afc0e {
 button.data-v-3e3afc0e::after {
   border: 0;
 }
-.fixed-header.data-v-3e3afc0e {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 20;
-  height: 176rpx;
-  background: #ffffff;
-}
-.nav-bar.data-v-3e3afc0e {
-  position: relative;
-  height: 176rpx;
-}
-.back-btn.data-v-3e3afc0e {
-  position: absolute;
-  left: 20rpx;
-  top: 82rpx;
-  width: 88rpx;
-  height: 88rpx;
-  font-size: 72rpx;
-  line-height: 78rpx;
-  text-align: center;
-  color: #000000;
-  z-index: 2;
-}
-.page-title.data-v-3e3afc0e {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 95rpx;
-  text-align: center;
-  font-size: 40rpx;
-  line-height: 56rpx;
-  color: #000000;
-}
 .list-scroll.data-v-3e3afc0e {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 176rpx;
-  bottom: 0;
+  flex: 1;
+  height: 0;
   background: #f7f7f7;
 }
 .list-body.data-v-3e3afc0e {

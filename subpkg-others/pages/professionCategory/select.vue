@@ -1,17 +1,7 @@
-﻿<template>
+<template>
 	<view class="select-page">
 
-		<view class="top-nav">
-			<!-- <view class="capsule">
-				<view class="dot-group">
-					<text></text>
-					<text></text>
-					<text></text>
-				</view>
-				<view class="capsule-line"></view>
-				<view class="circle-icon"></view>
-			</view> -->
-		</view>
+		<TitleBar :fixed="true" />
 
 		<view class="location-row enter-down">
 			<view class="location-icon"></view>
@@ -57,8 +47,12 @@
 
 <script>
 import request from '@/utils/request.js';
+import TitleBar from '@/components/title.vue';
 
 export default {
+	components: {
+		TitleBar
+	},
 	data() {
 		return {
 			selectedRole: 'service',
@@ -265,14 +259,6 @@ export default {
 	height: 10rpx;
 	background: #000000;
 	border-radius: 2rpx;
-}
-
-.top-nav {
-	position: absolute;
-	left: 24rpx;
-	top: 76rpx;
-	width: 702rpx;
-	height: 82rpx;
 }
 
 .capsule {

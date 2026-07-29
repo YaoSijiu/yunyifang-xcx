@@ -20973,26 +20973,22 @@ var _default = {
     }, {
       "path": "pages/outsourcing/index",
       "style": {
-        "navigationBarTitleText": "我的外包",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "我的外包"
       }
     }, {
       "path": "pages/withdrawalcenter/index",
       "style": {
-        "navigationBarTitleText": "提现中心",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "提现中心"
       }
     }, {
       "path": "pages/withdrawalcenter/detail/index",
       "style": {
-        "navigationBarTitleText": "订单详情",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "订单详情"
       }
     }, {
       "path": "pages/team/index",
       "style": {
-        "navigationBarTitleText": "我的团队",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "我的团队"
       }
     }, {
       "path": "pages/team/agree",
@@ -21062,27 +21058,23 @@ var _default = {
     "pages": [{
       "path": "pages/index",
       "style": {
-        "navigationBarTitleText": "发布橱窗",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "发布橱窗"
       }
     }, {
       "path": "pages/my/index",
       "style": {
         "navigationBarTitleText": "我的橱窗",
-        "navigationStyle": "custom",
         "enableShareAppMessage": true
       }
     }, {
       "path": "pages/favorite/index",
       "style": {
-        "navigationBarTitleText": "我的收藏",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "我的收藏"
       }
     }, {
       "path": "pages/detail/index",
       "style": {
         "navigationBarTitleText": "橱窗详情",
-        "navigationStyle": "custom",
         "enableShareAppMessage": true,
         "enableShareTimeline": true
       }
@@ -21092,8 +21084,7 @@ var _default = {
     "pages": [{
       "path": "pages/index",
       "style": {
-        "navigationBarTitleText": "发布任务",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "发布任务"
       }
     }, {
       "path": "pages/detail/index",
@@ -21106,8 +21097,7 @@ var _default = {
     }, {
       "path": "pages/taskOrder/index",
       "style": {
-        "navigationBarTitleText": "我的订单",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "我的订单"
       }
     }]
   }, {

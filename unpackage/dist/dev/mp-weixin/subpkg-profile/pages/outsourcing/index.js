@@ -557,6 +557,13 @@ var _default = {
         _this.resetList();
       }, 300);
     },
+    triggerSearch: function triggerSearch() {
+      if (this.searchTimer) {
+        clearTimeout(this.searchTimer);
+        this.searchTimer = null;
+      }
+      this.resetList();
+    },
     loadMore: function loadMore() {
       if (this.loading || this.finished) {
         return;

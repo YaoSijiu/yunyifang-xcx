@@ -1,17 +1,6 @@
 <template>
 	<view class="push-page">
-		<view class="top-nav">
-			<view class="back-icon" @click="goBack"></view>
-			<view class="capsule">
-				<view class="dot-group">
-					<text></text>
-					<text></text>
-					<text></text>
-				</view>
-				<view class="capsule-line"></view>
-				<view class="circle-icon"></view>
-			</view>
-		</view>
+		<TitleBar :fixed="true" />
 
 		<view class="page-title">选择您擅长的专业可获得任务推送
 可多选</view>
@@ -62,7 +51,12 @@
 </template>
 
 <script>
+import TitleBar from '@/components/title.vue';
+
 export default {
+	components: {
+		TitleBar
+	},
 	data() {
 		return {
 			role: '',
@@ -293,25 +287,6 @@ export default {
 	height: 10rpx;
 	background: #000000;
 	border-radius: 2rpx;
-}
-
-.top-nav {
-	position: absolute;
-	left: 24rpx;
-	top: 76rpx;
-	width: 702rpx;
-	height: 82rpx;
-}
-
-.back-icon {
-	position: absolute;
-	left: 9rpx;
-	top: 35rpx;
-	width: 28rpx;
-	height: 28rpx;
-	border-left: 5rpx solid #000000;
-	border-bottom: 5rpx solid #000000;
-	transform: rotate(45deg);
 }
 
 .capsule {

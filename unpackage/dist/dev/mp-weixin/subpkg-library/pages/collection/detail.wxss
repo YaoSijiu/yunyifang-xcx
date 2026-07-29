@@ -42,14 +42,15 @@
   -webkit-overflow-scrolling: touch;
 }
 .yellow-underline.data-v-6934f5d0 {
-  width: 50rpx;
-  height: 12rpx;
   position: absolute;
-  bottom: 0;
-  left: 35%;
+  left: 50%;
+  bottom: 6rpx;
+  width: 34rpx;
+  height: 6rpx;
+  border-radius: 999rpx;
+  background: #ff7a22;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
-  border-radius: 6rpx;
 }
 /* 标签栏样式 */
 .tag-tabs-container.data-v-6934f5d0 {
@@ -74,18 +75,20 @@
 /* 移除重复的滚动条样式 */
 /* 工作网格区域 */
 .tab-item.data-v-6934f5d0 {
-  display: inline-block;
-  margin: 0 20rpx;
-  padding: 20rpx;
   position: relative;
+  font-size: 30rpx;
+  color: #434343;
+  padding: 14rpx 22rpx 21rpx;
+  display: inline-block;
+  margin: 0 10rpx;
 }
 .tab-item text.data-v-6934f5d0 {
-  font-size: 28rpx;
-  color: #666;
+  font-size: 30rpx;
+  color: #434343;
 }
 .tab-item text.active.data-v-6934f5d0 {
-  color: #333;
-  font-weight: bold;
+  font-weight: 700;
+  color: #1a1a1a;
 }
 .badge.data-v-6934f5d0 {
   display: inline-block;

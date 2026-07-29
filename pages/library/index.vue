@@ -15,19 +15,19 @@
 				<!-- Tab 0: 主页 (仅在个人模式下显示) -->
 				<view v-if="!isTeamMode" class="nav-item" @click="changeTab(0)">
 					<text :class="currentTab == 0 ? 'active' : ''">主页</text>
-					<image v-if="currentTab == 0" class="yellow-underline" src="/static/common/选中条.png"></image>
+					<view v-if="currentTab == 0" class="yellow-underline"></view>
 				</view>
 
 				<!-- Tab 1: 作品 -->
 				<view class="nav-item" @click="changeTab(1)">
 					<text :class="currentTab == 1 ? 'active' : ''">作品</text>
-					<image v-if="currentTab == 1" class="yellow-underline" src="/static/common/选中条.png"></image>
+					<view v-if="currentTab == 1" class="yellow-underline"></view>
 				</view>
 
 				<!-- Tab 2: 作品集 -->
 				<view class="nav-item" @click="changeTab(2)">
 					<text :class="currentTab == 2 ? 'active' : ''">作品集</text>
-					<image v-if="currentTab == 2" class="yellow-underline" src="/static/common/选中条.png"></image>
+					<view v-if="currentTab == 2" class="yellow-underline"></view>
 				</view>
 			</view>
 		</view>
@@ -3605,31 +3605,29 @@
 	.nav-item {
 		margin-right: 40rpx;
 		position: relative;
-		height: 60rpx;
-		// padding-top: 10rpx;
+		padding-bottom: 10rpx;
 	}
 
 	.nav-item text {
-		font-size: 32rpx;
-		color: #666;
+		font-size: 30rpx;
+		color: #434343;
 		transition: all 0.3s;
-		margin-bottom: 10rpx;
 	}
 
-	.active {
-		color: #333 !important;
-		font-weight: bold;
-		font-size: 36rpx !important;
+	.nav-item text.active {
+		font-weight: 700;
+		color: #1a1a1a;
 	}
 
 	.yellow-underline {
-		width: 50rpx;
-		height: 12rpx;
 		position: absolute;
-		bottom: -5rpx;
 		left: 50%;
+		bottom: -6rpx;
 		transform: translateX(-50%);
-		border-radius: 6rpx;
+		width: 34rpx;
+		height: 6rpx;
+		border-radius: 999rpx;
+		background: #ff7a22;
 	}
 
 	/* tab-content */

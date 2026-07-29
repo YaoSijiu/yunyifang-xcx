@@ -5,11 +5,11 @@
 		<view class="tabs-header">
 			<view class="tab-item" :class="{ active: currentTab === 0 }" @click="switchTab(0)">
 				我要反馈
-				<image v-if="currentTab == 0" class="yellow-underline" src="/static/common/选中条.png"></image>
+				<view v-if="currentTab == 0" class="yellow-underline"></view>
 			</view>
 			<view class="tab-item" :class="{ active: currentTab === 1 }" @click="switchTab(1)">
 				反馈记录
-				<image v-if="currentTab == 1" class="yellow-underline" src="/static/common/选中条.png"></image>
+				<view v-if="currentTab == 1" class="yellow-underline"></view>
 			</view>
 		</view>
 
@@ -369,38 +369,38 @@ export default {
 	z-index: 10;
 
 	.tab-item {
-		margin-right: 60rpx;
-		padding: 30rpx 0;
-		font-size: 30rpx;
-		color: #666;
 		position: relative;
+		font-size: 30rpx;
+		color: #434343;
+		padding: 14rpx 22rpx 31rpx;
+		margin-right: 30rpx;
 
 		&.active {
-			color: #333;
-			font-weight: bold;
-			font-size: 32rpx;
+			font-weight: 700;
+			color: #1a1a1a;
 		}
 
 		.line {
 			position: absolute;
-			bottom: 10rpx;
+			bottom: 6rpx;
 			left: 50%;
 			transform: translateX(-50%);
-			width: 40rpx;
+			width: 34rpx;
 			height: 6rpx;
-			background: #ffd700;
-			border-radius: 4rpx;
+			background: #ff7a22;
+			border-radius: 999rpx;
 		}
 	}
 }
 .yellow-underline {
-	width: 50rpx;
-	height: 12rpx;
 	position: absolute;
-	bottom: 10%;
 	left: 50%;
+	bottom: 20rpx;
+	width: 34rpx;
+	height: 6rpx;
+	border-radius: 999rpx;
+	background: #ff7a22;
 	transform: translateX(-50%);
-	border-radius: 6rpx;
 }
 .content-box {
 	padding: 30rpx;

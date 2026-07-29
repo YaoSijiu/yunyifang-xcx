@@ -1,13 +1,5 @@
 ﻿<template>
 	<view class="showcase-page">
-		<view class="custom-nav" :style="{ paddingTop: statusBarHeight + 'px' }">
-			<view class="nav-row">
-				<view class="nav-back" @click="goBack">‹</view>
-				<text class="nav-title">{{ pageTitle }}</text>
-				<view class="nav-placeholder"></view>
-			</view>
-		</view>
-
 		<view class="page-canvas">
 				<view class="form-card">
 					<view class="field-block">
@@ -150,6 +142,8 @@
 import env from '@/config/env.js';
 
 export default {
+	components: {
+	},
 	data() {
 		return {
 			statusBarHeight: 0,
@@ -685,44 +679,9 @@ export default {
 	color: #000000;
 }
 
-.custom-nav {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	z-index: 20;
-	background: #ffffff;
-}
-
-.nav-row {
-	height: 140rpx;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 0 24rpx;
-	box-sizing: border-box;
-}
-
-.nav-back,
-.nav-placeholder {
-	width: 88rpx;
-	height: 88rpx;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 58rpx;
-	color: #000000;
-}
-
-.nav-title {
-	font-size: 40rpx;
-	line-height: 56rpx;
-	color: #000000;
-}
-
 .page-canvas {
 	min-height: 2050rpx;
-	padding: 196rpx 30rpx 150rpx;
+	padding: 20rpx 30rpx 150rpx;
 	box-sizing: border-box;
 }
 
@@ -955,16 +914,16 @@ export default {
 	position: fixed;
 	left: 0;
 	right: 0;
-	bottom: 0;
-	height: 98rpx;
-	padding: 17rpx 30rpx calc(17rpx + env(safe-area-inset-bottom));
+	bottom: 0%;
+	height: 85rpx;
+	padding: 20rpx 30rpx env(safe-area-inset-bottom);
+	box-sizing: content-box;
 	background: #ffffff;
 	box-shadow: 0 -1rpx 0 #dddddd;
+	z-index: 18;
+	gap: 38rpx;
 	display: flex;
 	justify-content: flex-end;
-	gap: 38rpx;
-	z-index: 30;
-	box-sizing: content-box;
 }
 
 .draft-btn,

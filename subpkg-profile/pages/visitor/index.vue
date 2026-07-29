@@ -2,13 +2,13 @@
 	<view class="container">
 		<!-- 2. 分类 Tab 栏 -->
 		<view class="tab-header">
-			<scroll-view scroll-x class="tab-scroll" :show-scrollbar="false" :scroll-into-view="scrollToId">
+			<scroll-view scroll-x class="tab-scroll" :show-scrollbar="false">
 				<view class="tab-item" v-for="(tab, index) in tabs" :key="index" :id="'tab_' + index"
 					:class="{ active: currentTab === index }" @click="switchTab(index)">
 					<text class="tab-text">{{ tab.name }}</text>
 					<view class="badge" :style="{ backgroundColor: currentTab === index ? '#333' : '#999' }"
 						v-if="tab.count >= 0">{{ tab.count }}</view>
-					<image v-if="currentTab == index" class="yellow-underline" src="/static/common/选中条.png"></image>
+					<view v-if="currentTab == index" class="yellow-underline"></view>
 				</view>
 			</scroll-view>
 
@@ -39,9 +39,7 @@
 								:style="{ backgroundColor: filterActiveTab === index ? '#333' : '#999' }">
 								{{ tab.count }}
 							</view>
-							<image v-if="filterActiveTab == index" class="yellow-underline"
-								src="/static/common/选中条.png">
-							</image>
+							<view v-if="filterActiveTab == index" class="yellow-underline"></view>
 						</view>
 					</view>
 
@@ -54,9 +52,7 @@
 								:style="{ backgroundColor: filterActiveTab === index+4 ? '#333' : '#999' }">
 								{{ tab.count }}
 							</view>
-							<image v-if="filterActiveTab == index+4" class="yellow-underline"
-								src="/static/common/选中条.png">
-							</image>
+							<view v-if="filterActiveTab == index+4" class="yellow-underline"></view>
 						</view>
 					</view>
 				</view>
@@ -215,7 +211,6 @@
 				showTagEditPopup: false,
 				selectedTagIndex: 0,
 				currentVisitor: null,
-				scrollToId: '',
 			}
 		},
 		onLoad() {
@@ -307,9 +302,7 @@
 				}
 			},
 			onFilterTabClick(index) {
-				this.$nextTick(() => {
-					this.scrollToId = 'tab_' + index;
-				});
+				
 				this.filterActiveTab = index;
 				this.currentTab = index; // 同步主tab选中状态
 				this.showFilterPopup = false; // 关闭弹窗
@@ -318,9 +311,7 @@
 				this.getTabCounts();
 			},
 			switchTab(index) {
-				this.$nextTick(() => {
-					this.scrollToId = 'tab_' + index;
-				});
+				
 				this.currentTab = index;
 				this.filterActiveTab = index;
 				// 根据不同的tab获取不同的数据
@@ -571,16 +562,16 @@
 	}
 
 	.tab-item1 {
-		display: inline-block;
-		margin-right: 20rpx;
-		padding-bottom: 20rpx;
 		position: relative;
-		width: 140rpx;
+		font-size: 30rpx;
+		color: #434343;
+		padding: 14rpx 22rpx 21rpx;
+		display: inline-block;
+		margin-right: 30rpx;
 
 		.tab-text {
 			font-size: 30rpx;
-			color: #666;
-			font-weight: 500;
+			color: #434343;
 		}
 
 		.badge {
@@ -596,79 +587,63 @@
 
 		&.active {
 			.tab-text {
-				color: #333;
-				font-weight: bold;
-				font-size: 32rpx;
+				font-weight: 700;
+				color: #1a1a1a;
 			}
 
-
 			.yellow-underline {
-				width: 50rpx;
-				height: 12rpx;
 				position: absolute;
-				bottom: 0;
-				left: 21%;
+				left: 50%;
+				bottom: 6rpx;
+				width: 34rpx;
+				height: 6rpx;
+				border-radius: 999rpx;
+				background: #ff7a22;
 				transform: translateX(-50%);
-				border-radius: 6rpx;
 			}
 
 		}
 	}
 
 	.tab-item {
-		display: inline-block;
-		margin-right: 40rpx;
-		padding-bottom: 20rpx;
 		position: relative;
+		font-size: 30rpx;
+		color: #434343;
+		padding: 14rpx 22rpx 21rpx;
+		display: inline-block;
+		margin-right: 30rpx;
+	}
 
-		.tab-text {
-			font-size: 30rpx;
-			color: #666;
-			font-weight: 500;
-		}
+	.tab-item .tab-text {
+		font-size: 30rpx;
+		color: #434343;
+	}
 
-		.badge {
-			display: inline-block;
-			background-color: #333;
-			color: #fff;
-			font-size: 20rpx;
-			padding: 2rpx 10rpx;
-			border-radius: 20rpx;
-			margin-left: 8rpx;
-			vertical-align: middle;
-		}
+	.tab-item.active .tab-text {
+		font-weight: 700;
+		color: #1a1a1a;
+	}
 
-		&.active {
-			.tab-text {
-				color: #333;
-				font-weight: bold;
-				font-size: 32rpx;
-			}
-
-			/* 橙色弧线指示器 */
-			.active-line {
-				position: absolute;
-				bottom: 10rpx;
-				left: 50%;
-				transform: translateX(-50%);
-				width: 40rpx;
-				height: 6rpx;
-				background-color: $accent-color;
-				border-radius: 6rpx;
-				/* 这里的 box-shadow 模拟弧形光晕效果 */
-				box-shadow: 0 2rpx 4rpx rgba(255, 107, 0, 0.3);
-			}
-		}
+	.tab-item .badge {
+		display: inline-block;
+		background-color: #333;
+		color: #fff;
+		font-size: 20rpx;
+		padding: 2rpx 10rpx;
+		border-radius: 20rpx;
+		margin-left: 8rpx;
+		vertical-align: middle;
 	}
 
 	.yellow-underline {
-		width: 50rpx;
-		height: 12rpx;
 		position: absolute;
-		bottom: 0;
-		left: 32%;
+		left: 50%;
+		bottom: 6rpx;
+		width: 34rpx;
+		height: 6rpx;
+		border-radius: 999rpx;
+		background: #ff7a22;
 		transform: translateX(-50%);
-		border-radius: 6rpx;
 	}
 
 	.expand-btn {

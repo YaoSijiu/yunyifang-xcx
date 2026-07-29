@@ -46,13 +46,6 @@
   padding: 20rpx 32rpx;
   border-bottom: 1rpx solid #eee;
 }
-.header-left.data-v-410684fd {
-  width: 80rpx;
-}
-.back-icon.data-v-410684fd {
-  width: 48rpx;
-  height: 48rpx;
-}
 .header-title.data-v-410684fd {
   font-size: 36rpx;
   font-weight: 600;

@@ -1,6 +1,5 @@
 {
   "navigationBarTitleText": "我的外包",
-  "navigationStyle": "custom",
   "usingComponents": {
     "contact-info-popup": "/components/contact-info-popup",
     "refund-reason-popup": "/components/refund-reason-popup",

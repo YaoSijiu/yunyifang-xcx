@@ -1,24 +1,5 @@
-﻿<template>
+<template>
 	<view class="detail-page">
-		<view class="header-panel">
-			<!-- <view class="capsule"> -->
-				<!-- <view class="capsule-dot-group">
-					<view class="dot small"></view>
-					<view class="dot large"></view>
-					<view class="dot small"></view>
-				</view> -->
-		<!-- 		<view class="capsule-line"></view>
-				<view class="capsule-circle"></view> -->
-			<!-- </view> -->
-
-			<view class="nav-row">
-				<view class="back-btn" @click="goBack">
-					<view class="back-icon"></view>
-				</view>
-				<text class="page-title">订单详情</text>
-			</view>
-		</view>
-
 		<scroll-view class="content-scroll" scroll-y>
 			<view v-if="loading" class="state-block">加载中...</view>
 			<view v-else-if="loadError" class="state-block">
@@ -117,6 +98,8 @@
 import env from '@/config/env.js'
 
 export default {
+	components: {
+	},
 	data() {
 		return {
 			orderNo: '',
@@ -432,107 +415,20 @@ page {
 
 .detail-page {
 	width: 750rpx;
-	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	overflow: hidden;
 	background: #f7f7f7;
 }
 
 .header-panel {
-	position: relative;
-	height: 184rpx;
 	background: #ffffff;
 }
 
-.capsule {
-	position: absolute;
-	top: 93rpx;
-	right: 21rpx;
-	width: 197rpx;
-	height: 65rpx;
-	border: 1rpx solid #e1e1e1;
-	border-radius: 33rpx;
-	box-sizing: border-box;
-}
-
-.capsule-line {
-	position: absolute;
-	top: 14rpx;
-	left: 98rpx;
-	width: 1rpx;
-	height: 38rpx;
-	background: #e1e1e1;
-}
-
-.capsule-dot-group {
-	position: absolute;
-	top: 29rpx;
-	left: 30rpx;
-	display: flex;
-	align-items: center;
-	gap: 7rpx;
-}
-
-.dot {
-	border-radius: 50%;
-	background: #000000;
-}
-
-.dot.small {
-	width: 7rpx;
-	height: 7rpx;
-}
-
-.dot.large {
-	width: 12rpx;
-	height: 12rpx;
-}
-
-.capsule-circle {
-	position: absolute;
-	top: 14rpx;
-	right: 29rpx;
-	width: 35rpx;
-	height: 35rpx;
-	border: 4rpx solid #000000;
-	border-radius: 50%;
-	box-sizing: border-box;
-}
-
-.nav-row {
-	position: relative;
-	height: 184rpx;
-}
-
-.back-btn {
-	position: absolute;
-	left: 20rpx;
-	top: 102rpx;
-	width: 48rpx;
-	height: 48rpx;
-}
-
-.back-icon {
-	width: 22rpx;
-	height: 22rpx;
-	margin: 13rpx 0 0 12rpx;
-	border-left: 5rpx solid #000000;
-	border-bottom: 5rpx solid #000000;
-	transform: rotate(45deg);
-}
-
-.page-title {
-	position: absolute;
-	left: 295rpx;
-	top: 98rpx;
-	width: 160rpx;
-	height: 56rpx;
-	line-height: 56rpx;
-	font-size: 40rpx;
-	color: #000000;
-	text-align: center;
-}
-
 .content-scroll {
-	height: calc(100vh - 184rpx);
+	flex: 1;
+	height: 0;
 }
 
 .content {
@@ -541,7 +437,7 @@ page {
 }
 
 .state-block {
-	min-height: calc(100vh - 184rpx);
+	min-height: 100%;
 	display: flex;
 	flex-direction: column;
 	align-items: center;

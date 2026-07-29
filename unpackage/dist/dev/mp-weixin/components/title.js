@@ -140,6 +140,11 @@ exports.default = void 0;
 //
 //
 //
+//
+//
+//
+//
+//
 var _default = {
   name: 'TitleBar',
   props: {
@@ -150,12 +155,30 @@ var _default = {
     showBack: {
       type: Boolean,
       default: true
+    },
+    fixed: {
+      type: Boolean,
+      default: false
     }
   },
   data: function data() {
     return {
       statusBarHeight: 0
     };
+  },
+  computed: {
+    statusBarStyle: function statusBarStyle() {
+      return 'height: ' + this.statusBarHeight + 'px';
+    },
+    titleBarStyle: function titleBarStyle() {
+      if (this.fixed) {
+        return 'padding-top: ' + this.statusBarHeight + 'px';
+      }
+      return '';
+    },
+    placeholderStyle: function placeholderStyle() {
+      return 'height: ' + (this.statusBarHeight + 44) + 'px';
+    }
   },
   mounted: function mounted() {
     // 获取状态栏高度

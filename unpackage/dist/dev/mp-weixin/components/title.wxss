@@ -58,20 +58,54 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* 状态栏占位 */
 .status-bar.data-v-0e80c22d {
 	width: 100%;
-	background: #ffffff; /* 与标题栏背景色一致 */
+	background: #ffffff;
 }
 /* 标题栏 */
 .title-bar.data-v-0e80c22d {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	height: 44px; /* 标准导航栏高度 */
+	height: 44px;
 	padding: 0 15rpx;
 	background: #ffffff;
 	position: relative;
+}
+.title-bar.fixed.data-v-0e80c22d {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 999;
+	height: auto;
+}
+.fixed-placeholder.data-v-0e80c22d {
+	width: 100%;
 }
 .back-button.data-v-0e80c22d {
 	width: 44px;
@@ -79,10 +113,16 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	flex-shrink: 0;
 }
-.back-button image.data-v-0e80c22d {
-	width: 20px;
-	height: 20px;
+.back-arrow.data-v-0e80c22d {
+	width: 12px;
+	height: 12px;
+	border-left: 2.5px solid #333333;
+	border-bottom: 2.5px solid #333333;
+	-webkit-transform: rotate(45deg);
+	        transform: rotate(45deg);
+	margin-left: 2px;
 }
 .title-text.data-v-0e80c22d {
 	position: absolute;
@@ -93,9 +133,19 @@
 	font-weight: 500;
 	color: #333333;
 	text-align: center;
+	max-width: 400rpx;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 .placeholder.data-v-0e80c22d {
 	width: 44px;
 	height: 44px;
+	flex-shrink: 0;
+}
+.right-slot.data-v-0e80c22d {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
 }
 

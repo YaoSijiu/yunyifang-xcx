@@ -97,13 +97,6 @@
   background: #000000;
   border-radius: 2rpx;
 }
-.top-nav.data-v-09458e9d {
-  position: absolute;
-  left: 24rpx;
-  top: 76rpx;
-  width: 702rpx;
-  height: 82rpx;
-}
 .capsule.data-v-09458e9d {
   position: absolute;
   right: -3rpx;

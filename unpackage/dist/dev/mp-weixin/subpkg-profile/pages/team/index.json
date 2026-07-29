@@ -1,8 +1,6 @@
 {
   "navigationBarTitleText": "我的团队",
-  "navigationStyle": "custom",
   "usingComponents": {
-    "yun-storage-warning": "/components/yun-storage-warning",
-    "title-bar": "/components/title"
+    "yun-storage-warning": "/components/yun-storage-warning"
   }
 }

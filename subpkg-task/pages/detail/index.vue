@@ -1,12 +1,10 @@
-﻿<template>
+<template>
 	<view class="task-detail-page">
-		<view class="top-nav" :style="{ paddingTop: statusBarHeight + 'px' }">
-			<view class="nav-row">
-				<view class="back-btn" @click="goBack">‹</view>
-				<button class="capsule-btn" :open-type="shareOpenType" @click.stop="handleShareClick">
-				</button>
-			</view>
-		</view>
+		<TitleBar title="任务详情" :fixed="true">
+			<template #right>
+				<button class="capsule-btn" :open-type="shareOpenType" @click.stop="handleShareClick"></button>
+			</template>
+		</TitleBar>
 
 		<scroll-view scroll-y class="page-scroll" :style="pageScrollStyle">
 			<view class="page-canvas">
@@ -161,6 +159,7 @@
 <script>
 import request from '@/utils/request.js';
 import env from '@/config/env.js';
+import TitleBar from '@/components/title.vue';
 
 const DEFAULT_AVATAR = '/static/yunyiku/avatar.png';
 
@@ -187,6 +186,9 @@ const createDefaultDetail = () => ({
 });
 
 export default {
+	components: {
+		TitleBar
+	},
 	data() {
 		return {
 			statusBarHeight: 0,
@@ -212,7 +214,7 @@ export default {
 	computed: {
 		pageScrollStyle() {
 			return {
-				height: `calc(100vh - ${this.statusBarHeight}px - 90rpx)`
+				height: `calc(100vh - ${this.statusBarHeight}px - 44px)`
 			};
 		},
 		posterIndexText() {
@@ -685,31 +687,6 @@ export default {
 	height: 100vh;
 	background: #f7f7f7;
 	overflow: hidden;
-}
-
-.top-nav {
-	background: #f7f7f7;
-	position: relative;
-	z-index: 10;
-}
-
-.nav-row {
-	height: 90rpx;
-	padding: 0 20rpx;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-}
-
-.back-btn {
-	width: 48rpx;
-	height: 48rpx;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 48rpx;
-	line-height: 48rpx;
-	color: #000000;
 }
 
 .capsule-btn {

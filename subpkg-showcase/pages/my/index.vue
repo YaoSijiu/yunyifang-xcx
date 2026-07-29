@@ -1,10 +1,6 @@
-﻿<template>
+<template>
 	<view class="my-showcase-page">
 		<view class="fixed-header">
-			<view class="nav-bar">
-				<view class="back-btn" @click="goBack">‹</view>
-				<text class="page-title">我的橱窗</text>
-			</view>
 			<view class="tab-row">
 				<view
 					class="tab-item"
@@ -14,13 +10,14 @@
 					@click="switchTab(item.status)"
 				>
 					<text>{{ item.label }}</text>
-					<image v-if="activeStatus === item.status" class="tab-line" src="/static/common/选中条.png" mode="aspectFit"></image>
+					<view v-if="activeStatus === item.status" class="tab-line"></view>
 				</view>
 			</view>
 		</view>
 
 		<scroll-view
 			class="list-scroll"
+			:style="{ top: '92rpx' }"
 			scroll-y
 			:refresher-enabled="true"
 			:refresher-triggered="refreshing"
@@ -68,8 +65,10 @@ import request from '@/utils/request.js';
 import env from '@/config/env.js';
 
 export default {
+	components: { },
 	data() {
 		return {
+			statusBarHeight: 20,
 			tabs: [
 				{ label: '出售中', status: 1 },
 				{ label: '草稿', status: 0 },
@@ -472,37 +471,8 @@ button::after {
 	left: 0;
 	right: 0;
 	z-index: 20;
-	height: 268rpx;
+	height: auto;
 	background: #ffffff;
-}
-
-.nav-bar {
-	position: relative;
-	height: 176rpx;
-}
-
-.back-btn {
-	position: absolute;
-	left: 20rpx;
-	top: 82rpx;
-	width: 88rpx;
-	height: 88rpx;
-	font-size: 72rpx;
-	line-height: 78rpx;
-	text-align: center;
-	color: #000000;
-	z-index: 2;
-}
-
-.page-title {
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 95rpx;
-	text-align: center;
-	font-size: 40rpx;
-	line-height: 56rpx;
-	color: #000000;
 }
 
 .tab-row {
@@ -515,25 +485,25 @@ button::after {
 
 .tab-item {
 	position: relative;
-	height: 76rpx;
-	margin-right: 63rpx;
-	font-size: 28rpx;
-	line-height: 40rpx;
-	color: #363636;
+	font-size: 30rpx;
+	color: #434343;
+	padding: 14rpx 22rpx 21rpx;
+	margin-right: 30rpx;
 }
 
 .tab-item.active {
-	font-size: 32rpx;
-	line-height: 45rpx;
-	color: #000000;
+	font-weight: 700;
+	color: #1a1a1a;
 }
 
 .tab-line {
 	position: absolute;
 	left: 50%;
-	bottom: 20%;
-	width: 45rpx;
-	height: 12rpx;
+	bottom: 6rpx;
+	width: 34rpx;
+	height: 6rpx;
+	border-radius: 999rpx;
+	background: #ff7a22;
 	transform: translateX(-50%);
 }
 
@@ -541,7 +511,6 @@ button::after {
 	position: fixed;
 	left: 0;
 	right: 0;
-	top: 268rpx;
 	bottom: 0;
 	background: #f7f7f7;
 }

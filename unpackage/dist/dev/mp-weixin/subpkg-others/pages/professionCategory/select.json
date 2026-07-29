@@ -1,5 +1,7 @@
 {
   "navigationBarTitleText": "选择",
   "navigationStyle": "custom",
-  "usingComponents": {}
+  "usingComponents": {
+    "title-bar": "/components/title"
+  }
 }

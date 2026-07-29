@@ -1,5 +1,7 @@
 {
   "navigationBarTitleText": "专业推送",
   "navigationStyle": "custom",
-  "usingComponents": {}
+  "usingComponents": {
+    "title-bar": "/components/title"
+  }
 }

@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 	<view class="page">
 		<view class="top-area" :style="{ paddingTop: (statusBarHeight + 8) + 'px' }">
 			<view class="search-row">
@@ -485,7 +485,7 @@ export default {
 		formatPrice(budgetAmount, isOtherPartyQuote) {
 			const hasAmount = budgetAmount !== '' && budgetAmount !== null && budgetAmount !== undefined;
 			if (Number(isOtherPartyQuote) === 1) {
-				return hasAmount ? `￥${budgetAmount}` : '等待报价';
+				return hasAmount ? `￥${budgetAmount}` : '设计师报价';
 			}
 			if (!hasAmount) {
 				return '预算待定';
@@ -578,10 +578,10 @@ export default {
 }
 
 .search-box {
-	width: 378rpx;
+	width: 346rpx;
 	height: 66rpx;
 	border-radius: 33rpx;
-	background: #f7f7f7;
+	background: #f5f5f5;
 	display: flex;
 	align-items: center;
 	padding: 0 20rpx;
@@ -589,10 +589,10 @@ export default {
 }
 
 .search-icon {
-	width: 31rpx;
-	height: 31rpx;
-	margin-right: 8rpx;
-	opacity: 0.45;
+	width: 30rpx;
+	height: 30rpx;
+	margin-right: 14rpx;
+	opacity: 0.55;
 }
 
 .search-input {
@@ -605,7 +605,7 @@ export default {
 
 .search-placeholder {
 	font-size: 26rpx;
-	color: #999999;
+	color: #b1b1b1;
 }
 
 .capsule {

@@ -3,7 +3,7 @@
 		<!-- Logo区域 -->
 		<view class="logo-box">
 			<image class="logo-img" src="https://yunyifang-test.oss-cn-beijing.aliyuncs.com/static/logo.png" mode="aspectFit"></image>
-			<text class="app-name">云艺坊</text>
+			<text class="app-name">可靠猫</text>
 		</view>
 
 		<!-- 登录按钮区域 -->

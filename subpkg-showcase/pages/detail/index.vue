@@ -1,22 +1,5 @@
-﻿<template>
+<template>
 	<view class="detail-page">
-		<view class="top-nav">
-			<view class="nav-row">
-				<view class="back-btn" @click="goBack">‹</view>
-				<!-- <button class="capsule-btn" open-type="share" @click.stop="handleShareClick">
-					<view class="capsule-more">
-						<view></view>
-						<view></view>
-						<view></view>
-					</view>
-					<view class="capsule-divider"></view>
-					<view class="capsule-target">
-						<view></view>
-					</view>
-				</button> -->
-			</view>
-		</view>
-
 		<scroll-view scroll-y class="page-scroll" :lower-threshold="120" @scrolltolower="loadMoreComments">
 			<view v-if="loading" class="state-block">
 				<text>加载中...</text>
@@ -112,12 +95,16 @@
 							class="review-tab"
 							:class="{ active: activeReviewTab === 'image' }"
 							@click="switchReviewTab('image')"
-						>带图评价</view>
+						>带图评价
+						<view v-if="activeReviewTab === 'image'" class="review-underline"></view>
+						</view>
 						<view
 							class="review-tab"
 							:class="{ active: activeReviewTab === 'all' }"
 							@click="switchReviewTab('all')"
-						>最新评价 <text>{{ commentTotalText }}</text></view>
+						>最新评价 <text>{{ commentTotalText }}</text>
+						<view v-if="activeReviewTab === 'all'" class="review-underline"></view>
+						</view>
 					</view>
 					<view v-if="comments.length === 0 && !commentLoading" class="comment-empty">暂无评价</view>
 					<view class="comment-item" v-for="item in comments" :key="item.id">
@@ -218,6 +205,7 @@ import request from '@/utils/request.js';
 import env from '@/config/env.js';
 
 export default {
+	components: { },
 	data() {
 		return {
 			showcaseId: '',
@@ -1070,100 +1058,6 @@ button::after {
 	border: 0;
 }
 
-.top-nav {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	height: 178rpx;
-	z-index: 20;
-	background: #f7f7f7;
-	pointer-events: none;
-}
-
-.nav-row {
-	position: relative;
-	width: 750rpx;
-	height: 178rpx;
-	pointer-events: none;
-}
-
-.back-btn {
-	position: absolute;
-	left: 20rpx;
-	top: 88rpx;
-	width: 56rpx;
-	height: 64rpx;
-	font-size: 72rpx;
-	line-height: 52rpx;
-	text-align: center;
-	color: #000000;
-	pointer-events: auto;
-}
-
-.capsule-btn {
-	position: absolute;
-	right: 21rpx;
-	top: 93rpx;
-	width: 197rpx;
-	height: 65rpx;
-	border: 1rpx solid #e1e1e1;
-	border-radius: 33rpx;
-	background: rgba(255, 255, 255, 0.2);
-	pointer-events: auto;
-}
-
-.capsule-more view {
-	position: absolute;
-	top: 26rpx;
-	width: 12rpx;
-	height: 12rpx;
-	border-radius: 50%;
-	background: #000000;
-}
-
-.capsule-more view:nth-child(1) {
-	left: 30rpx;
-}
-
-.capsule-more view:nth-child(2) {
-	left: 54rpx;
-}
-
-.capsule-more view:nth-child(3) {
-	left: 78rpx;
-}
-
-.capsule-divider {
-	position: absolute;
-	left: 98rpx;
-	top: 13rpx;
-	width: 1rpx;
-	height: 38rpx;
-	background: #e1e1e1;
-}
-
-.capsule-target {
-	position: absolute;
-	left: 132rpx;
-	top: 14rpx;
-	width: 35rpx;
-	height: 35rpx;
-	border: 8rpx solid #000000;
-	border-radius: 50%;
-	box-sizing: border-box;
-}
-
-.capsule-target view {
-	position: absolute;
-	left: 8rpx;
-	top: 8rpx;
-	width: 5rpx;
-	height: 5rpx;
-	border-radius: 50%;
-	background: #000000;
-}
-
 .page-scroll {
 	height: 100vh;
 }
@@ -1520,20 +1414,17 @@ button::after {
 }
 
 .review-tabs {
-	display: flex;
+	display: inline-flex;
 	align-items: center;
 	margin-top: 29rpx;
 }
 
 .review-tab {
-	height: 48rpx;
-	padding: 0 30rpx;
-	margin-right: 28rpx;
-	border-radius: 24rpx;
-	background: #f5f5f5;
-	font-size: 24rpx;
-	line-height: 48rpx;
-	color: #000000;
+	position: relative;
+	font-size: 30rpx;
+	color: #434343;
+	padding: 14rpx 22rpx 21rpx;
+	margin-right: 30rpx;
 }
 
 .review-tab text {
@@ -1542,7 +1433,19 @@ button::after {
 }
 
 .review-tab.active {
-	background: #fff1e9;
+	font-weight: 700;
+	color: #1a1a1a;
+}
+
+.review-underline {
+	position: absolute;
+	left: 50%;
+	bottom: 6rpx;
+	width: 34rpx;
+	height: 6rpx;
+	border-radius: 999rpx;
+	background: #ff7a22;
+	transform: translateX(-50%);
 }
 
 .comment-empty,

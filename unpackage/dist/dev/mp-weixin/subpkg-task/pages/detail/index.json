@@ -3,5 +3,7 @@
   "navigationStyle": "custom",
   "enableShareAppMessage": true,
   "enableShareTimeline": true,
-  "usingComponents": {}
+  "usingComponents": {
+    "title-bar": "/components/title"
+  }
 }

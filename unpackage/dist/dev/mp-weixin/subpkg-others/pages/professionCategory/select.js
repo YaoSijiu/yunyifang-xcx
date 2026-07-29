@@ -192,17 +192,15 @@ var _request = _interopRequireDefault(__webpack_require__(/*! @/utils/request.js
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+var TitleBar = function TitleBar() {
+  __webpack_require__.e(/*! require.ensure | components/title */ "components/title").then((function () {
+    return resolve(__webpack_require__(/*! @/components/title.vue */ 365));
+  }).bind(null, __webpack_require__)).catch(__webpack_require__.oe);
+};
 var _default = {
+  components: {
+    TitleBar: TitleBar
+  },
   data: function data() {
     return {
       selectedRole: 'service',

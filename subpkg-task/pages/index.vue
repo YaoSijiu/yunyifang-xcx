@@ -1,17 +1,12 @@
 ﻿<template>
 	<view class="task-page">
-		<view class="custom-nav" :style="{ paddingTop: statusBarHeight + 'px' }">
-			<view class="nav-row">
-				<view class="nav-back" @click="goBack">‹</view>
-				<text class="nav-title">发布任务</text>
-				<view class="nav-placeholder"></view>
-			</view>
-		</view>
-
 		<view class="page-canvas">
 				<view class="form-card intro-card">
 					<view class="field-block title-block">
-						<text class="field-title">任务标题</text>
+						<view class="field-header">
+							<text class="field-title">任务标题</text>
+							<text class="field-count">{{ form.title.length }}/30</text>
+						</view>
 						<input
 							class="plain-input title-input"
 							v-model="form.title"
@@ -19,11 +14,13 @@
 							placeholder="最多输入30个字符(15个汉字）"
 							placeholder-class="placeholder-text"
 						/>
-						<text class="field-count">{{ form.title.length }}/30</text>
 					</view>
 
 					<view class="field-block desc-block">
-						<text class="field-title">需求描述</text>
+						<view class="field-header">
+							<text class="field-title">需求描述</text>
+							<text class="field-count desc-count">{{ form.description.length }}/100</text>
+						</view>
 						<textarea
 							class="plain-textarea"
 							v-model="form.description"
@@ -31,7 +28,6 @@
 							placeholder="最多输入100个字符(50个汉字）"
 							placeholder-class="placeholder-text"
 						></textarea>
-						<text class="field-count desc-count">{{ form.description.length }}/100</text>
 					</view>
 
 					<view class="upload-list">
@@ -1092,45 +1088,9 @@ export default {
 	color: #000000;
 }
 
-.custom-nav {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	z-index: 20;
-	background: #ffffff;
-}
-
-.nav-row {
-	height: 140rpx;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 0 24rpx;
-	box-sizing: border-box;
-}
-
-.nav-back,
-.nav-placeholder {
-	width: 88rpx;
-	height: 64rpx;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 58rpx;
-	line-height: 58rpx;
-	color: #000000;
-}
-
-.nav-title {
-	font-size: 40rpx;
-	line-height: 56rpx;
-	color: #000000;
-}
-
 .page-canvas {
 	min-height: 1914rpx;
-	padding: 196rpx 30rpx 150rpx;
+	padding: 20rpx 30rpx 150rpx;
 	box-sizing: border-box;
 	background: #f7f7f7;
 }
@@ -1194,12 +1154,18 @@ export default {
 }
 
 .field-count {
-	position: absolute;
+	position: static;
 	right: 2rpx;
 	bottom: 0;
 	font-size: 22rpx;
 	line-height: 31rpx;
 	color: #999999;
+}
+
+.field-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 }
 
 .desc-count {
@@ -1386,7 +1352,7 @@ export default {
 }
 
 .guarantee-list {
-	padding-top: 24rpx;
+	padding-top: 0rpx;
 }
 
 .guarantee-row {
@@ -1484,9 +1450,9 @@ export default {
 	position: fixed;
 	left: 0;
 	right: 0;
-	bottom: -11rpx;
-	// height: 98rpx;
-	padding: 16rpx 30rpx env(safe-area-inset-bottom);
+	bottom: 0%;
+	height: 85rpx;
+	padding: 20rpx 30rpx env(safe-area-inset-bottom);
 	box-sizing: content-box;
 	background: #ffffff;
 	box-shadow: 0 -1rpx 0 #dddddd;

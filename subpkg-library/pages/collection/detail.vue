@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 	<view class="collection-detail">
 		<!-- 标签栏 -->
 		<view class="tag-tabs-container">
@@ -12,7 +12,7 @@
 						<view class="badge" :style="{ backgroundColor: currentTag === '全部' ? '#333' : '#999' }">
 							{{ tagsNum['全部'] || allWorks.length }}
 						</view>
-						<image v-if="currentTag === '全部'" class="yellow-underline" src="/static/common/选中条.png"></image>
+						<view v-if="currentTag === '全部'" class="yellow-underline"></view>
 					</view>
 
 					<!-- 动态标签 -->
@@ -22,7 +22,7 @@
 						<view class="badge" :style="{ backgroundColor: currentTag === tag ? '#333' : '#999' }">
 							{{ count }}
 						</view>
-						<image v-if="currentTag === tag" class="yellow-underline" src="/static/common/选中条.png"></image>
+						<view v-if="currentTag === tag" class="yellow-underline"></view>
 					</view>
 				</view>
 			</scroll-view>
@@ -1188,13 +1188,14 @@
 	}
 
 	.yellow-underline {
-		width: 50rpx;
-		height: 12rpx;
 		position: absolute;
-		bottom: 0;
-		left: 35%;
+		left: 50%;
+		bottom: 6rpx;
+		width: 34rpx;
+		height: 6rpx;
+		border-radius: 999rpx;
+		background: #ff7a22;
 		transform: translateX(-50%);
-		border-radius: 6rpx;
 	}
 
 	/* 标签栏样式 */
@@ -1235,20 +1236,22 @@
 	// }
 
 	.tab-item {
-		display: inline-block;
-		margin: 0 20rpx;
-		padding: 20rpx;
 		position: relative;
+		font-size: 30rpx;
+		color: #434343;
+		padding: 14rpx 22rpx 21rpx;
+		display: inline-block;
+		margin: 0 10rpx;
 	}
 
 	.tab-item text {
-		font-size: 28rpx;
-		color: #666;
+		font-size: 30rpx;
+		color: #434343;
 	}
 
 	.tab-item text.active {
-		color: #333;
-		font-weight: bold;
+		font-weight: 700;
+		color: #1a1a1a;
 	}
 
 	.badge {

@@ -349,10 +349,6 @@ var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/r
 //
 //
 //
-//
-//
-//
-//
 var _default = {
   data: function data() {
     return {
@@ -409,8 +405,7 @@ var _default = {
       // 标签编辑弹窗
       showTagEditPopup: false,
       selectedTagIndex: 0,
-      currentVisitor: null,
-      scrollToId: ''
+      currentVisitor: null
     };
   },
   onLoad: function onLoad() {
@@ -498,10 +493,6 @@ var _default = {
       }
     },
     onFilterTabClick: function onFilterTabClick(index) {
-      var _this = this;
-      this.$nextTick(function () {
-        _this.scrollToId = 'tab_' + index;
-      });
       this.filterActiveTab = index;
       this.currentTab = index; // 同步主tab选中状态
       this.showFilterPopup = false; // 关闭弹窗
@@ -510,10 +501,6 @@ var _default = {
       this.getTabCounts();
     },
     switchTab: function switchTab(index) {
-      var _this2 = this;
-      this.$nextTick(function () {
-        _this2.scrollToId = 'tab_' + index;
-      });
       this.currentTab = index;
       this.filterActiveTab = index;
       // 根据不同的tab获取不同的数据
@@ -522,7 +509,7 @@ var _default = {
       this.getTabCounts();
     },
     getTabCounts: function getTabCounts() {
-      var _this3 = this;
+      var _this = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
         var res;
         return _regenerator.default.wrap(function _callee$(_context) {
@@ -531,13 +518,13 @@ var _default = {
               case 0:
                 _context.prev = 0;
                 _context.next = 3;
-                return _this3.$request.get('/wechat/visitor/count', {
-                  keyWord: _this3.keyWord
+                return _this.$request.get('/wechat/visitor/count', {
+                  keyWord: _this.keyWord
                 });
               case 3:
                 res = _context.sent;
                 if (res.code === 200 && Array.isArray(res.data)) {
-                  _this3.updateTabCounts(res.data);
+                  _this.updateTabCounts(res.data);
                 }
                 _context.next = 10;
                 break;
@@ -555,7 +542,7 @@ var _default = {
     },
     // 更新标签计数
     updateTabCounts: function updateTabCounts(countData) {
-      var _this4 = this;
+      var _this2 = this;
       // 先重置所有标签计数为0
       this.tabs.forEach(function (tab) {
         tab.count = 0;
@@ -563,7 +550,7 @@ var _default = {
 
       // 遍历接口返回的数据数组
       countData.forEach(function (item) {
-        var tab = _this4.tabs.find(function (tab) {
+        var tab = _this2.tabs.find(function (tab) {
           // 处理可能的类型不一致问题
           var tabType = tab.type === null ? null : Number(tab.type);
           var itemType = item.type === null ? null : Number(item.type);
@@ -583,14 +570,14 @@ var _default = {
     },
     // 获取访客列表
     getList: function getList() {
-      var _this5 = this;
+      var _this3 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee2() {
         var currentType, res;
         return _regenerator.default.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                if (_this5.isVip) {
+                if (_this3.isVip) {
                   _context2.next = 3;
                   break;
                 }
@@ -601,21 +588,21 @@ var _default = {
                 return _context2.abrupt("return");
               case 3:
                 _context2.prev = 3;
-                currentType = _this5.tabs[_this5.currentTab].type;
+                currentType = _this3.tabs[_this3.currentTab].type;
                 _context2.next = 7;
-                return _this5.$request.post('/wechat/visitor/list', {
-                  keyWord: _this5.keyWord,
-                  pageNum: _this5.pageNum,
-                  pageSize: _this5.pageSize,
+                return _this3.$request.post('/wechat/visitor/list', {
+                  keyWord: _this3.keyWord,
+                  pageNum: _this3.pageNum,
+                  pageSize: _this3.pageSize,
                   type: currentType
                 });
               case 7:
                 res = _context2.sent;
                 if (res.code === 200) {
-                  if (_this5.pageNum === 1) {
-                    _this5.visitorList = res.rows || [];
+                  if (_this3.pageNum === 1) {
+                    _this3.visitorList = res.rows || [];
                   } else {
-                    _this5.visitorList = [].concat((0, _toConsumableArray2.default)(_this5.visitorList), (0, _toConsumableArray2.default)(res.rows || []));
+                    _this3.visitorList = [].concat((0, _toConsumableArray2.default)(_this3.visitorList), (0, _toConsumableArray2.default)(res.rows || []));
                   }
                 }
                 _context2.next = 14;
@@ -670,32 +657,32 @@ var _default = {
     },
     // 保存标签
     saveTag: function saveTag() {
-      var _this6 = this;
+      var _this4 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee3() {
         var selectedTab, res;
         return _regenerator.default.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                if (_this6.currentVisitor) {
+                if (_this4.currentVisitor) {
                   _context3.next = 2;
                   break;
                 }
                 return _context3.abrupt("return");
               case 2:
                 _context3.prev = 2;
-                selectedTab = _this6.tabs[_this6.selectedTagIndex]; // 调用API更新访客标签
+                selectedTab = _this4.tabs[_this4.selectedTagIndex]; // 调用API更新访客标签
                 _context3.next = 6;
-                return _this6.$request.put('/wechat/visitor/tag', {
-                  visitorId: _this6.currentVisitor.visitorId,
+                return _this4.$request.put('/wechat/visitor/tag', {
+                  visitorId: _this4.currentVisitor.visitorId,
                   type: selectedTab.type
                 });
               case 6:
                 res = _context3.sent;
                 if (res.code === 200) {
-                  _this6.pageNum = 1;
-                  _this6.getList();
-                  _this6.getTabCounts();
+                  _this4.pageNum = 1;
+                  _this4.getList();
+                  _this4.getTabCounts();
                   uni.showToast({
                     title: '标签修改成功',
                     icon: 'success'
@@ -718,7 +705,7 @@ var _default = {
                 });
               case 14:
                 _context3.prev = 14;
-                _this6.closeTagEditPopup();
+                _this4.closeTagEditPopup();
                 return _context3.finish(14);
               case 17:
               case "end":

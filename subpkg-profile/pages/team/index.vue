@@ -1,6 +1,5 @@
-﻿<template>
+<template>
 	<view class="page">
-		<TitleBar title="我的团队" :show-back="true" />
 		<view class="page-container">
 			<!-- Fixed Header Group -->
 			<view class="fixed-header">
@@ -533,7 +532,6 @@
 <script>
 	import config from '@/config/env.js';
 	import buildOssImageUrl from '@/utils/imageUtil.js';
-	import TitleBar from '@/components/title.vue'
 	import {
 		uploadFile
 	} from '@/utils/uploadUtil.js';
@@ -546,7 +544,6 @@
 	};
 	export default {
 		components: {
-			TitleBar
 		},
 		data() {
 			return {
@@ -1469,19 +1466,19 @@
 			position: relative;
 			text {
 				font-size: 30rpx;
-				color: #999;
+				color: #434343;
 				font-weight: 500;
 				margin-bottom: 8rpx;
 				&.active {
-					color: #333;
-					font-weight: 600;
+					color: #1a1a1a;
+					font-weight: 700;
 				}
 			}
 			.active-line {
-				width: 40rpx;
+				width: 34rpx;
 				height: 6rpx;
-				background-color: #F37738;
-				border-radius: 4rpx;
+				background: #ff7a22;
+				border-radius: 999rpx;
 			}
 		}
 	}

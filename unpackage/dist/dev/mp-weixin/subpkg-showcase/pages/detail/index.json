@@ -1,6 +1,5 @@
 {
   "navigationBarTitleText": "橱窗详情",
-  "navigationStyle": "custom",
   "enableShareAppMessage": true,
   "enableShareTimeline": true,
   "usingComponents": {

@@ -24,18 +24,14 @@
 					<text>{{ getBtnText(item) }}</text>
 				</view>
 			</view>
-
-			<!-- 加载中 -->
-			<view v-if="loadingMore" class="load-tip">
-				<text>加载中...</text>
-			</view>
-
-			<!-- 没有更多数据 -->
-			<view v-if="!loadingMore && !currentHasMore && currentList.length > 0" class="load-tip">
-				<text>没有更多了</text>
-			</view>
+			
 		</view>
-
+		
+		<!-- 没有更多数据 -->
+		<view v-if="currentList.length >0" class="load-more-text">
+		    {{ currentHasMore ? (loadingMore ? '加载中...' : '上拉加载更多') : '没有更多了' }}
+		</view>
+		
 		<!-- 空状态 -->
 		<view v-if="currentList.length === 0 && !loading" class="empty-state">
 			<text>暂无数据</text>
@@ -338,16 +334,22 @@ export default {
 }
 
 .empty-state {
-	padding: 100rpx;
+	padding: 30rpx;
 	text-align: center;
 	color: #999999;
 	font-size: 28rpx;
 }
 
 .load-tip {
+	padding: 10rpx 0 40rpx;
+	text-align: center;
+	font-size: 24rpx;
+	color: #999999;
+}
+.load-more-text {
 	padding: 30rpx;
 	text-align: center;
+	font-size: 24rpx;
 	color: #999999;
-	font-size: 26rpx;
 }
 </style>

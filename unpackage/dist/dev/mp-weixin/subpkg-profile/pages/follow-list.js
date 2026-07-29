@@ -110,7 +110,7 @@ var render = function () {
       m0: m0,
     }
   })
-  var g0 = !_vm.loadingMore && !_vm.currentHasMore && _vm.currentList.length > 0
+  var g0 = _vm.currentList.length
   var g1 = _vm.currentList.length === 0 && !_vm.loading
   _vm.$mp.data = Object.assign(
     {},
@@ -165,10 +165,6 @@ exports.default = void 0;
 var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ 47));
 var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ 49));
 var _env = _interopRequireDefault(__webpack_require__(/*! @/config/env.js */ 40));
-//
-//
-//
-//
 //
 //
 //

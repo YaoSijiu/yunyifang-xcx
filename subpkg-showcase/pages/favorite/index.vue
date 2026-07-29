@@ -1,12 +1,5 @@
-﻿<template>
+<template>
 	<view class="favorite-page">
-		<view class="fixed-header">
-			<view class="nav-bar">
-				<view class="back-btn" @click="goBack">‹</view>
-				<text class="page-title">我的收藏</text>
-			</view>
-		</view>
-
 		<scroll-view
 			class="list-scroll"
 			scroll-y
@@ -57,6 +50,7 @@ import request from '@/utils/request.js';
 import env from '@/config/env.js';
 
 export default {
+	components: { },
 	data() {
 		return {
 			pageNum: 1,
@@ -274,7 +268,9 @@ export default {
 
 <style lang="scss" scoped>
 .favorite-page {
-	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
 	background: #f7f7f7;
 	color: #000000;
 }
@@ -290,51 +286,9 @@ button::after {
 	border: 0;
 }
 
-.fixed-header {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	z-index: 20;
-	height: 176rpx;
-	background: #ffffff;
-}
-
-.nav-bar {
-	position: relative;
-	height: 176rpx;
-}
-
-.back-btn {
-	position: absolute;
-	left: 20rpx;
-	top: 82rpx;
-	width: 88rpx;
-	height: 88rpx;
-	font-size: 72rpx;
-	line-height: 78rpx;
-	text-align: center;
-	color: #000000;
-	z-index: 2;
-}
-
-.page-title {
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 95rpx;
-	text-align: center;
-	font-size: 40rpx;
-	line-height: 56rpx;
-	color: #000000;
-}
-
 .list-scroll {
-	position: fixed;
-	left: 0;
-	right: 0;
-	top: 176rpx;
-	bottom: 0;
+	flex: 1;
+	height: 0;
 	background: #f7f7f7;
 }
 

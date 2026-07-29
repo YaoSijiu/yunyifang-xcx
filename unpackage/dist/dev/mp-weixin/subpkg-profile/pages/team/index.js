@@ -306,11 +306,6 @@ var _uploadUtil = __webpack_require__(/*! @/utils/uploadUtil.js */ 67);
 var _excluded = ["role"];
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2.default)(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
-var TitleBar = function TitleBar() {
-  __webpack_require__.e(/*! require.ensure | components/title */ "components/title").then((function () {
-    return resolve(__webpack_require__(/*! @/components/title.vue */ 365));
-  }).bind(null, __webpack_require__)).catch(__webpack_require__.oe);
-};
 var TEAM_OPERATE_ROLES = {
   ADD_MEMBER: 'canAddMember',
   ADD_SEATS: 'canAddSeats',
@@ -318,9 +313,7 @@ var TEAM_OPERATE_ROLES = {
   MANAGE_COLLECTIONS: 'canManageCollections'
 };
 var _default = {
-  components: {
-    TitleBar: TitleBar
-  },
+  components: {},
   data: function data() {
     return {
       ossBaseUrl: _env.default.aliyunUrl,

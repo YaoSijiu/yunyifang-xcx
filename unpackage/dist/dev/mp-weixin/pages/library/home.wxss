@@ -44,10 +44,10 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 14rpx 24rpx 12rpx;
+  padding: 18rpx 24rpx 12rpx;
   background: #ffffff;
 }
-.search-bar.data-v-b6963da8 {
+.search-box.data-v-b6963da8 {
   width: 346rpx;
   height: 66rpx;
   border-radius: 33rpx;
@@ -55,6 +55,7 @@
   display: flex;
   align-items: center;
   padding: 0 20rpx;
+  box-sizing: border-box;
 }
 .search-icon.data-v-b6963da8 {
   width: 30rpx;
@@ -123,6 +124,7 @@
 }
 .secondary-tab.active.data-v-b6963da8 {
   color: #8a8a8a;
+  font-weight: 600;
 }
 .secondary-tab.filter.data-v-b6963da8 {
   margin-left: auto;
