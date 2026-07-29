@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 	<view class="page">
 		<view class="condition-panel">
 			<view class="status-bar" :style="{ height: statusBarHeight + 'px' }"></view>
@@ -232,8 +232,8 @@ export default {
 		}
 	},
 	created() {
-		const systemInfo = uni.getSystemInfoSync();
-		this.statusBarHeight = systemInfo.statusBarHeight || 20;
+		const windowInfo = uni.getWindowInfo();
+		this.statusBarHeight = windowInfo.statusBarHeight || 20;
 		this.loadTaskTypeTabs();
 		this.loadAreaTree();
 		this.resetCards();

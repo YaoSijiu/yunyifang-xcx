@@ -575,8 +575,8 @@ export default {
 			if (typeof wx === 'undefined' || !wx.requestVirtualPayment) {
 				return false;
 			}
-			const systemInfo = wx.getSystemInfoSync();
-			return this.compareVersion(systemInfo.SDKVersion, '2.19.2') >= 0 || wx.canIUse('requestVirtualPayment');
+			const appBaseInfo = uni.getAppBaseInfo();
+			return this.compareVersion(appBaseInfo.SDKVersion, '2.19.2') >= 0 || wx.canIUse('requestVirtualPayment');
 			// #endif
 			// #ifndef MP-WEIXIN
 			return false;

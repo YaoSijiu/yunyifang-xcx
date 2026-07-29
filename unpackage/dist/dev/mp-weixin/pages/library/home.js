@@ -435,8 +435,8 @@ var _default = {
     }
   },
   created: function created() {
-    var systemInfo = uni.getSystemInfoSync();
-    this.statusBarHeight = systemInfo.statusBarHeight || 20;
+    var windowInfo = uni.getWindowInfo();
+    this.statusBarHeight = windowInfo.statusBarHeight || 20;
     this.loadTaskTypeTabs();
     this.loadAreaTree();
     this.resetCards();

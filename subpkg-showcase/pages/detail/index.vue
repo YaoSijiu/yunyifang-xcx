@@ -192,8 +192,8 @@
 		<uni-calendar
 			ref="deliveryCalendar"
 			:insert="false"
-			:date="selectedDeliveryDate || minDeliveryDate"
-			:start-date="minDeliveryDate"
+			:date="selectedDeliveryDate || minDeliveryDate || ''"
+			:start-date="minDeliveryDate || ''"
 			:clear-date="false"
 			@confirm="confirmDeliveryDate"
 		/>

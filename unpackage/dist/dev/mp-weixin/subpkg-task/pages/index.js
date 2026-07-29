@@ -332,13 +332,13 @@ var _default = {
   onLoad: function onLoad(options) {
     var _this3 = this;
     return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
-      var systemInfo;
+      var windowInfo;
       return _regenerator.default.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              systemInfo = uni.getSystemInfoSync();
-              _this3.statusBarHeight = systemInfo.statusBarHeight || 0;
+              windowInfo = uni.getWindowInfo();
+              _this3.statusBarHeight = windowInfo.statusBarHeight || 0;
               _this3.publishType = _this3.normalizePublishType(options && options.publishType);
               _this3.inviteeWxUserId = options && options.inviteeWxUserId ? String(options.inviteeWxUserId) : '';
               _this3.source = options && options.source ? String(options.source) : '';

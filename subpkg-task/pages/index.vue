@@ -174,8 +174,8 @@
 		<uni-calendar
 			ref="deadlineCalendar"
 			:insert="false"
-			:date="form.deadline || todayDate"
-			:start-date="todayDate"
+			:date="form.deadline || todayDate || ''"
+			:start-date="todayDate || ''"
 			:clear-date="false"
 			@confirm="handleDateConfirm"
 		/>
@@ -273,8 +273,8 @@ export default {
 		}
 	},
 	async onLoad(options) {
-		const systemInfo = uni.getSystemInfoSync();
-		this.statusBarHeight = systemInfo.statusBarHeight || 0;
+		const windowInfo = uni.getWindowInfo();
+		this.statusBarHeight = windowInfo.statusBarHeight || 0;
 		this.publishType = this.normalizePublishType(options && options.publishType);
 		this.inviteeWxUserId = options && options.inviteeWxUserId ? String(options.inviteeWxUserId) : '';
 		this.source = options && options.source ? String(options.source) : '';

@@ -101,7 +101,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _globalFont = __webpack_require__(/*! @/utils/globalFont.js */ 34);
 var _default = {
   globalData: {
     launchOptions: null,
@@ -112,7 +111,6 @@ var _default = {
   onLaunch: function onLaunch(options) {
     this.globalData.launchOptions = options || null;
     console.log('App Launch');
-    this.loadGlobalFont();
     this.checkMiniProgramUpdate();
   },
   onShow: function onShow(options) {
@@ -124,7 +122,6 @@ var _default = {
     console.log('App Hide');
   },
   methods: {
-    loadGlobalFont: _globalFont.loadGlobalFont,
     checkMiniProgramUpdate: function checkMiniProgramUpdate() {
       var _this = this;
       console.log("我触发了", wx.canIUse('getUpdateManager'));

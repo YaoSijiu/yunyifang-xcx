@@ -182,8 +182,8 @@ var _default = {
   },
   mounted: function mounted() {
     // 获取状态栏高度
-    var systemInfo = uni.getSystemInfoSync();
-    this.statusBarHeight = systemInfo.statusBarHeight || 20;
+    var windowInfo = uni.getWindowInfo();
+    this.statusBarHeight = windowInfo.statusBarHeight || 20;
   },
   methods: {
     onBackClick: function onBackClick() {

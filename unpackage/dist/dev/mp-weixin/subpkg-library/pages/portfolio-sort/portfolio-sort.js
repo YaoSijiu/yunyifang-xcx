@@ -359,9 +359,10 @@ var _default = {
     }
   },
   onLoad: function onLoad() {
-    var systemInfo = uni.getSystemInfoSync();
-    this.windowHeight = systemInfo.windowHeight || 0;
-    this.isPCDevice = this.checkIsPCDevice(systemInfo);
+    var windowInfo = uni.getWindowInfo();
+    var deviceInfo = uni.getDeviceInfo();
+    this.windowHeight = windowInfo.windowHeight || 0;
+    this.isPCDevice = this.checkIsPCDevice(deviceInfo);
     this.loadData();
   },
   onShow: function onShow() {

@@ -158,9 +158,10 @@
 		},
 
 		onLoad() {
-			const systemInfo = uni.getSystemInfoSync();
-			this.windowHeight = systemInfo.windowHeight || 0;
-			this.isPCDevice = this.checkIsPCDevice(systemInfo);
+			const windowInfo = uni.getWindowInfo();
+			const deviceInfo = uni.getDeviceInfo();
+			this.windowHeight = windowInfo.windowHeight || 0;
+			this.isPCDevice = this.checkIsPCDevice(deviceInfo);
 			this.loadData();
 		},
 		onShow() {

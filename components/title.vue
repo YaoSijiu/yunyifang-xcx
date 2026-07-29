@@ -61,8 +61,8 @@ export default {
 	},
 	mounted() {
 		// 获取状态栏高度
-		const systemInfo = uni.getSystemInfoSync()
-		this.statusBarHeight = systemInfo.statusBarHeight || 20
+		const windowInfo = uni.getWindowInfo()
+		this.statusBarHeight = windowInfo.statusBarHeight || 20
 	},
 	methods: {
 		onBackClick() {

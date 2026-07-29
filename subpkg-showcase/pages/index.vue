@@ -192,8 +192,8 @@ export default {
 		}
 	},
 	async onLoad(options) {
-		const systemInfo = uni.getSystemInfoSync();
-		this.statusBarHeight = systemInfo.statusBarHeight || 0;
+		const windowInfo = uni.getWindowInfo();
+		this.statusBarHeight = windowInfo.statusBarHeight || 0;
 		this.showcaseId = options && options.id ? String(options.id) : '';
 		this.isEdit = !!this.showcaseId || (options && options.mode === 'edit');
 		if (!this.ensureLoggedIn()) {

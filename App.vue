@@ -1,6 +1,4 @@
 <script>
-import { loadGlobalFont } from '@/utils/globalFont.js'
-
 export default {
 	globalData: {
 		launchOptions: null,
@@ -11,7 +9,6 @@ export default {
 	onLaunch: function (options) {
 		this.globalData.launchOptions = options || null;
 		console.log('App Launch')
-		this.loadGlobalFont()
 		this.checkMiniProgramUpdate()
 	},
 	onShow: function (options) {
@@ -23,7 +20,6 @@ export default {
 		console.log('App Hide')
 	},
 	methods: {
-		loadGlobalFont,
 		checkMiniProgramUpdate() {
 			console.log("我触发了",wx.canIUse('getUpdateManager'))
 			console.log(this.globalData.updateManagerInited)

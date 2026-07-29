@@ -2006,13 +2006,13 @@ var _default = {
           _this21.itemSize = data.width; // 假设正方形
           _this21.gridInfo = {
             itemSize: data.width,
-            gap: (_this21.imageGridRect.width - 40 / 750 * uni.getSystemInfoSync().windowWidth - 3 * data.width) / 2 // 估算gap，或者直接读取
+            gap: (_this21.imageGridRect.width - 40 / 750 * uni.getWindowInfo().windowWidth - 3 * data.width) / 2 // 估算gap，或者直接读取
             // 更好的方式是硬编码gap值，因为CSS里写死了
           };
           // 重新计算精确的gap
           // CSS: gap: 12rpx -> 6px (approx)
           // padding: 20rpx -> 10px
-          var rpxToPx = uni.getSystemInfoSync().windowWidth / 750;
+          var rpxToPx = uni.getWindowInfo().windowWidth / 750;
           _this21.gridInfo = {
             itemSize: data.width,
             gap: 12 * rpxToPx,
@@ -2030,7 +2030,7 @@ var _default = {
       // 确保gridInfo已初始化
       if (!this.gridInfo || !this.gridInfo.itemSize) {
         // 尝试再次初始化
-        var rpxToPx = uni.getSystemInfoSync().windowWidth / 750;
+        var rpxToPx = uni.getWindowInfo().windowWidth / 750;
         var query = uni.createSelectorQuery().in(this);
         query.select('.bg-image-item').boundingClientRect(function (data) {
           if (data) {
@@ -3219,9 +3219,8 @@ var _default = {
     },
     // 判断是否是电脑端
     isPC: function isPC() {
-      var systemInfo = uni.getSystemInfoSync();
-      // console.log('systemInfo', systemInfo.platform)
-      return systemInfo.platform === 'windows' || systemInfo.platform === 'mac';
+      var deviceInfo = uni.getDeviceInfo();
+      return deviceInfo.platform === 'windows' || deviceInfo.platform === 'mac';
     },
     // 判断是否已登录
     isLoggedIn: function isLoggedIn() {

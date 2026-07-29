@@ -362,11 +362,12 @@ var _default = {
     }
 
     // 获取状态栏高度
-    var sys = uni.getSystemInfoSync();
-    this.statusBarHeight = sys.statusBarHeight;
+    var windowInfo = uni.getWindowInfo();
+    this.statusBarHeight = windowInfo.statusBarHeight;
 
     // 检测是否为电脑端
-    this.isComputer = sys.platform === 'windows' || sys.platform === 'mac' || sys.platform === 'devtools' || sys.deviceType === 'pc';
+    var deviceInfo = uni.getDeviceInfo();
+    this.isComputer = deviceInfo.platform === 'windows' || deviceInfo.platform === 'mac' || deviceInfo.platform === 'devtools' || deviceInfo.deviceType === 'pc';
 
     // 获取下载权限信息
     this.getDownloadPermissions();

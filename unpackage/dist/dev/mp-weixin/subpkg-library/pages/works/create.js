@@ -1507,8 +1507,8 @@ var _default = {
         this.placeholderIndex = targetIndex;
         // 只在真机上震动，PC端跳过，避免PC端拖拽卡顿
 
-        var systemInfo = uni.getSystemInfoSync();
-        if (systemInfo.platform !== 'windows' && systemInfo.platform !== 'mac') {
+        var deviceInfo = uni.getDeviceInfo();
+        if (deviceInfo.platform !== 'windows' && deviceInfo.platform !== 'mac') {
           uni.vibrateShort();
         }
       }

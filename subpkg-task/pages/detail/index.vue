@@ -261,8 +261,8 @@ export default {
 		}
 	},
 	async onLoad(options) {
-		const systemInfo = uni.getSystemInfoSync();
-		this.statusBarHeight = systemInfo.statusBarHeight || 0;
+		const windowInfo = uni.getWindowInfo();
+		this.statusBarHeight = windowInfo.statusBarHeight || 0;
 		this.channelId = this.resolveChannelId(options);
 		this.taskId = options && options.taskId ? String(options.taskId) : '';
 		this.initPublisherFromRoute(options);

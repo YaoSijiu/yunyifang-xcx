@@ -942,8 +942,8 @@
 			},
 			// 判断是否是电脑端
 			isPC() {
-				const systemInfo = uni.getSystemInfoSync();
-				return systemInfo.platform === 'windows' || systemInfo.platform === 'mac';
+				const deviceInfo = uni.getDeviceInfo();
+				return deviceInfo.platform === 'windows' || deviceInfo.platform === 'mac';
 			},
 
 			// 判断是否已登录

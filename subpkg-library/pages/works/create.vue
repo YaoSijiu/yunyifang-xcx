@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 	<view class="publish-container">
 		<!-- 1. 标题输入 -->
 		<view class="input-section">
@@ -1235,8 +1235,8 @@
 					this.placeholderIndex = targetIndex;
 					// 只在真机上震动，PC端跳过，避免PC端拖拽卡顿
 					// #ifdef MP-WEIXIN
-					const systemInfo = uni.getSystemInfoSync();
-					if (systemInfo.platform !== 'windows' && systemInfo.platform !== 'mac') {
+					const deviceInfo = uni.getDeviceInfo();
+					if (deviceInfo.platform !== 'windows' && deviceInfo.platform !== 'mac') {
 						uni.vibrateShort();
 					}
 					// #endif

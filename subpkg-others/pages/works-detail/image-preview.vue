@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 	<view class="preview-container" :class="{ 'landscape-mode': isLandscapePreview }">
 		<!-- 顶部导航栏 -->
 		<view v-if="!isLandscapePreview" class="status-bar" :style="{ height: statusBarHeight + 'px' }"></view>
@@ -164,11 +164,12 @@
 			}
 
 			// 获取状态栏高度
-			const sys = uni.getSystemInfoSync();
-			this.statusBarHeight = sys.statusBarHeight;
+			const windowInfo = uni.getWindowInfo();
+			this.statusBarHeight = windowInfo.statusBarHeight;
 
 			// 检测是否为电脑端
-			this.isComputer = sys.platform === 'windows' || sys.platform === 'mac' || sys.platform === 'devtools' || sys.deviceType === 'pc';
+			const deviceInfo = uni.getDeviceInfo();
+			this.isComputer = deviceInfo.platform === 'windows' || deviceInfo.platform === 'mac' || deviceInfo.platform === 'devtools' || deviceInfo.deviceType === 'pc';
 
 			// 获取下载权限信息
 			this.getDownloadPermissions();

@@ -11871,58 +11871,6 @@ module.exports = g;
 
 /***/ }),
 
-/***/ 34:
-/*!******************************************************!*\
-  !*** D:/yunyifang/yunyifang-xcx/utils/globalFont.js ***!
-  \******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(wx) {
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.loadGlobalFont = loadGlobalFont;
-var FONT_FAMILY = 'PingFangSC-Medium';
-var FONT_URL = 'https://www.hnpuyuan.com/font/PingFangSC-Medium.woff2';
-var fontLoaded = false;
-var fontLoadPromise = null;
-function loadGlobalFont() {
-  if (fontLoaded) {
-    return Promise.resolve(true);
-  }
-  if (fontLoadPromise) {
-    return fontLoadPromise;
-  }
-  if (typeof wx === 'undefined' || !wx.loadFontFace) {
-    return Promise.resolve(false);
-  }
-  fontLoadPromise = new Promise(function (resolve) {
-    wx.loadFontFace({
-      family: FONT_FAMILY,
-      source: "url(\"".concat(FONT_URL, "\")"),
-      global: true,
-      success: function success() {
-        fontLoaded = true;
-        resolve(true);
-      },
-      fail: function fail(err) {
-        console.warn("".concat(FONT_FAMILY, " font load failed"), err);
-        resolve(false);
-      },
-      complete: function complete() {
-        fontLoadPromise = null;
-      }
-    });
-  });
-  return fontLoadPromise;
-}
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/wx.js */ 1)["default"]))
-
-/***/ }),
-
 /***/ 37:
 /*!**********************************************************************************************************!*\
   !*** ./node_modules/@dcloudio/vue-cli-plugin-uni/packages/vue-loader/lib/runtime/componentNormalizer.js ***!

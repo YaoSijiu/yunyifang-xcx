@@ -377,13 +377,13 @@ var _default = {
   onLoad: function onLoad() {
     var _this = this;
     return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
-      var systemInfo;
+      var windowInfo;
       return _regenerator.default.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              systemInfo = uni.getSystemInfoSync();
-              _this.statusBarHeight = systemInfo.statusBarHeight || 0;
+              windowInfo = uni.getWindowInfo();
+              _this.statusBarHeight = windowInfo.statusBarHeight || 0;
               _context.next = 4;
               return _this.loadCategoryOptions();
             case 4:

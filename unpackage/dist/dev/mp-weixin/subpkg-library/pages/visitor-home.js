@@ -950,8 +950,8 @@ var _default = {
     },
     // 判断是否是电脑端
     isPC: function isPC() {
-      var systemInfo = uni.getSystemInfoSync();
-      return systemInfo.platform === 'windows' || systemInfo.platform === 'mac';
+      var deviceInfo = uni.getDeviceInfo();
+      return deviceInfo.platform === 'windows' || deviceInfo.platform === 'mac';
     },
     // 判断是否已登录
     isLoggedIn: function isLoggedIn() {

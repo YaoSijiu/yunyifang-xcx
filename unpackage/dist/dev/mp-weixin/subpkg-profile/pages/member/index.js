@@ -775,8 +775,8 @@ var _default = {
       if (typeof wx === 'undefined' || !wx.requestVirtualPayment) {
         return false;
       }
-      var systemInfo = wx.getSystemInfoSync();
-      return this.compareVersion(systemInfo.SDKVersion, '2.19.2') >= 0 || wx.canIUse('requestVirtualPayment');
+      var appBaseInfo = uni.getAppBaseInfo();
+      return this.compareVersion(appBaseInfo.SDKVersion, '2.19.2') >= 0 || wx.canIUse('requestVirtualPayment');
     }
   }
 };

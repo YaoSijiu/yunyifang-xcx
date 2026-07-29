@@ -978,8 +978,8 @@ var _default2 = {
     },
     // 判断是否是电脑端
     isPC: function isPC() {
-      var systemInfo = uni.getSystemInfoSync();
-      return systemInfo.platform === 'windows' || systemInfo.platform === 'mac';
+      var deviceInfo = uni.getDeviceInfo();
+      return deviceInfo.platform === 'windows' || deviceInfo.platform === 'mac';
     },
     // 判断是否已登录
     isLoggedIn: function isLoggedIn() {
@@ -1417,7 +1417,7 @@ var _default2 = {
       query.select('.bg-image-item').boundingClientRect(function (data) {
         if (data) {
           _this16.itemSize = data.width;
-          var rpxToPx = uni.getSystemInfoSync().windowWidth / 750;
+          var rpxToPx = uni.getWindowInfo().windowWidth / 750;
           _this16.gridInfo = {
             itemSize: data.width,
             gap: 12 * rpxToPx,
@@ -1435,7 +1435,7 @@ var _default2 = {
       }
       // 确保gridInfo已初始化
       if (!this.gridInfo || !this.gridInfo.itemSize) {
-        var rpxToPx = uni.getSystemInfoSync().windowWidth / 750;
+        var rpxToPx = uni.getWindowInfo().windowWidth / 750;
         var query = uni.createSelectorQuery().in(this);
         query.select('.bg-image-item').boundingClientRect(function (data) {
           if (data) {

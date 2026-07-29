@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 	<view class="user-action-bar-wrapper">
 
 		<!-- 1. 占位块：防止内容被底部固定栏遮挡 (在文档流中占据空间) -->
@@ -827,8 +827,8 @@
 			},
 			// 判断是否是电脑端
 			isPC() {
-				const systemInfo = uni.getSystemInfoSync();
-				return systemInfo.platform === 'windows' || systemInfo.platform === 'mac';
+				const deviceInfo = uni.getDeviceInfo();
+				return deviceInfo.platform === 'windows' || deviceInfo.platform === 'mac';
 			},
 
 			// 判断是否已登录
@@ -1157,7 +1157,7 @@
 				query.select('.bg-image-item').boundingClientRect(data => {
 					if (data) {
 						this.itemSize = data.width;
-						const rpxToPx = uni.getSystemInfoSync().windowWidth / 750;
+						const rpxToPx = uni.getWindowInfo().windowWidth / 750;
 						this.gridInfo = {
 							itemSize: data.width,
 							gap: 12 * rpxToPx,
@@ -1174,7 +1174,7 @@
 				}
 				// 确保gridInfo已初始化
 				if (!this.gridInfo || !this.gridInfo.itemSize) {
-					const rpxToPx = uni.getSystemInfoSync().windowWidth / 750;
+					const rpxToPx = uni.getWindowInfo().windowWidth / 750;
 					const query = uni.createSelectorQuery().in(this);
 					query.select('.bg-image-item').boundingClientRect(data => {
 						if (data) {

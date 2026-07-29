@@ -589,9 +589,9 @@ var _default = {
   },
   onLoad: function onLoad(options) {
     var _uni$getStorageSync;
-    // 获取系统信息
-    var sysInfo = uni.getSystemInfoSync();
-    this.statusBarHeight = sysInfo.statusBarHeight;
+    // 获取状态栏高度
+    var windowInfo = uni.getWindowInfo();
+    this.statusBarHeight = windowInfo.statusBarHeight;
     this.userId = (_uni$getStorageSync = uni.getStorageSync('userInfo')) === null || _uni$getStorageSync === void 0 ? void 0 : _uni$getStorageSync.id;
     this.isShareAccess = options.fromShare === '1';
     // 处理团队模式参数
@@ -1380,8 +1380,8 @@ var _default = {
     },
     // 判断是否是电脑端
     isPC: function isPC() {
-      var systemInfo = uni.getSystemInfoSync();
-      return systemInfo.platform === 'windows' || systemInfo.platform === 'mac';
+      var deviceInfo = uni.getDeviceInfo();
+      return deviceInfo.platform === 'windows' || deviceInfo.platform === 'mac';
     },
     // 判断是否已登录
     isLoggedIn: function isLoggedIn() {

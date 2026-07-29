@@ -172,8 +172,8 @@ export default {
 		}
 	},
 	async onLoad() {
-		const systemInfo = uni.getSystemInfoSync();
-		this.statusBarHeight = systemInfo.statusBarHeight || 0;
+		const windowInfo = uni.getWindowInfo();
+		this.statusBarHeight = windowInfo.statusBarHeight || 0;
 		await this.loadCategoryOptions();
 		this.resetList();
 	},
