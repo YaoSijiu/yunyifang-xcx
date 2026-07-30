@@ -32,11 +32,14 @@
   flex-direction: column;
 }
 .top-area.data-v-d4e6bb4e {
-  height: 238rpx;
-  padding: 0 21rpx 0 23rpx;
+  padding: 0 21rpx 24rpx 23rpx;
   box-sizing: border-box;
   background: #ffffff;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: calc(100rpx + 25px);
 }
 .search-row.data-v-d4e6bb4e {
   display: flex;
@@ -185,6 +188,7 @@ button.data-v-d4e6bb4e::after {
 }
 .task-card-cover.data-v-d4e6bb4e {
   min-height: 679rpx;
+  padding-bottom: 20rpx;
 }
 .task-card-simple.data-v-d4e6bb4e {
   min-height: 320rpx;
@@ -213,42 +217,48 @@ button.data-v-d4e6bb4e::after {
 .task-name.data-v-d4e6bb4e {
   display: block;
   font-size: 32rpx;
+  font-family: PingFang SC;
+  margin-top: 6rpx;
   line-height: 46rpx;
   font-weight: 700;
-  color: #111111;
+  color: #000000;
 }
 .publish-date.data-v-d4e6bb4e {
   display: block;
-  margin-top: 1rpx;
+  margin-top: -6rpx;
   font-size: 20rpx;
-  line-height: 28rpx;
-  color: #b4b4b4;
+  line-height: 48rpx;
+  color: #979797;
 }
 .deadline.data-v-d4e6bb4e {
   position: absolute;
   right: 24rpx;
-  bottom: 15rpx;
+  bottom: 31rpx;
   font-size: 20rpx;
-  line-height: 28rpx;
-  color: #a8a8a8;
+  line-height: 1rpx;
+  color: #979797;
 }
 .cover-image.data-v-d4e6bb4e {
   display: block;
   width: 689rpx;
   height: 380rpx;
   background: #f0f0f0;
+  margin-top: 30rpx;
+  margin-bottom: 20rpx;
 }
 .dash-divider.data-v-d4e6bb4e {
   width: 637rpx;
-  margin: 26rpx auto 33rpx;
+  margin: 26rpx auto 20rpx;
   border-top: 2rpx dashed #d4d4d4;
 }
 .desc.data-v-d4e6bb4e {
   display: block;
   padding: 22rpx 23rpx 0;
-  font-size: 24rpx;
-  line-height: 38rpx;
-  color: #111111;
+  font-family: PingFang SC;
+  font-size: 28rpx;
+  line-height: 16rpx;
+  color: #000000;
+  margin-bottom: 10rpx;
 }
 .task-card-cover .desc.data-v-d4e6bb4e {
   padding-top: 22rpx;
@@ -265,12 +275,10 @@ button.data-v-d4e6bb4e::after {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 20rpx 23rpx 0;
-  padding-top: 18rpx;
-  border-top: 2rpx solid #f1f1f1;
+  margin: 1rpx 23rpx 0;
 }
 .task-card-cover .bottom-row.data-v-d4e6bb4e {
-  margin-top: 27rpx;
+  margin-top: 0rpx;
 }
 .participant-area.data-v-d4e6bb4e {
   display: flex;
@@ -308,14 +316,32 @@ button.data-v-d4e6bb4e::after {
   color: #b4b4b4;
 }
 .task-share-btn.data-v-d4e6bb4e {
-  width: 58rpx;
-  height: 54rpx;
+  width: 39rpx;
+  height: 41rpx;
   margin-left: 18rpx;
   border-radius: 18rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+}
+.task-action-btn.data-v-d4e6bb4e {
+  width: 150rpx;
+  height: 48rpx;
+  padding: 0 24rpx;
+  margin-left: 12rpx;
+  border-radius: 27rpx;
+  background: #f37738;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  line-height: 34rpx;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+.task-action-btn.data-v-d4e6bb4e::after {
+  border: 0;
 }
 .share-icon.data-v-d4e6bb4e {
   width: 34rpx;

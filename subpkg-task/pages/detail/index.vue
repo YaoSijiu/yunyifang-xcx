@@ -1,12 +1,6 @@
 <template>
 	<view class="task-detail-page">
-		<TitleBar title="任务详情" :fixed="true">
-			<template #right>
-				<button class="capsule-btn" :open-type="shareOpenType" @click.stop="handleShareClick"></button>
-			</template>
-		</TitleBar>
-
-		<scroll-view scroll-y class="page-scroll" :style="pageScrollStyle">
+		<scroll-view scroll-y class="page-scroll">
 			<view class="page-canvas">
 				<view v-if="loading" class="state-card">
 					<text>加载中...</text>
@@ -113,20 +107,22 @@
 				<text class="quote-tip-mark">?</text>
 				<text class="quote-tip-text">需要乙方报价</text>
 			</view>
-			<button
-				class="apply-btn"
-				:class="{
-					'apply-btn-quoted': detail.canQuote,
-					'apply-btn-disabled': applyButtonDisabled
-				}"
-				:disabled="applyButtonDisabled"
-				@click="handleApply"
-			>
-				{{ actionButtonText }}
-			</button>
-			<button class="share-btn" :open-type="shareOpenType" @click.stop="handleShareClick">
-				<image class="share-icon" src="/static/profile/橱窗分享按钮.svg" mode="aspectFit"></image>
-			</button>
+			<view class="bottom-bar-right">
+				<button
+					class="apply-btn"
+					:class="{
+						'apply-btn-quoted': detail.canQuote,
+						'apply-btn-disabled': applyButtonDisabled
+					}"
+					:disabled="applyButtonDisabled"
+					@click="handleApply"
+				>
+					{{ actionButtonText }}
+				</button>
+				<button class="share-btn" :open-type="shareOpenType" @click.stop="handleShareClick">
+					<image class="share-icon" src="/static/profile/橱窗分享按钮.svg" mode="aspectFit"></image>
+				</button>
+			</view>
 		</view>
 
 		<view v-if="showQuotePopup" class="popup-mask" @click="closeQuotePopup">
@@ -159,8 +155,6 @@
 <script>
 import request from '@/utils/request.js';
 import env from '@/config/env.js';
-import TitleBar from '@/components/title.vue';
-
 const DEFAULT_AVATAR = '/static/yunyiku/avatar.png';
 
 const createDefaultDetail = () => ({
@@ -186,12 +180,9 @@ const createDefaultDetail = () => ({
 });
 
 export default {
-	components: {
-		TitleBar
-	},
+	components: {},
 	data() {
 		return {
-			statusBarHeight: 0,
 			currentPoster: 0,
 			loading: false,
 			loadFailed: false,
@@ -206,17 +197,13 @@ export default {
 			applySubmitting: false,
 			quoteSubmitting: false,
 			loginPromptVisible: false,
+			pendingAutoAction: '',
 			quoteForm: {
 				price: ''
 			}
 		};
 	},
 	computed: {
-		pageScrollStyle() {
-			return {
-				height: `calc(100vh - ${this.statusBarHeight}px - 44px)`
-			};
-		},
 		posterIndexText() {
 			const total = this.detail.posters.length || 1;
 			const current = Math.min(this.currentPoster + 1, total);
@@ -261,11 +248,10 @@ export default {
 		}
 	},
 	async onLoad(options) {
-		const windowInfo = uni.getWindowInfo();
-		this.statusBarHeight = windowInfo.statusBarHeight || 0;
 		this.channelId = this.resolveChannelId(options);
 		this.taskId = options && options.taskId ? String(options.taskId) : '';
 		this.initPublisherFromRoute(options);
+		this.pendingAutoAction = options && options.autoAction ? String(options.autoAction) : '';
 		// #ifdef MP-WEIXIN
 		if (this.isLoggedIn) {
 			uni.showShareMenu({
@@ -281,6 +267,7 @@ export default {
 			return;
 		}
 		await this.fetchDetail();
+		this.triggerAutoAction();
 	},
 	onShareAppMessage() {
 		return {
@@ -677,6 +664,31 @@ export default {
 		},
 		handleShareClick() {
 			this.ensureLoggedIn();
+		},
+		triggerAutoAction() {
+			if (!this.pendingAutoAction) {
+				return;
+			}
+			const action = this.pendingAutoAction;
+			this.pendingAutoAction = '';
+			if (this.loadFailed || this.isOwnTask) {
+				return;
+			}
+			if (action === 'quote' && this.detail.canQuote) {
+				if (!this.ensureLoggedIn()) {
+					return;
+				}
+				if (!this.hasQuoted && !this.quoteSubmitting) {
+					this.showQuotePopup = true;
+				}
+			} else if (action === 'accept' && !this.detail.canQuote) {
+				if (!this.ensureLoggedIn()) {
+					return;
+				}
+				if (!this.applyButtonDisabled) {
+					this.handleApply();
+				}
+			}
 		}
 	}
 };
@@ -689,20 +701,6 @@ export default {
 	overflow: hidden;
 }
 
-.capsule-btn {
-	width: 197rpx;
-	height: 65rpx;
-	padding: 0;
-	margin: 0;
-	border: 1rpx solid #e8e8e8;
-	border-radius: 33rpx;
-	background: #ffffff;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.capsule-btn::after,
 .apply-btn::after,
 .share-btn::after,
 .retry-btn::after,
@@ -782,6 +780,7 @@ export default {
 	line-height: 68rpx;
 	color: #ffffff;
 }
+
 
 .publisher-card {
 	background: #ffffff;
@@ -1107,13 +1106,18 @@ export default {
 	box-shadow: 0 -1rpx 0 0 #dddddd;
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
 	box-sizing: border-box;
+}
+
+.bottom-bar-right {
+	display: flex;
+	align-items: center;
 }
 
 .quote-tip {
 	display: flex;
 	align-items: center;
-	margin-right: auto;
 }
 
 .quote-tip-mark {
@@ -1168,6 +1172,7 @@ export default {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	flex-shrink: 0;
 }
 
 .share-icon {

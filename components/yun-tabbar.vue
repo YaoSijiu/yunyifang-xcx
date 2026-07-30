@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 	<view class="tabbar-container">
 		<view class="tabbar">
 			<view
@@ -12,7 +12,11 @@
 				<image
 					:src="selected === index ? item.selectedIconPath : item.iconPath"
 					class="icon"
-					:class="{ 'mid-btn': index === 2 }"
+					:class="{ 
+						'home-icon': index === 0,
+						'square-icon': index === 1,
+						'mid-btn': index === 2
+					}"
 				/>
 				<text class="text" :class="{ active: selected === index, 'mid-text': index === 2 }">
 					{{ item.text }}
@@ -305,7 +309,7 @@ export default {
 
 .hump-bg {
 	position: absolute;
-	top: -18rpx;
+	top: -23rpx;
 	left: 50%;
 	transform: translateX(-50%);
 	width: 96rpx;
@@ -313,24 +317,64 @@ export default {
 	border-radius: 50%;
 	background: #ffffff;
 	z-index: 1;
+	
+	overflow: hidden;
+}
+
+.hump-bg::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 50%;
+	transform: translateX(-50%);
+	
+	width: 96rpx;
+	height: 96rpx;
+	border-radius: 50%;
+	
+	border: 3rpx solid #DDDDDD;
+	border-bottom-color: transparent;
+	border-left-color:transparent;
+	border-right-color: transparent;
+	
+	transform: translateX(-50%);
+	
+	box-sizing: border-box;
 }
 
 .icon {
 	width: 50rpx;
 	height: 50rpx;
-	margin-bottom: 4rpx;
+	margin-top: 0rpx;
+	margin-bottom: 8rpx;
+	position: relative;
+	z-index: 2;
+}
+.square-icon {
+	
+	width: 44rpx;
+	height: 36rpx;
+	margin-top: 8rpx;
+	margin-bottom: 13rpx;
+	position: relative;
+	z-index: 2;
+}
+.home-icon {
+	width: 42rpx;
+	height: 42rpx;
+	margin-top: 4rpx;
+	margin-bottom: 10rpx;
 	position: relative;
 	z-index: 2;
 }
 
 .mid-btn {
 	position: absolute;
-	top: -10rpx;
+	top: -15rpx;
 	left: 50%;
 	transform: translateX(-50%);
 	width: 72rpx;
 	height: 72rpx;
-	margin-bottom: 0;
 }
 
 .text {
@@ -349,7 +393,7 @@ export default {
 
 .mid-text {
 	position: absolute;
-	bottom: 6rpx;
+	bottom: 13rpx;
 }
 
 .safe-area-spacer {

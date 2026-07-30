@@ -69,16 +69,15 @@
 						</view>
 						<text v-if="item.deadlineText" class="deadline">{{ item.deadlineText }}</text>
 					</view>
-
+					<view v-if="!item.hasCover" class="dash-divider"></view>
+					<text class="desc">{{ item.desc }}</text>
 					<image
 						v-if="item.hasCover"
 						class="cover-image"
 						:src="item.cover"
 						mode="aspectFill"
 					></image>
-					<view v-else class="dash-divider"></view>
-
-					<text class="desc">{{ item.desc }}</text>
+					
 					<text class="budget">{{ item.price }}</text>
 
 					<view class="bottom-row">
@@ -97,13 +96,20 @@
 							</view>
 						</view>
 						<button
+							class="task-action-btn"
+							:class="{ 'task-action-btn-quote': item.participantType === 'quote', 'task-action-btn-accept': item.participantType === 'accept' }"
+							@click.stop="handleQuickAction(item)"
+						>
+							{{ item.participantType === 'quote' ? '报价' : '接单' }}
+						</button>
+						<button
 							class="task-share-btn"
 							open-type="share"
 							:data-channel-id="item.channelId"
 							:data-task-title="item.desc"
 							@click.stop="handleShareTask(item)"
 						>
-							<image class="share-icon" src="/static/profile/橱窗分享按钮.svg" mode="aspectFit"></image>
+							<image class="share-icon" src="/static/profile/橱窗分享按钮.png" mode="aspectFit"></image>
 						</button>
 					</view>
 				</view>
@@ -485,7 +491,7 @@ export default {
 		formatPrice(budgetAmount, isOtherPartyQuote) {
 			const hasAmount = budgetAmount !== '' && budgetAmount !== null && budgetAmount !== undefined;
 			if (Number(isOtherPartyQuote) === 1) {
-				return hasAmount ? `￥${budgetAmount}` : '设计师报价';
+				return hasAmount ? `￥${budgetAmount}` : '￥？';
 			}
 			if (!hasAmount) {
 				return '预算待定';
@@ -537,6 +543,19 @@ export default {
 			}
 			this.goDetail(item);
 		},
+		handleQuickAction(item) {
+			if (!item || !item.channelId) {
+				uni.showToast({
+					title: '任务信息缺失',
+					icon: 'none'
+				});
+				return;
+			}
+			const actionType = item.participantType === 'quote' ? 'quote' : 'accept';
+			uni.navigateTo({
+				url: `/subpkg-task/pages/detail/index?id=${item.channelId}&channelId=${item.channelId}&taskId=${item.taskId}&autoAction=${actionType}`
+			});
+		},
 		handleShareTask() {
 			// open-type="share" 触发原生分享；这里仅阻止卡片点击冒泡。
 		}
@@ -563,11 +582,15 @@ export default {
 }
 
 .top-area {
-	height: 238rpx;
-	padding: 0 21rpx 0 23rpx;
+	padding: 0 21rpx 24rpx 23rpx; 
 	box-sizing: border-box;
 	background: #ffffff;
 	position: relative;
+	
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end; 
+	min-height: calc(100rpx + var(--status-bar-height)); 
 }
 
 .search-row {
@@ -740,6 +763,7 @@ button::after {
 
 .task-card-cover {
 	min-height: 679rpx;
+	padding-bottom: 20rpx;
 }
 
 .task-card-simple {
@@ -773,26 +797,28 @@ button::after {
 .task-name {
 	display: block;
 	font-size: 32rpx;
+	font-family: PingFang SC;
+	margin-top: 6rpx;
 	line-height: 46rpx;
 	font-weight: 700;
-	color: #111111;
+	color: #000000;
 }
 
 .publish-date {
 	display: block;
-	margin-top: 1rpx;
+	margin-top: -6rpx;
 	font-size: 20rpx;
-	line-height: 28rpx;
-	color: #b4b4b4;
+	line-height: 48rpx;
+	color: #979797;
 }
 
 .deadline {
 	position: absolute;
 	right: 24rpx;
-	bottom: 15rpx;
+	bottom: 31rpx;
 	font-size: 20rpx;
-	line-height: 28rpx;
-	color: #a8a8a8;
+	line-height: 1rpx;
+	color: #979797;
 }
 
 .cover-image {
@@ -800,20 +826,24 @@ button::after {
 	width: 689rpx;
 	height: 380rpx;
 	background: #f0f0f0;
+	margin-top: 30rpx;
+	margin-bottom: 20rpx;
 }
 
 .dash-divider {
 	width: 637rpx;
-	margin: 26rpx auto 33rpx;
+	margin: 26rpx auto 20rpx;
 	border-top: 2rpx dashed #d4d4d4;
 }
 
 .desc {
 	display: block;
 	padding: 22rpx 23rpx 0;
-	font-size: 24rpx;
-	line-height: 38rpx;
-	color: #111111;
+	font-family: PingFang SC;
+	font-size: 28rpx;
+	line-height: 16rpx;
+	color: #000000;
+	margin-bottom: 10rpx;
 }
 
 .task-card-cover .desc {
@@ -833,13 +863,11 @@ button::after {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	margin: 20rpx 23rpx 0;
-	padding-top: 18rpx;
-	border-top: 2rpx solid #f1f1f1;
+	margin: 1rpx 23rpx 0;
 }
 
 .task-card-cover .bottom-row {
-	margin-top: 27rpx;
+	margin-top: 0rpx;
 }
 
 .participant-area {
@@ -883,15 +911,34 @@ button::after {
 }
 
 .task-share-btn {
-	width: 58rpx;
-	height: 54rpx;
+	width: 39rpx;
+	height: 41rpx;
 	margin-left: 18rpx;
 	border-radius: 18rpx;
-	// border: 1rpx dashed #d7d7d7;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
+}
+
+.task-action-btn {
+	width: 150rpx;
+	height: 48rpx;
+	padding: 0 24rpx;
+	margin-left: 12rpx;
+	border-radius: 27rpx;
+	background: #f37738;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 24rpx;
+	line-height: 34rpx;
+	color: #ffffff;
+	flex-shrink: 0;
+}
+
+.task-action-btn::after {
+	border: 0;
 }
 
 .share-icon {

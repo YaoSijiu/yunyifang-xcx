@@ -1,4 +1,4 @@
-<template>
+﻿<template>
 	<view class="login-container">
 		<!-- Logo区域 -->
 		<view class="logo-box">
@@ -101,28 +101,49 @@
 		methods: {
 			redirectAfterLogin() {
 				const redirect = uni.getStorageSync('login_redirect');
-				if (redirect) {
-					uni.removeStorageSync('login_redirect');
-					// tabBar 页面不能带 query，非 tabBar 页面保留完整参数返回
-					const isTab = ['/pages/library/home',
-						'/pages/square/index',
-						'/pages/publish/index',
-						'/pages/library/index',
-						'/pages/profile/index'
-					].some(
-						path => redirect.indexOf(path) > -1);
-					if (isTab) {
-						uni.switchTab({
-							url: redirect.split('?')[0]
-						});
-					} else {
-						uni.redirectTo({
-							url: redirect
-						});
-					}
-				} else {
+				uni.removeStorageSync('login_redirect');
+				const tabBarPages = ['/pages/library/home',
+					'/pages/square/index',
+					'/pages/publish/index',
+					'/pages/library/index',
+					'/pages/profile/index'
+				];
+				const isTab = redirect && tabBarPages.some(
+					path => redirect.indexOf(path) > -1);
+
+				if (isTab) {
+					// tabBar 页面：switchTab 会自动清除非 tabBar 页面
 					uni.switchTab({
-						url: '/pages/library/home'
+						url: redirect.split('?')[0]
+					});
+				} else {
+					// 非 tabBar 页面：先 navigateBack 回到原页面（触发 onShow 刷新为已登录状态）
+					// 再 redirectTo 跳转到目标页，替换而非叠加，避免栈中残留未登录版本
+					uni.navigateBack({
+						delta: 1,
+						success: () => {
+							if (redirect) {
+								uni.redirectTo({
+									url: redirect
+								});
+							} else {
+								uni.switchTab({
+									url: '/pages/library/home'
+								});
+							}
+						},
+						fail: () => {
+							// 兜底：navigateBack 失败时直接跳转
+							if (redirect) {
+								uni.redirectTo({
+									url: redirect
+								});
+							} else {
+								uni.switchTab({
+									url: '/pages/library/home'
+								});
+							}
+						}
 					});
 				}
 			},
@@ -162,10 +183,8 @@
 						}).then(res => {
 							uni.hideLoading();
 							const data = res.data || {};
-							// 老用户：直接登录成功，跳转到主页
+							// 老用户：直接登录成功
 							if (data.token && data.isNewUser === false) {
-								// 清除可能残留的登录重定向地址，老用户直接回主页
-								uni.removeStorageSync('login_redirect');
 								// 保存 token 和用户信息
 								uni.setStorageSync('token', data.token);
 								if (data.wxUser) {
@@ -188,9 +207,7 @@
 									icon: 'success'
 								});
 								setTimeout(() => {
-									uni.switchTab({
-										url: '/pages/library/home'
-									});
+									this.redirectAfterLogin();
 								}, 1500);
 							} else if (data.isNewUser === true) {
 								// 新用户：打开完善信息弹窗

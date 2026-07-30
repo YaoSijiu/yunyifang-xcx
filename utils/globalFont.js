@@ -1,5 +1,5 @@
 const FONT_FAMILY = 'PingFangSC-Medium';
-const FONT_URL = 'https://www.hnpuyuan.com/font/PingFangSC-Medium.woff2';
+const FONT_URL = 'https://kkm.hnpuyuan.com/font/PingFangSC-Medium.woff2';
 
 let fontLoaded = false;
 let fontLoadPromise = null;

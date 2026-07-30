@@ -1063,7 +1063,7 @@ button::after {
 }
 
 .page-canvas {
-	min-height: 2087rpx;
+	min-height: calc(100vh + 1rpx);
 	padding-bottom: calc(98rpx + env(safe-area-inset-bottom));
 	box-sizing: border-box;
 }
@@ -1091,14 +1091,12 @@ button::after {
 
 .hero-card {
 	position: relative;
-	height: 858rpx;
 	background: #ffffff;
+	padding-bottom: 30rpx;
 }
 
 .poster-area {
-	position: absolute;
-	left: 0;
-	top: 178rpx;
+	position: relative;
 	width: 750rpx;
 	height: 480rpx;
 	background: #f7f7f7;
@@ -1137,12 +1135,11 @@ button::after {
 }
 
 .showcase-title {
-	position: absolute;
-	left: 32rpx;
-	top: 680rpx;
+	display: block;
+	margin: 24rpx 32rpx 0;
 	max-width: 650rpx;
-	font-size: 36rpx;
-	line-height: 50rpx;
+	font-size: 34rpx;
+	line-height: 48rpx;
 	color: #000000;
 	white-space: nowrap;
 	overflow: hidden;
@@ -1150,10 +1147,7 @@ button::after {
 }
 
 .hero-guarantees {
-	position: absolute;
-	left: 30rpx;
-	right: 30rpx;
-	top: 739rpx;
+	margin: 16rpx 30rpx 0;
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8rpx;
@@ -1173,9 +1167,7 @@ button::after {
 }
 
 .hero-empty {
-	position: absolute;
-	left: 30rpx;
-	top: 739rpx;
+	margin: 16rpx 30rpx 0;
 	height: 36rpx;
 	font-size: 20rpx;
 	line-height: 36rpx;
@@ -1183,11 +1175,7 @@ button::after {
 }
 
 .deal-row {
-	position: absolute;
-	left: 27rpx;
-	right: 30rpx;
-	top: 781rpx;
-	height: 58rpx;
+	margin: 24rpx 30rpx 0;
 	display: flex;
 	align-items: center;
 }
@@ -1199,19 +1187,20 @@ button::after {
 }
 
 .sold-wrap {
-	margin-left: 34rpx;
+	margin-left: 20rpx;
 	display: flex;
 	align-items: center;
 	font-size: 24rpx;
 	line-height: 34rpx;
 	color: rgba(0, 0, 0, 0.4);
+	flex: 1;
 }
 
 .sold-icon {
 	position: relative;
 	width: 32rpx;
 	height: 28rpx;
-	margin-right: 18rpx;
+	margin-right: 8rpx;
 	background: #545454;
 	border-radius: 50%;
 }
@@ -1229,15 +1218,13 @@ button::after {
 }
 
 .favorite-btn {
-	position: absolute;
-	right: 0;
-	top: 0;
-	width: 168rpx;
+	margin-left: auto;
+	width: 140rpx;
 	height: 48rpx;
 	border: 1rpx solid #5a8fea;
 	border-radius: 36rpx;
 	color: #5a8fea;
-	font-size: 28rpx;
+	font-size: 26rpx;
 	line-height: 48rpx;
 	background: #ffffff;
 }
@@ -1253,49 +1240,53 @@ button::after {
 
 .seller-card {
 	position: relative;
-	height: 232rpx;
 	margin-top: 16rpx;
 	background: #ffffff;
+	padding: 30rpx 32rpx;
 }
 
 .seller-avatar {
 	position: absolute;
 	left: 32rpx;
-	top: 36rpx;
-	width: 83rpx;
-	height: 83rpx;
+	top: 30rpx;
+	width: 80rpx;
+	height: 80rpx;
 	border-radius: 50%;
 	background: #d8d8d8;
 }
 
 .seller-name {
-	position: absolute;
-	left: 150rpx;
-	top: 35rpx;
+	margin-left: 100rpx;
 	font-size: 32rpx;
 	line-height: 45rpx;
 	color: #000000;
+	display: inline-block;
+	vertical-align: middle;
+	max-width: 280rpx;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .seller-location {
-	position: absolute;
-	left: 316rpx;
-	top: 36rpx;
-	display: flex;
+	display: inline-flex;
 	align-items: center;
-	font-size: 20rpx;
-	line-height: 66rpx;
-	color: #000000;
+	margin-left: 12rpx;
+	vertical-align: middle;
+	font-size: 22rpx;
+	line-height: 45rpx;
+	color: #666666;
 }
 
 .location-icon {
 	position: relative;
 	width: 20rpx;
 	height: 25rpx;
-	margin-right: 16rpx;
+	margin-right: 8rpx;
 	border-radius: 50% 50% 50% 0;
 	background: #000000;
 	transform: rotate(-45deg);
+	flex-shrink: 0;
 }
 
 .location-icon::after {
@@ -1311,14 +1302,14 @@ button::after {
 
 .follow-btn {
 	position: absolute;
-	right: 45rpx;
-	top: 36rpx;
-	width: 147rpx;
+	right: 32rpx;
+	top: 30rpx;
+	width: 120rpx;
 	height: 48rpx;
 	border: 1rpx solid #ff8b5a;
 	border-radius: 36rpx;
 	color: #ff8b5a;
-	font-size: 28rpx;
+	font-size: 26rpx;
 	line-height: 48rpx;
 	background: #ffffff;
 }
@@ -1329,9 +1320,8 @@ button::after {
 }
 
 .seller-rating {
-	position: absolute;
-	left: 149rpx;
-	top: 90rpx;
+	margin-left: 100rpx;
+	margin-top: 8rpx;
 	display: flex;
 	align-items: center;
 }
@@ -1361,31 +1351,24 @@ button::after {
 }
 
 .seller-divider {
-	position: absolute;
-	left: 28rpx;
-	right: 27rpx;
-	top: 154rpx;
+	margin-top: 20rpx;
 	border-top: 2rpx dashed #dcdcdc;
 }
 
 .seller-stats {
-	position: absolute;
-	left: 32rpx;
-	right: 36rpx;
-	bottom: 25rpx;
+	margin-top: 16rpx;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	font-size: 26rpx;
-	line-height: 36rpx;
+	font-size: 24rpx;
+	line-height: 34rpx;
 	color: #979797;
 }
 
 .description-card {
-	height: 322rpx;
 	margin-top: 16rpx;
 	background: #ffffff;
-	padding: 33rpx 32rpx 0 38rpx;
+	padding: 30rpx 32rpx;
 	box-sizing: border-box;
 }
 
@@ -1397,18 +1380,17 @@ button::after {
 
 .description-text {
 	display: block;
-	margin-top: 50rpx;
+	margin-top: 24rpx;
 	font-size: 26rpx;
-	line-height: 36rpx;
+	line-height: 42rpx;
 	color: #979797;
 	white-space: pre-wrap;
 }
 
 .review-card {
-	min-height: 530rpx;
 	margin-top: 16rpx;
 	background: #ffffff;
-	padding: 33rpx 30rpx 0 32rpx;
+	padding: 30rpx 32rpx;
 	box-sizing: border-box;
 	overflow: hidden;
 }
@@ -1416,7 +1398,7 @@ button::after {
 .review-tabs {
 	display: inline-flex;
 	align-items: center;
-	margin-top: 29rpx;
+	margin-top: 24rpx;
 }
 
 .review-tab {
@@ -1460,15 +1442,16 @@ button::after {
 .comment-item {
 	position: relative;
 	display: flex;
-	margin-top: 57rpx;
+	margin-top: 40rpx;
 }
 
 .comment-avatar {
-	width: 84rpx;
-	height: 84rpx;
+	width: 72rpx;
+	height: 72rpx;
 	border-radius: 50%;
-	margin-right: 30rpx;
+	margin-right: 20rpx;
 	background: #eeeeee;
+	flex-shrink: 0;
 }
 
 .comment-content {
@@ -1478,21 +1461,19 @@ button::after {
 
 .comment-head {
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
 	justify-content: space-between;
-	height: 44rpx;
 }
 
 .comment-name {
-	font-size: 32rpx;
-	line-height: 44rpx;
+	font-size: 30rpx;
+	line-height: 42rpx;
 	color: #000000;
 }
 
 .comment-time {
-	padding-top: 16rpx;
-	font-size: 26rpx;
-	line-height: 36rpx;
+	font-size: 24rpx;
+	line-height: 34rpx;
 	color: #979797;
 }
 
@@ -1500,13 +1481,13 @@ button::after {
 	display: flex;
 	align-items: center;
 	margin-top: 4rpx;
-	height: 36rpx;
+	height: 32rpx;
 }
 
 .comment-star {
-	margin-right: 6rpx;
-	font-size: 30rpx;
-	line-height: 36rpx;
+	margin-right: 4rpx;
+	font-size: 24rpx;
+	line-height: 32rpx;
 	color: #d6d6d6;
 }
 
@@ -1516,23 +1497,24 @@ button::after {
 
 .comment-text {
 	display: block;
-	margin-top: 34rpx;
+	margin-top: 16rpx;
 	font-size: 26rpx;
 	line-height: 42rpx;
-	color: #979797;
+	color: #666666;
 }
 
 .comment-images {
 	display: flex;
 	flex-wrap: wrap;
-	margin-top: 27rpx;
-	gap: 22rpx;
+	margin-top: 16rpx;
+	gap: 16rpx;
 }
 
 .comment-image {
-	width: 130rpx;
-	height: 130rpx;
+	width: 140rpx;
+	height: 140rpx;
 	background: #f0f0f0;
+	border-radius: 8rpx;
 }
 
 .bottom-space {
@@ -1546,6 +1528,7 @@ button::after {
 	bottom: 0;
 	z-index: 18;
 	height: 98rpx;
+	padding: 0 32rpx;
 	padding-bottom: env(safe-area-inset-bottom);
 	background: #ffffff;
 	box-shadow: 0 -1rpx 0 #dddddd;
@@ -1555,14 +1538,12 @@ button::after {
 }
 
 .bottom-share-btn {
-	position: absolute;
-	left: 32rpx;
-	top: 20rpx;
 	width: 56rpx;
 	height: 56rpx;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	flex-shrink: 0;
 }
 
 .bottom-share-icon {
@@ -1573,17 +1554,16 @@ button::after {
 
 .buy-btn,
 .hire-btn {
-	position: absolute;
-	top: 17rpx;
-	width: 220rpx;
+	width: 200rpx;
 	height: 64rpx;
 	border-radius: 36rpx;
-	font-size: 30rpx;
+	font-size: 28rpx;
 	line-height: 64rpx;
 }
 
 .buy-btn {
-	left: 242rpx;
+	margin-left: auto;
+	margin-right: 20rpx;
 	border: 1rpx solid #f37738;
 	color: #f37738;
 	background: #ffffff;
@@ -1594,7 +1574,6 @@ button::after {
 }
 
 .hire-btn {
-	left: 500rpx;
 	color: #ffffff;
 	background: #f37738;
 }
