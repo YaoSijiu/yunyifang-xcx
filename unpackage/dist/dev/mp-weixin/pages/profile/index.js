@@ -232,14 +232,6 @@ var _default = {
       isTeamMode: false,
       loggedIn: false,
       menuItems: [{
-        icon: '/static/profile/标签.png',
-        text: '标签',
-        url: '/subpkg-library/pages/tags/edit'
-      }, {
-        icon: '/static/profile/访客.png',
-        text: '访客',
-        url: '/subpkg-profile/pages/visitor/index'
-      }, {
         icon: '/static/profile/外包.svg',
         text: '我的外包',
         url: '/subpkg-profile/pages/outsourcing/index'
@@ -252,29 +244,38 @@ var _default = {
         text: '提现中心',
         url: '/subpkg-profile/pages/withdrawalcenter/index'
       }, {
-        icon: '/static/profile/团队.png',
-        text: '团队',
-        url: '/subpkg-profile/pages/team/index'
-      }, {
         icon: '/static/profile/橱窗.png',
         text: '我的橱窗',
         url: '/subpkg-showcase/pages/my/index'
       }, {
-        icon: '/static/profile/收藏.svg',
-        text: '收藏',
-        url: '/subpkg-showcase/pages/favorite/index'
+        icon: '/static/profile/团队.png',
+        text: '团队',
+        url: '/subpkg-profile/pages/team/index'
       }, {
         icon: '/static/profile/会员中心.png',
         text: '会员中心',
         url: '/subpkg-profile/pages/member/index'
       }, {
-        icon: '/static/profile/问题反馈.png',
-        text: '问题反馈',
-        url: '/subpkg-profile/pages/feedback/index'
+        icon: '/static/profile/收藏.svg',
+        text: '收藏',
+        url: '/subpkg-showcase/pages/favorite/index'
       }, {
         icon: '/static/profile/设置.png',
         text: '设置',
         url: '/subpkg-profile/pages/settings/index'
+      }],
+      menuItemssub: [{
+        icon: '/static/profile/标签.png',
+        text: '标签',
+        url: '/subpkg-library/pages/tags/edit'
+      }, {
+        icon: '/static/profile/访客.png',
+        text: '访客',
+        url: '/subpkg-profile/pages/visitor/index'
+      }, {
+        icon: '/static/profile/问题反馈.png',
+        text: '问题反馈',
+        url: '/subpkg-profile/pages/feedback/index'
       }]
     };
   },
@@ -531,7 +532,7 @@ var _default = {
       });
     },
     goToEdit: function goToEdit() {
-      if (!this.ensureLoggedIn('/subpkg-profile/pages/edit')) {
+      if (!this.ensureLoggedIn('/pages/profile/index')) {
         return;
       }
       if (this.isTeamMode) {

@@ -11,7 +11,7 @@
 						@click="changeTab(tab.value)"
 					>
 						<text>{{ tab.label }}</text>
-						<view v-if="activeTab === tab.value" class="active-mark"></view>
+						<image v-if="activeTab === tab.value" class="active-mark" src="/static/common/选中条.png" />
 					</view>
 				</view>
 			</scroll-view>
@@ -62,8 +62,64 @@
 						<view class="detail-head" @click.stop="toggleExpand(item.id)">
 							<view class="detail-title-wrap">
 								<text class="detail-title">{{ item.taskTitle }}</text>
-								<view class="detail-view-btn" @click.stop="openWithdrawalDetail(item)">查看详情</view>
+								<view
+									class="detail-view-btn"
+									:class="{ 'detail-view-btn-collapse': item.taskDetailVisible }"
+									@click.stop="toggleTaskDetail(item)"
+								>{{ item.taskDetailVisible ? '收起' : '查看详情' }}</view>
 								<view class="expand-icon" :class="{ open: item.expanded }"></view>
+							</view>
+						</view>
+
+						<view v-if="item.taskDetailVisible" class="task-detail-inline">
+							<view v-if="item.taskDetailLoading" class="task-detail-loading">加载中...</view>
+							<view v-else-if="item.taskDetailError" class="task-detail-error">{{ item.taskDetailError }}</view>
+							<view v-else class="task-detail-content">
+								<view class="task-detail-hero">
+									<swiper
+										v-if="item.taskDetailImages && item.taskDetailImages.length > 0"
+										class="task-detail-swiper"
+										:indicator-dots="false"
+										:circular="true"
+										@change="onTaskDetailPosterChange($event, item)"
+									>
+										<swiper-item v-for="(image, imgIndex) in item.taskDetailImages" :key="image + '-' + imgIndex">
+											<image class="task-detail-poster" :src="image" mode="aspectFill" @click.stop="previewTaskDetailImage(item, imgIndex)"></image>
+										</swiper-item>
+									</swiper>
+									<view v-else class="task-detail-empty-poster">暂无封面</view>
+									<view v-if="item.taskDetailImages && item.taskDetailImages.length > 0" class="task-detail-poster-count">
+										{{ (item.taskDetailPosterIndex || 0) + 1 }}/{{ item.taskDetailImages.length }}
+									</view>
+								</view>
+								<text class="task-detail-title">{{ item.taskDetail.taskTitleSnapshot || '暂无标题' }}</text>
+								<text class="task-detail-desc">{{ item.taskDetail.taskDescSnapshot || '暂无描述' }}</text>
+								<view class="task-detail-section">
+									<text class="task-detail-section-title">专业类型</text>
+									<view v-if="item.taskDetailProfessions && item.taskDetailProfessions.length" class="task-detail-tags">
+										<view
+											v-for="(tag, tagIndex) in item.taskDetailProfessions"
+											:key="tag + '-' + tagIndex"
+											class="task-detail-profession-tag"
+										>{{ tag }}</view>
+									</view>
+									<text v-else class="task-detail-empty-tags">暂无专业类型</text>
+								</view>
+								<view class="task-detail-dash-divider"></view>
+								<view class="task-detail-section">
+									<text class="task-detail-section-title">服务要求</text>
+									<view v-if="item.taskDetailGuarantees && item.taskDetailGuarantees.length" class="task-detail-tags">
+										<view
+											v-for="(tag, tagIndex) in item.taskDetailGuarantees"
+											:key="tag + '-' + tagIndex"
+											class="task-detail-service-tag"
+										>
+											<text class="task-detail-check">✓</text>
+											<text>{{ tag }}</text>
+										</view>
+									</view>
+									<text v-else class="task-detail-empty-tags">暂无服务保障</text>
+								</view>
 							</view>
 						</view>
 
@@ -555,6 +611,146 @@ export default {
 				url: `/subpkg-profile/pages/withdrawalcenter/detail/index?${query}`
 			})
 		},
+		async toggleTaskDetail(item) {
+			if (!item || !item.orderNo) {
+				return
+			}
+			if (item.taskDetailVisible) {
+				item.taskDetailVisible = false
+				return
+			}
+			item.taskDetailVisible = true
+			if (item.taskDetailLoaded || item.taskDetailLoading) {
+				return
+			}
+			await this.fetchTaskDetail(item)
+		},
+		async fetchTaskDetail(item) {
+			if (!item || !item.orderNo || item.taskDetailLoading) {
+				return
+			}
+			this.updateOrderItem(item.id, orderItem => ({
+				...orderItem,
+				taskDetailLoading: true,
+				taskDetailError: ''
+			}))
+			try {
+				const res = await request.get('/wechat/withdrawal/taskDetail', {
+					orderNo: item.orderNo
+				})
+				const detail = this.extractTaskDetailData(res)
+				const images = this.normalizeImageList(detail.imageList).map(url => this.buildImageUrl(url)).filter(Boolean)
+				const professions = this.normalizeProfessionList(detail.professionList)
+				const guarantees = this.normalizeGuaranteeList(detail.guaranteeList)
+				this.updateOrderItem(item.id, orderItem => ({
+					...orderItem,
+					taskDetail: detail,
+					taskDetailImages: images,
+					taskDetailProfessions: professions,
+					taskDetailGuarantees: guarantees,
+					taskDetailPosterIndex: 0,
+					taskDetailLoaded: true,
+					taskDetailLoading: false,
+					taskDetailError: ''
+				}))
+			} catch (e) {
+				this.updateOrderItem(item.id, orderItem => ({
+					...orderItem,
+					taskDetailLoading: false,
+					taskDetailError: (e && e.msg) || '订单详情加载失败'
+				}))
+			}
+		},
+		extractTaskDetailData(res) {
+			const candidates = [
+				res && res.data,
+				res && res.data && res.data.data,
+				res
+			]
+			return candidates.find(item => item && typeof item === 'object' && !Array.isArray(item)) || {}
+		},
+		normalizeImageList(value) {
+			if (!value) {
+				return []
+			}
+			if (Array.isArray(value)) {
+				return value.filter(Boolean)
+			}
+			if (typeof value === 'string') {
+				const text = value.trim()
+				if (!text) {
+					return []
+				}
+				if (text[0] === '[') {
+					try {
+						const parsed = JSON.parse(text)
+						return Array.isArray(parsed) ? parsed.filter(Boolean) : []
+					} catch (e) {
+						return []
+					}
+				}
+				return text.split(',').map(item => item.trim()).filter(Boolean)
+			}
+			return []
+		},
+		normalizeProfessionList(value) {
+			if (!Array.isArray(value)) {
+				return []
+			}
+			return value
+				.map(item => {
+					if (!item) {
+						return ''
+					}
+					if (typeof item === 'string') {
+						return item.trim()
+					}
+					return String(
+						item.professionCategoryName ||
+						item.categoryName ||
+						item.professionName ||
+						item.name ||
+						item.label ||
+						item.description ||
+						''
+					).trim()
+				})
+				.filter(Boolean)
+		},
+		normalizeGuaranteeList(value) {
+			if (!Array.isArray(value)) {
+				return []
+			}
+			return value
+				.map(item => {
+					if (!item) {
+						return ''
+					}
+					if (typeof item === 'string') {
+						return item.trim()
+					}
+					return String(item.description || '').trim()
+				})
+				.filter(Boolean)
+		},
+		onTaskDetailPosterChange(event, item) {
+			if (!item) {
+				return
+			}
+			this.updateOrderItem(item.id, orderItem => ({
+				...orderItem,
+				taskDetailPosterIndex: event.detail.current || 0
+			}))
+		},
+		previewTaskDetailImage(item, index) {
+			if (!item || !item.taskDetailImages || !item.taskDetailImages.length) {
+				return
+			}
+			uni.previewImage({
+				urls: item.taskDetailImages,
+				current: item.taskDetailImages[index] || item.taskDetailImages[0]
+			})
+		},
 		openRejectPopup(item) {
 			if (!item || item.rejectLoading) {
 				return
@@ -724,6 +920,15 @@ export default {
 					reason: '订单已婉拒',
 					subtitle: this.buildParticipantSubtitle(item.orderStatus)
 				},
+				taskDetailVisible: false,
+				taskDetailLoading: false,
+				taskDetailLoaded: false,
+				taskDetailError: '',
+				taskDetail: {},
+				taskDetailImages: [],
+				taskDetailProfessions: [],
+				taskDetailGuarantees: [],
+				taskDetailPosterIndex: 0,
 				expanded: false
 			}
 		},
@@ -1449,10 +1654,8 @@ page {
 	position: absolute;
 	left: 50%;
 	bottom: 6rpx;
-	width: 34rpx;
-	height: 6rpx;
-	border-radius: 999rpx;
-	background: #ff7a22;
+	width: 44rpx;
+	height: 11rpx;
 	transform: translateX(-50%);
 }
 
@@ -1512,20 +1715,96 @@ page {
 
 .order-card {
 	width: 710rpx;
+	min-height: 180rpx;
 	margin-bottom: 24rpx;
 	border-radius: 30rpx;
 	overflow: hidden;
 	box-sizing: border-box;
-	box-shadow: 0 11rpx 21rpx rgba(238, 238, 238, 0.95);
+	box-shadow: 0 11rpx 21rpx rgba(203, 203, 203, 0.9) ;
+	transition: min-height 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.order-card.expanded {
+	min-height: 342rpx;
+}
+
+/* 展开背景 + 内描边 */
+.expanded.theme-pending,
+.expanded.theme-service {
+	background: #FFF3E7;
+	border: 1rpx solid #F37738;
+}
+
+.expanded.theme-rejected {
+	background: #DFDFDF;
+	border: 1rpx solid #B5B5B5;
+}
+
+.expanded.theme-refund {
+	background: #FFF0F0;
+	border: 1rpx solid #FFA2A2;
+}
+
+.expanded.theme-done {
+	background: #FF8F1E;
+}
+
+/* 展开态文字色 — 浅底用深色 */
+.expanded.theme-pending .customer-name,
+.expanded.theme-service .customer-name,
+.expanded.theme-rejected .customer-name,
+.expanded.theme-refund .customer-name {
+	color: #000000;
+}
+
+.expanded.theme-pending .amount-text,
+.expanded.theme-service .amount-text,
+.expanded.theme-rejected .amount-text,
+.expanded.theme-refund .amount-text {
+	color: #f37738;
+}
+
+.expanded.theme-pending .time-text,
+.expanded.theme-service .time-text,
+.expanded.theme-rejected .time-text,
+.expanded.theme-refund .time-text {
+	color: rgba(0, 0, 0, 0.4);
+}
+
+.expanded.theme-pending .order-info-line,
+.expanded.theme-service .order-info-line,
+.expanded.theme-rejected .order-info-line,
+.expanded.theme-refund .order-info-line {
+	color: rgba(0, 0, 0, 0.35);
+}
+
+/* 展开态文字色 — 已完成橙底用白字 */
+.expanded.theme-done .customer-name,
+.expanded.theme-done .amount-text {
+	color: #FFFFFF;
+}
+
+.expanded.theme-done .time-text {
+	color: rgba(255, 255, 255, 0.72);
+}
+
+.expanded.theme-done .order-info-line {
+	color: rgba(255, 255, 255, 0.72);
+}
+
+/* 展开态状态文字色 */
+.expanded.theme-rejected .status-text,
+.expanded.theme-done .status-text {
+	color: #000000;
 }
 
 .card-main {
 	position: relative;
-	height: 202rpx;
+	height: 180rpx;
 }
 
 .compact .card-main {
-	height: 202rpx;
+	height: 180rpx;
 }
 
 .avatar {
@@ -1550,6 +1829,9 @@ page {
 	line-height: 45rpx;
 	font-size: 32rpx;
 	font-weight: 500;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .amount-block {
@@ -1651,7 +1933,8 @@ page {
 .detail-view-btn {
 	flex-shrink: 0;
 	height: 44rpx;
-	line-height: 42rpx;
+	width: 140rpx;
+	line-height: 40rpx;
 	margin-left: 18rpx;
 	padding: 0 22rpx;
 	border: 1rpx solid #f37738;
@@ -1661,6 +1944,157 @@ page {
 	font-size: 22rpx;
 	color: #f37738;
 	text-align: center;
+}
+
+.detail-view-btn-collapse {
+	flex-shrink: 0;
+	height: 44rpx;
+	width: 140rpx;
+	line-height: 40rpx;
+	margin-left: 18rpx;
+	border: 1rpx solid #b5b5b5;
+	color: #666666;
+}
+
+/* 订单详情内嵌小窗 */
+.task-detail-inline {
+	width: 100%;
+	box-sizing: border-box;
+	background: #fafafa;
+}
+
+.task-detail-loading,
+.task-detail-error {
+	padding: 40rpx 28rpx;
+	line-height: 34rpx;
+	font-size: 24rpx;
+	color: #999999;
+	text-align: center;
+}
+
+.task-detail-content {
+	padding: 0 0 24rpx;
+}
+
+.task-detail-hero {
+	position: relative;
+	width: 100%;
+	height: 360rpx;
+	background: #eeeeee;
+}
+
+.task-detail-swiper,
+.task-detail-poster {
+	width: 100%;
+	height: 360rpx;
+}
+
+.task-detail-empty-poster {
+	width: 100%;
+	height: 360rpx;
+	line-height: 360rpx;
+	font-size: 28rpx;
+	color: #979797;
+	text-align: center;
+}
+
+.task-detail-poster-count {
+	position: absolute;
+	left: 24rpx;
+	bottom: 18rpx;
+	min-width: 72rpx;
+	height: 36rpx;
+	line-height: 36rpx;
+	padding: 0 14rpx;
+	border-radius: 20rpx;
+	background: rgba(0, 0, 0, 0.7);
+	font-size: 20rpx;
+	color: #ffffff;
+	text-align: center;
+	box-sizing: border-box;
+}
+
+.task-detail-title {
+	display: block;
+	margin: 18rpx 24rpx 0;
+	font-size: 28rpx;
+	line-height: 40rpx;
+	color: #000000;
+}
+
+.task-detail-desc {
+	display: block;
+	margin: 12rpx 24rpx 0;
+	font-size: 24rpx;
+	line-height: 34rpx;
+	color: #333333;
+	word-break: break-all;
+}
+
+.task-detail-section {
+	margin: 18rpx 24rpx 0;
+}
+
+.task-detail-section-title {
+	font-size: 26rpx;
+	line-height: 38rpx;
+	color: #000000;
+}
+
+.task-detail-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16rpx 24rpx;
+	margin-top: 14rpx;
+}
+
+.task-detail-profession-tag {
+	min-width: 100rpx;
+	height: 44rpx;
+	line-height: 42rpx;
+	padding: 0 24rpx;
+	border: 1rpx solid #f37738;
+	border-radius: 22rpx;
+	background: #fff1e9;
+	box-sizing: border-box;
+	font-size: 22rpx;
+	color: #f37738;
+	text-align: center;
+	white-space: nowrap;
+}
+
+.task-detail-service-tag {
+	display: flex;
+	align-items: center;
+	height: 44rpx;
+	padding: 0 24rpx;
+	border-radius: 22rpx;
+	background: #f5f5f5;
+	box-sizing: border-box;
+	font-size: 22rpx;
+	color: #000000;
+	white-space: nowrap;
+}
+
+.task-detail-check {
+	margin-right: 8rpx;
+	font-size: 22rpx;
+	line-height: 1;
+	color: #0dc71e;
+	font-weight: 700;
+}
+
+.task-detail-dash-divider {
+	margin: 18rpx 24rpx 0;
+	border-top: 2rpx dashed #cecece;
+}
+
+.task-detail-empty-tags {
+	display: block;
+	margin-top: 14rpx;
+	font-size: 22rpx;
+	line-height: 32rpx;
+	color: #979797;
 }
 
 .expand-icon {
@@ -1930,7 +2364,7 @@ page {
 
 .timeline-contact-action {
 	height: 48rpx;
-	line-height: 48rpx;
+	line-height: 46rpx;
 	margin-left: 28rpx;
 	padding: 0 24rpx;
 	border: 1rpx solid #f37738;
@@ -2280,6 +2714,9 @@ page {
 .ghost-btn,
 .primary-btn,
 .outline-btn {
+	display: inline-flex;
+	align-items: flex-start;
+	justify-content: center;
 	height: 48rpx;
 	line-height: 48rpx;
 	border-radius: 36rpx;
@@ -2340,9 +2777,16 @@ page {
 }
 
 .theme-pending .customer-name,
-.theme-pending .status-text,
 .theme-pending .amount-text {
 	color: #ffffff;
+}
+
+.theme-pending .status-text {
+	color: #4779CC;
+}
+
+.expanded.theme-pending .status-text {
+	color: #F37738;
 }
 
 .theme-pending .time-text {
@@ -2350,22 +2794,25 @@ page {
 }
 
 .theme-rejected {
-	border: 1rpx solid #b5b5b5;
-	background: #dfdfdf;
+	border: none;
+	background: #B5B5B5;
 }
 
 .theme-rejected .customer-name,
-.theme-rejected .status-text {
-	color: #111111;
+.theme-rejected .amount-text {
+	color: #ffffff;
 }
 
-.theme-rejected .amount-text,
+.theme-rejected .status-text {
+	color: #FFFFFF;
+}
+
 .theme-rejected .time-text {
-	color: rgba(0, 0, 0, 0.35);
+	color: rgba(255, 255, 255, 0.72);
 }
 
 .theme-rejected .order-info-line {
-	color: rgba(0, 0, 0, 0.35);
+	color: rgba(255, 255, 255, 0.72);
 }
 
 .theme-summary {
@@ -2385,7 +2832,7 @@ page {
 }
 
 .theme-service .status-text {
-	color: #ffffff;
+	color: #19C229;
 }
 
 .theme-service .customer-name,
@@ -2403,7 +2850,7 @@ page {
 }
 
 .theme-refund .status-text {
-	color: #ffffff;
+	color: #F00004;
 }
 
 .theme-refund .customer-name,

@@ -186,7 +186,7 @@
   flex: 1;
   min-width: 0;
   min-height: 68rpx;
-  border: 1rpx solid #979797;
+  border: 1rpx solid #d9d9d9;
   border-radius: 6rpx;
   display: flex;
   align-items: center;
@@ -222,7 +222,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1rpx solid #eeeeee;
 }
 .budget-label.data-v-ba46a180 {
   width: 140rpx;
@@ -233,7 +232,7 @@
 .budget-input.data-v-ba46a180 {
   flex: 1;
   height: 68rpx;
-  border: 1rpx solid #979797;
+  border: 1rpx solid #d9d9d9;
   border-radius: 6rpx;
   padding: 0 30rpx;
   box-sizing: border-box;

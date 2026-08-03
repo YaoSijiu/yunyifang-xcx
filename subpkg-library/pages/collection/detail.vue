@@ -12,7 +12,7 @@
 						<view class="badge" :style="{ backgroundColor: currentTag === '全部' ? '#333' : '#999' }">
 							{{ tagsNum['全部'] || allWorks.length }}
 						</view>
-						<view v-if="currentTag === '全部'" class="yellow-underline"></view>
+						<image v-if="currentTag === '全部'" class="yellow-underline" src="/static/common/选中条.png" />
 					</view>
 
 					<!-- 动态标签 -->
@@ -22,7 +22,7 @@
 						<view class="badge" :style="{ backgroundColor: currentTag === tag ? '#333' : '#999' }">
 							{{ count }}
 						</view>
-						<view v-if="currentTag === tag" class="yellow-underline"></view>
+						<image v-if="currentTag === tag" class="yellow-underline" src="/static/common/选中条.png" />
 					</view>
 				</view>
 			</scroll-view>
@@ -1191,10 +1191,8 @@
 		position: absolute;
 		left: 50%;
 		bottom: 6rpx;
-		width: 34rpx;
-		height: 6rpx;
-		border-radius: 999rpx;
-		background: #ff7a22;
+		width: 44rpx;
+		height: 11rpx;
 		transform: translateX(-50%);
 	}
 

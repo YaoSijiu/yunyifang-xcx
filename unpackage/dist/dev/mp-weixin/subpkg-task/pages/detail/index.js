@@ -115,10 +115,6 @@ var render = function () {
     !_vm.loading && !_vm.loadFailed && _vm.showBidderCard
       ? _vm.bidders.length
       : null
-  var g6 =
-    !_vm.loading && !_vm.loadFailed && _vm.showBidderCard
-      ? _vm.bidders.length
-      : null
   _vm.$mp.data = Object.assign(
     {},
     {
@@ -129,7 +125,6 @@ var render = function () {
         g3: g3,
         g4: g4,
         g5: g5,
-        g6: g6,
       },
     }
   )
@@ -191,7 +186,7 @@ var createDefaultDetail = function createDefaultDetail() {
     statusText: '',
     title: '',
     description: '',
-    deadlineText: '交稿时间待定',
+    deadlineText: '截稿时间待定',
     budgetText: '预算待定',
     hasBudgetAmount: false,
     canQuote: false,
@@ -220,6 +215,7 @@ var _default = {
       bidders: [],
       showQuotePopup: false,
       hasQuoted: false,
+      hasAccepted: false,
       applySubmitting: false,
       quoteSubmitting: false,
       loginPromptVisible: false,
@@ -255,7 +251,7 @@ var _default = {
       if (this.detail.canQuote) {
         return this.quoteSubmitting || this.hasQuoted;
       }
-      return this.applySubmitting;
+      return this.applySubmitting || this.hasAccepted;
     },
     actionButtonText: function actionButtonText() {
       if (!this.detail.canQuote && this.applySubmitting) {
@@ -269,6 +265,9 @@ var _default = {
       }
       if (this.detail.canQuote) {
         return '报价';
+      }
+      if (this.hasAccepted) {
+        return '已接单';
       }
       return '申请接单';
     }
@@ -424,8 +423,9 @@ var _default = {
       this.detail = normalizedDetail;
       this.taskId = normalizedDetail.taskId || this.taskId;
       this.ownerUserId = this.resolveOwnerUserId(data || {});
-      this.bidders = this.normalizeBidders(data && data.quoteUserList);
+      this.bidders = this.normalizeBidders(data || {});
       this.hasQuoted = this.checkHasQuoted(data && data.quoteUserList);
+      this.hasAccepted = this.checkHasAccepted(data || {});
       this.quoteForm.price = '';
       this.currentPoster = 0;
     },
@@ -460,7 +460,7 @@ var _default = {
       nextDetail.canQuote = canQuote;
       nextDetail.publisher = {
         name: data.nickName || this.detail.publisher.name || '发布者',
-        publishTime: this.formatPublishTime(data.publishTime || data.createTime || this.detail.publisher.publishTime),
+        publishTime: this.formatPublishTime(data.publishTime || data.createTime || data.gmtCreate || data.updateTime || data.time || data.publisher && (data.publisher.publishTime || data.publisher.createTime) || this.detail.publisher.publishTime),
         avatar: this.buildImageUrl(data.avatarUrl) || this.detail.publisher.avatar || DEFAULT_AVATAR
       };
       nextDetail.posters = posters;
@@ -472,18 +472,47 @@ var _default = {
       }).filter(Boolean);
       return nextDetail;
     },
-    normalizeBidders: function normalizeBidders(list) {
+    normalizeBidders: function normalizeBidders(data) {
       var _this5 = this;
-      return (Array.isArray(list) ? list : []).map(function (item) {
-        return {
-          id: item && item.quoteId ? String(item.quoteId) : "".concat(Date.now(), "-").concat(Math.random()),
+      var result = [];
+      var isQuoteType = Number(data.isOtherPartyQuote) === 1;
+      var quoteList = Array.isArray(data.quoteUserList) ? data.quoteUserList : [];
+      quoteList.forEach(function (item) {
+        var id = item && item.quoteId ? String(item.quoteId) : "".concat(Date.now(), "-").concat(Math.random());
+        result.push({
+          id: id,
+          type: isQuoteType ? 'quote' : 'accepted',
           userId: item && item.quoteUserId ? String(item.quoteUserId) : '',
           avatar: _this5.buildImageUrl(item && item.quoteUserAvatar ? item.quoteUserAvatar : '') || DEFAULT_AVATAR,
           name: item && item.quoteUserName ? item.quoteUserName : '匿名用户',
           time: _this5.formatBidderTime(item && item.quoteTime),
-          priceText: _this5.formatCurrency(item && item.quotePrice)
-        };
+          priceText: _this5.formatCurrency(item && item.quotePrice),
+          hasPrice: !!(item && item.quotePrice !== null && item.quotePrice !== undefined && item.quotePrice !== '')
+        });
       });
+      var acceptListCandidates = [data.receiverList, data.acceptUserList, data.orderUserList, data.participantList];
+      acceptListCandidates.forEach(function (list) {
+        if (!Array.isArray(list)) return;
+        list.forEach(function (item) {
+          if (!item) return;
+          var id = item.quoteId || item.receiverId || item.acceptId || item.orderId || "".concat(Date.now(), "-").concat(Math.random());
+          var price = item.quotePrice || item.receiverPrice || item.acceptPrice || item.orderPrice || item.price;
+          var time = item.quoteTime || item.receiverTime || item.acceptTime || item.orderTime || item.createTime;
+          var avatar = item.quoteUserAvatar || item.receiverAvatarUrl || item.acceptAvatarUrl || item.orderUserAvatar || '';
+          var name = item.quoteUserName || item.receiverUserName || item.acceptUserName || item.orderUserName || '匿名用户';
+          var userId = item.quoteUserId || item.receiverUserId || item.acceptUserId || item.orderUserId || '';
+          result.push({
+            id: String(id),
+            type: 'accepted',
+            userId: String(userId || ''),
+            avatar: _this5.buildImageUrl(avatar) || DEFAULT_AVATAR,
+            name: name,
+            time: _this5.formatBidderTime(time),
+            priceText: _this5.formatCurrency(price)
+          });
+        });
+      });
+      return result;
     },
     buildImageUrl: function buildImageUrl(url) {
       if (!url) {
@@ -499,13 +528,13 @@ var _default = {
       if (deliveryDate) {
         var text = String(deliveryDate).trim().replace(/-/g, '/');
         var date = text.length >= 16 ? text.slice(0, 16) : text;
-        return date ? "\u4EA4\u7A3F\u65F6\u95F4\uFF1A".concat(date) : '交稿时间待定';
+        return date ? "\u622A\u7A3F\u65F6\u95F4\uFF1A".concat(date) : '截稿时间待定';
       }
       var days = Number(deliveryDays);
       if (Number.isFinite(days) && days > 0) {
-        return "\u4EA4\u7A3F\u5929\u6570\uFF1A".concat(days, "\u5929");
+        return "\u622A\u7A3F\u5929\u6570\uFF1A".concat(days, "\u5929");
       }
-      return '交稿时间待定';
+      return '截稿时间待定';
     },
     formatBudgetText: function formatBudgetText(amount, isOtherPartyQuote) {
       if (amount === '' || amount === null || amount === undefined) {
@@ -580,6 +609,40 @@ var _default = {
         return !!quoteUserId && quoteUserId === String(currentUserId);
       });
     },
+    checkHasAccepted: function checkHasAccepted(data) {
+      var currentUserId = this.getCurrentUserId();
+      if (!currentUserId) {
+        return false;
+      }
+      // 接单型任务：检查 quoteUserList 中是否包含当前用户
+      if (Number(data && data.isOtherPartyQuote) !== 1) {
+        var quoteList = Array.isArray(data && data.quoteUserList) ? data.quoteUserList : [];
+        var foundInQuote = quoteList.some(function (item) {
+          var quoteUserId = item && item.quoteUserId ? String(item.quoteUserId) : '';
+          return !!quoteUserId && quoteUserId === String(currentUserId);
+        });
+        if (foundInQuote) {
+          return true;
+        }
+      }
+      var listCandidates = [data && data.receiverList, data && data.acceptUserList, data && data.orderUserList, data && data.participantList];
+      for (var _i = 0, _listCandidates = listCandidates; _i < _listCandidates.length; _i++) {
+        var list = _listCandidates[_i];
+        if (Array.isArray(list) && list.length > 0) {
+          var found = list.some(function (item) {
+            if (!item) {
+              return false;
+            }
+            var userId = item.userId || item.receiverUserId || item.acceptUserId || item.orderUserId || item.wxUserId || '';
+            return !!userId && String(userId) === String(currentUserId);
+          });
+          if (found) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
     goBack: function goBack() {
       if (getCurrentPages().length > 1) {
         uni.navigateBack();
@@ -645,25 +708,15 @@ var _default = {
                 }
                 return _context3.abrupt("return");
               case 4:
-                if (!_this6.hasQuoted) {
-                  _context3.next = 7;
-                  break;
-                }
-                uni.showToast({
-                  title: '您已报过价',
-                  icon: 'none'
-                });
-                return _context3.abrupt("return");
-              case 7:
                 if (!_this6.detail.canQuote) {
-                  _context3.next = 10;
+                  _context3.next = 7;
                   break;
                 }
                 _this6.showQuotePopup = true;
                 return _context3.abrupt("return");
-              case 10:
+              case 7:
                 if (!(!_this6.taskId || !_this6.channelId)) {
-                  _context3.next = 13;
+                  _context3.next = 10;
                   break;
                 }
                 uni.showToast({
@@ -671,46 +724,47 @@ var _default = {
                   icon: 'none'
                 });
                 return _context3.abrupt("return");
-              case 13:
+              case 10:
                 _this6.applySubmitting = true;
-                _context3.prev = 14;
+                _context3.prev = 11;
                 payload = {
                   taskId: Number(_this6.taskId),
                   channelId: Number(_this6.channelId)
                 };
-                _context3.next = 18;
+                _context3.next = 15;
                 return _request.default.post('/wechat/userTask/applyReceive', payload, {
                   loading: true,
                   loadingText: '提交中...'
                 });
-              case 18:
+              case 15:
                 res = _context3.sent;
-                _context3.next = 21;
+                _this6.hasAccepted = true;
+                _context3.next = 19;
                 return _this6.fetchDetail();
-              case 21:
+              case 19:
                 uni.showToast({
                   title: res && res.msg || '申请成功',
                   icon: 'success'
                 });
-                _context3.next = 27;
+                _context3.next = 25;
                 break;
-              case 24:
-                _context3.prev = 24;
-                _context3.t0 = _context3["catch"](14);
+              case 22:
+                _context3.prev = 22;
+                _context3.t0 = _context3["catch"](11);
                 uni.showToast({
                   title: _context3.t0 && _context3.t0.msg || '申请失败',
                   icon: 'none'
                 });
-              case 27:
-                _context3.prev = 27;
+              case 25:
+                _context3.prev = 25;
                 _this6.applySubmitting = false;
-                return _context3.finish(27);
-              case 30:
+                return _context3.finish(25);
+              case 28:
               case "end":
                 return _context3.stop();
             }
           }
-        }, _callee3, null, [[14, 24, 27, 30]]);
+        }, _callee3, null, [[11, 22, 25, 28]]);
       }))();
     },
     closeQuotePopup: function closeQuotePopup() {

@@ -256,7 +256,6 @@ button.data-v-d4e6bb4e::after {
   padding: 22rpx 23rpx 0;
   font-family: PingFang SC;
   font-size: 28rpx;
-  line-height: 16rpx;
   color: #000000;
   margin-bottom: 10rpx;
 }

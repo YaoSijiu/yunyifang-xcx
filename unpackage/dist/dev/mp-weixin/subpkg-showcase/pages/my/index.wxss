@@ -62,19 +62,18 @@ button.data-v-16ffcb89::after {
   margin-right: 30rpx;
 }
 .tab-item.active.data-v-16ffcb89 {
-  font-weight: 700;
+  font-weight: bold;
   color: #1a1a1a;
 }
 .tab-line.data-v-16ffcb89 {
   position: absolute;
   left: 50%;
   bottom: 6rpx;
-  width: 34rpx;
-  height: 6rpx;
-  border-radius: 999rpx;
-  background: #ff7a22;
+  width: 44rpx;
+  height: 11rpx;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
+  top: 65rpx;
 }
 .list-scroll.data-v-16ffcb89 {
   position: fixed;
@@ -134,6 +133,7 @@ button.data-v-16ffcb89::after {
 .card-title.data-v-16ffcb89 {
   display: block;
   font-size: 36rpx;
+  font-weight: bold;
   line-height: 51rpx;
   color: #000000;
   white-space: nowrap;
@@ -193,7 +193,7 @@ button.data-v-16ffcb89::after {
   color: #979797;
   background: #ffffff;
   font-size: 24rpx;
-  line-height: 48rpx;
+  line-height: 46rpx;
   text-align: center;
 }
 .shelf-btn.data-v-16ffcb89 {

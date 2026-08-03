@@ -448,8 +448,18 @@ var _default = {
                 });
                 return _context3.abrupt("return");
               case 3:
-                if (!(_this5.profileData.phone && !/^1[3-9]\d{9}$/.test(_this5.profileData.phone))) {
+                if (!(_this5.profileData.nickname.length > 10)) {
                   _context3.next = 6;
+                  break;
+                }
+                uni.showToast({
+                  title: '昵称不能超过10个字符',
+                  icon: 'none'
+                });
+                return _context3.abrupt("return");
+              case 6:
+                if (!(_this5.profileData.phone && !/^1[3-9]\d{9}$/.test(_this5.profileData.phone))) {
+                  _context3.next = 9;
                   break;
                 }
                 uni.showToast({
@@ -457,9 +467,9 @@ var _default = {
                   icon: 'none'
                 });
                 return _context3.abrupt("return");
-              case 6:
+              case 9:
                 if (!(_this5.regionChanged && !_this5.selectedRegionId)) {
-                  _context3.next = 9;
+                  _context3.next = 12;
                   break;
                 }
                 uni.showToast({
@@ -467,7 +477,7 @@ var _default = {
                   icon: 'none'
                 });
                 return _context3.abrupt("return");
-              case 9:
+              case 12:
                 postData = {
                   nickName: _this5.profileData.nickname,
                   avatarUrl: _this5.profileData.avatarUrl,
@@ -478,30 +488,30 @@ var _default = {
                 uni.showLoading({
                   title: '保存中...'
                 });
-                _context3.prev = 11;
-                _context3.next = 14;
+                _context3.prev = 14;
+                _context3.next = 17;
                 return _this5.$request.post('/wechat/user/editUserInfo', postData);
-              case 14:
+              case 17:
                 if (!_this5.regionChanged) {
-                  _context3.next = 21;
+                  _context3.next = 24;
                   break;
                 }
                 _userInfo = uni.getStorageSync('userInfo') || {};
                 userId = _this5.profileData.userId || _userInfo.userId || _userInfo.id;
                 if (userId) {
-                  _context3.next = 19;
+                  _context3.next = 22;
                   break;
                 }
                 throw {
                   msg: '用户信息不存在'
                 };
-              case 19:
-                _context3.next = 21;
+              case 22:
+                _context3.next = 24;
                 return _this5.$request.post('/wechat/basic/saveUserRegion', {
                   userId: Number(userId),
                   regionId: Number(_this5.selectedRegionId)
                 });
-              case 21:
+              case 24:
                 uni.hideLoading();
                 uni.showToast({
                   title: '保存成功',
@@ -516,23 +526,23 @@ var _default = {
                 setTimeout(function () {
                   uni.navigateBack();
                 }, 1500);
-                _context3.next = 33;
+                _context3.next = 36;
                 break;
-              case 28:
-                _context3.prev = 28;
-                _context3.t0 = _context3["catch"](11);
+              case 31:
+                _context3.prev = 31;
+                _context3.t0 = _context3["catch"](14);
                 uni.hideLoading();
                 console.error('保存失败', _context3.t0);
                 uni.showToast({
                   title: _context3.t0.msg || '保存失败',
                   icon: 'none'
                 });
-              case 33:
+              case 36:
               case "end":
                 return _context3.stop();
             }
           }
-        }, _callee3, null, [[11, 28]]);
+        }, _callee3, null, [[14, 31]]);
       }))();
     },
     uploadFile: function uploadFile(filePath) {

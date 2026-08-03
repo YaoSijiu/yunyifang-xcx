@@ -70,11 +70,9 @@
 .yellow-underline.data-v-8a9b88c8 {
   position: absolute;
   left: 50%;
-  bottom: 20rpx;
-  width: 34rpx;
-  height: 6rpx;
-  border-radius: 999rpx;
-  background: #ff7a22;
+  bottom: 6rpx;
+  width: 44rpx;
+  height: 11rpx;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
 }

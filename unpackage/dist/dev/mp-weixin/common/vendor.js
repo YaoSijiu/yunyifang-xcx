@@ -20854,7 +20854,7 @@ var request = function request() {
             });
             reject(res.data);
           } else if (code === 601) {
-            resolve(res);
+            resolve(res.data);
           } else if (code === 401) {
             isShowingLoginModal = false;
             reject(res.data);

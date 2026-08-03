@@ -109,7 +109,7 @@
 	font-weight: bold;
 	color: #fff;
 	margin-bottom: 12rpx;
-	font-family: DINAlternate-Bold, "Helvetica Neue", Helvetica, sans-serif;
+	font-family: PingFang SC;
 }
 .stat-label.data-v-14bc1b43 {
 	font-size: 26rpx;
@@ -217,7 +217,8 @@
 .menu-section.data-v-14bc1b43 {
 	background-color: rgba(255, 255, 255, 1);
 	border-radius: 16rpx;
-	padding: 30rpx;
+	padding: 20rpx 0;
+	margin-bottom: 20rpx;
 }
 .menu-grid.data-v-14bc1b43 {
 	display: flex;

@@ -115,7 +115,7 @@ cover-image,
 scroll-view,
 swiper,
 swiper-item {
-  font-family: "PingFangSC-Medium", "PingFang SC", -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-family: PingFang SC !important;
 }
 
 /* 隐藏所有滚动条 - 适用于所有平台 */
@@ -136,6 +136,7 @@ swiper-item {
 }
 
 page {
+  font-family: PingFang SC;
   -webkit-overflow-scrolling: touch;
   overflow: auto;
   scrollbar-width: none !important;

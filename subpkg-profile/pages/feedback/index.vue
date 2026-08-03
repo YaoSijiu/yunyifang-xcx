@@ -5,11 +5,11 @@
 		<view class="tabs-header">
 			<view class="tab-item" :class="{ active: currentTab === 0 }" @click="switchTab(0)">
 				我要反馈
-				<view v-if="currentTab == 0" class="yellow-underline"></view>
+				<image v-if="currentTab == 0" class="yellow-underline" src="/static/common/选中条.png" />
 			</view>
 			<view class="tab-item" :class="{ active: currentTab === 1 }" @click="switchTab(1)">
 				反馈记录
-				<view v-if="currentTab == 1" class="yellow-underline"></view>
+				<image v-if="currentTab == 1" class="yellow-underline" src="/static/common/选中条.png" />
 			</view>
 		</view>
 
@@ -395,11 +395,9 @@ export default {
 .yellow-underline {
 	position: absolute;
 	left: 50%;
-	bottom: 20rpx;
-	width: 34rpx;
-	height: 6rpx;
-	border-radius: 999rpx;
-	background: #ff7a22;
+	bottom: 6rpx;
+	width: 44rpx;
+	height: 11rpx;
 	transform: translateX(-50%);
 }
 .content-box {

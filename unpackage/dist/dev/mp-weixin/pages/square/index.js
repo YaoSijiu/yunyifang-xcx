@@ -323,6 +323,7 @@ var _env = _interopRequireDefault(__webpack_require__(/*! @/config/env.js */ 39)
 //
 //
 //
+//
 
 var DEFAULT_AVATAR = '/static/yunyiku/avatar.png';
 var DEFAULT_CATEGORY_OPTION = {
@@ -638,6 +639,7 @@ var _default = {
         taskId: item.taskId ? String(item.taskId) : '',
         name: item.nickName || '未命名用户',
         publishDate: this.formatPublishDate(item.publishTime),
+        publishTime: item.publishTime || '',
         deadlineText: this.buildDeadlineText(item.deliveryDate),
         desc: item.taskDesc || item.taskTitle || '暂无任务描述',
         price: this.formatPrice(item.budgetAmount, item.isOtherPartyQuote),
@@ -652,8 +654,31 @@ var _default = {
         participants: participantList,
         displayParticipants: participantList.slice(0, 3),
         hasMoreParticipants: participantCount > 3 || participantList.length > 3,
-        professionList: professionList
+        professionList: professionList,
+        isOwnTask: this.checkIsOwnTask(item)
       };
+    },
+    getCurrentUserId: function getCurrentUserId() {
+      var isTeamMode = !!uni.getStorageSync('isTeamMode');
+      var userInfo = uni.getStorageSync('userInfo') || {};
+      if (isTeamMode) {
+        return uni.getStorageSync('teamOwnerId') || userInfo.id || userInfo.userId || '';
+      }
+      return userInfo.id || userInfo.userId || '';
+    },
+    checkIsOwnTask: function checkIsOwnTask(item) {
+      if (!item) {
+        return false;
+      }
+      var currentUserId = this.getCurrentUserId();
+      if (!currentUserId) {
+        return false;
+      }
+      var ownerUserId = item.userId || item.publishUserId || item.publisherUserId || item.wxUserId || item.publishWxUserId || '';
+      if (ownerUserId && String(ownerUserId) === String(currentUserId)) {
+        return true;
+      }
+      return false;
     },
     normalizeParticipantList: function normalizeParticipantList(item, participantType) {
       var _this6 = this;
@@ -751,7 +776,7 @@ var _default = {
     formatPrice: function formatPrice(budgetAmount, isOtherPartyQuote) {
       var hasAmount = budgetAmount !== '' && budgetAmount !== null && budgetAmount !== undefined;
       if (Number(isOtherPartyQuote) === 1) {
-        return hasAmount ? "\uFFE5".concat(budgetAmount) : '￥？';
+        return hasAmount ? "\uFFE5".concat(budgetAmount) : '￥?';
       }
       if (!hasAmount) {
         return '预算待定';
@@ -780,7 +805,7 @@ var _default = {
         return;
       }
       uni.navigateTo({
-        url: "/subpkg-task/pages/detail/index?id=".concat(item.channelId, "&channelId=").concat(item.channelId, "&taskId=").concat(item.taskId)
+        url: "/subpkg-task/pages/detail/index?id=".concat(item.channelId, "&channelId=").concat(item.channelId, "&taskId=").concat(item.taskId, "&publishTime=").concat(encodeURIComponent(item.publishTime || ''))
       });
     },
     handleParticipantClick: function handleParticipantClick(participant) {
@@ -811,7 +836,7 @@ var _default = {
       }
       var actionType = item.participantType === 'quote' ? 'quote' : 'accept';
       uni.navigateTo({
-        url: "/subpkg-task/pages/detail/index?id=".concat(item.channelId, "&channelId=").concat(item.channelId, "&taskId=").concat(item.taskId, "&autoAction=").concat(actionType)
+        url: "/subpkg-task/pages/detail/index?id=".concat(item.channelId, "&channelId=").concat(item.channelId, "&taskId=").concat(item.taskId, "&autoAction=").concat(actionType, "&publishTime=").concat(encodeURIComponent(item.publishTime || ''))
       });
     },
     handleShareTask: function handleShareTask() {

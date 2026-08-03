@@ -1,4 +1,4 @@
-<template>
+﻿<template>
 	<view class="page">
 		<view class="condition-panel">
 			<view class="status-bar" :style="{ height: statusBarHeight + 'px' }"></view>
@@ -28,7 +28,7 @@
 						@click="switchPrimaryTab(index)"
 					>
 						<text>{{ item.label }}</text>
-						<view v-if="activePrimaryTab === index" class="primary-underline"></view>
+						<image v-if="activePrimaryTab === index" class="primary-underline" src="/static/common/选中条.png" />
 					</view>
 				</view>
 			</scroll-view>
@@ -164,7 +164,7 @@
 			<view v-if="!loading && visibleCards.length === 0" class="empty-state">
 				<text>暂无橱窗</text>
 			</view>
-			<view class="load-state">
+			<view v-if="visibleCards.length > 0" class="load-state">
 				<text v-if="loading">加载中...</text>
 				<text v-else-if="finished">没有更多了</text>
 				<text v-else>上滑加载更多</text>
@@ -667,15 +667,16 @@ export default {
 
 .primary-tab {
 	position: relative;
-	padding: 14rpx 22rpx 21rpx;
+	padding: 14rpx 22rpx 28rpx;
 	font-size: 30rpx;
-	color: #434343;
+	color: #363636;
 	flex-shrink: 0;
 }
 
 .primary-tab.active {
-	font-weight: 700;
-	color: #1a1a1a;
+	font-weight: bold;
+	color: #000000;
+	
 }
 
 .primary-underline {
@@ -683,10 +684,8 @@ export default {
 	left: 50%;
 	bottom: 6rpx;
 	transform: translateX(-50%);
-	width: 34rpx;
-	height: 6rpx;
-	border-radius: 999rpx;
-	background: #ff7a22;
+	width: 44rpx;
+	height: 11rpx;
 }
 
 .secondary-tabs {
@@ -770,6 +769,7 @@ export default {
 	flex: 1;
 	height: 0;
 	background: #f7f7f7;
+	min-height: 1300rpx;
 }
 
 .card-grid {
@@ -1089,7 +1089,7 @@ export default {
 	padding: 0 20rpx;
 	font-size: 28rpx;
 	line-height: 40rpx;
-	font-weight: 400;
+	font-weight: bold;
 	color: #000000;
 }
 

@@ -104,9 +104,8 @@ var render = function () {
   var _c = _vm._self._c || _h
   var g0 = _vm.form.title.length
   var g1 = _vm.form.description.length
-  var g2 = _vm.form.requirement.length
-  var g3 = _vm.selectedSkillNames.length
-  var g4 = !(g3 === 0) ? _vm.selectedSkillNames.join("、") : null
+  var g2 = _vm.selectedSkillNames.length
+  var g3 = !(g2 === 0) ? _vm.selectedSkillNames.join("、") : null
   var l0 = _vm.__map(_vm.guarantees, function (item, __i0__) {
     var $orig = _vm.__get_orig(item)
     var m0 = _vm.isGuaranteeSelected(item)
@@ -115,10 +114,10 @@ var render = function () {
       m0: m0,
     }
   })
-  var g5 = !_vm.guaranteeLoading && _vm.guarantees.length === 0
-  var g6 = _vm.showSkillPopup ? _vm.skillTree.length : null
+  var g4 = !_vm.guaranteeLoading && _vm.guarantees.length === 0
+  var g5 = _vm.showSkillPopup ? _vm.skillTree.length : null
   var l1 =
-    _vm.showSkillPopup && g6 > 0
+    _vm.showSkillPopup && g5 > 0
       ? _vm.__map(_vm.skillTree, function (item, __i1__) {
           var $orig = _vm.__get_orig(item)
           var m1 = _vm.getSelectedChildCount(item)
@@ -131,19 +130,19 @@ var render = function () {
         })
       : null
   var l2 =
-    _vm.showSkillPopup && g6 > 0
+    _vm.showSkillPopup && g5 > 0
       ? _vm.__map(_vm.activeSkillChildren, function (item, __i2__) {
           var $orig = _vm.__get_orig(item)
+          var g6 = _vm.selectedSkillIds.includes(String(item.id))
           var g7 = _vm.selectedSkillIds.includes(String(item.id))
-          var g8 = _vm.selectedSkillIds.includes(String(item.id))
           return {
             $orig: $orig,
+            g6: g6,
             g7: g7,
-            g8: g8,
           }
         })
       : null
-  var g9 = _vm.showSkillPopup
+  var g8 = _vm.showSkillPopup
     ? !_vm.skillLoading && _vm.skillOptions.length === 0
     : null
   _vm.$mp.data = Object.assign(
@@ -154,13 +153,12 @@ var render = function () {
         g1: g1,
         g2: g2,
         g3: g3,
-        g4: g4,
         l0: l0,
+        g4: g4,
         g5: g5,
-        g6: g6,
         l1: l1,
         l2: l2,
-        g9: g9,
+        g8: g8,
       },
     }
   )
@@ -852,9 +850,30 @@ var _default = {
         });
         return false;
       }
+      if (this.form.title.length > 30) {
+        uni.showToast({
+          title: '橱窗标题不能超过30个字符',
+          icon: 'none'
+        });
+        return false;
+      }
       if (!this.form.description.trim()) {
         uni.showToast({
           title: '请输入商品描述',
+          icon: 'none'
+        });
+        return false;
+      }
+      if (this.form.description.length > 100) {
+        uni.showToast({
+          title: '商品描述不能超过100个字符',
+          icon: 'none'
+        });
+        return false;
+      }
+      if (this.form.requirement && this.form.requirement.length > 100) {
+        uni.showToast({
+          title: '需求描述不能超过100个字符',
           icon: 'none'
         });
         return false;

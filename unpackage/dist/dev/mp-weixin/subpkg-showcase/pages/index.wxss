@@ -30,8 +30,8 @@
   color: #000000;
 }
 .page-canvas.data-v-343ecbe8 {
-  min-height: 2050rpx;
-  padding: 20rpx 30rpx 150rpx;
+  min-height: 1600rpx;
+  padding: 20rpx 30rpx 130rpx;
   box-sizing: border-box;
 }
 .form-card.data-v-343ecbe8 {
@@ -114,7 +114,7 @@
 }
 .plain-textarea.data-v-343ecbe8 {
   width: 100%;
-  height: 150rpx;
+  height: 220rpx;
   margin-top: 18rpx;
   font-size: 28rpx;
   line-height: 40rpx;
@@ -127,7 +127,7 @@
 }
 .placeholder-text.data-v-343ecbe8,
 .line-placeholder.data-v-343ecbe8 {
-  color: #D4D4D4;
+  color: #888888;
   font-size: 28rpx;
 }
 .line-field.data-v-343ecbe8 {
@@ -135,7 +135,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1rpx solid #eeeeee;
 }
 .line-label.data-v-343ecbe8 {
   width: 140rpx;
@@ -146,7 +145,7 @@
   flex: 1;
   min-width: 0;
   min-height: 68rpx;
-  border: 1rpx solid #979797;
+  border: 1rpx solid #D9D9D9;
   border-radius: 6rpx;
   display: flex;
   align-items: center;
@@ -167,7 +166,7 @@
 .line-input.data-v-343ecbe8 {
   flex: 1;
   height: 68rpx;
-  border: 1rpx solid #979797;
+  border: 1rpx solid #D9D9D9;
   border-radius: 6rpx;
   padding: 0 30rpx;
   box-sizing: border-box;

@@ -5,10 +5,12 @@
 			<scroll-view scroll-x class="tab-scroll" :show-scrollbar="false">
 				<view class="tab-item" v-for="(tab, index) in tabs" :key="index" :id="'tab_' + index"
 					:class="{ active: currentTab === index }" @click="switchTab(index)">
-					<text class="tab-text">{{ tab.name }}</text>
+					<view class="tab-item-text">
+						<text class="tab-text">{{ tab.name }}</text>
+						<image v-if="currentTab == index" class="yellow-underline" src="/static/common/选中条.png" />
+					</view>
 					<view class="badge" :style="{ backgroundColor: currentTab === index ? '#333' : '#999' }"
 						v-if="tab.count >= 0">{{ tab.count }}</view>
-					<view v-if="currentTab == index" class="yellow-underline"></view>
 				</view>
 			</scroll-view>
 
@@ -39,7 +41,7 @@
 								:style="{ backgroundColor: filterActiveTab === index ? '#333' : '#999' }">
 								{{ tab.count }}
 							</view>
-							<view v-if="filterActiveTab == index" class="yellow-underline"></view>
+							<image v-if="filterActiveTab == index" class="yellow-underline" src="/static/common/选中条.png" />
 						</view>
 					</view>
 
@@ -52,7 +54,7 @@
 								:style="{ backgroundColor: filterActiveTab === index+4 ? '#333' : '#999' }">
 								{{ tab.count }}
 							</view>
-							<view v-if="filterActiveTab == index+4" class="yellow-underline"></view>
+							<image v-if="filterActiveTab == index+4" class="yellow-underline" src="/static/common/选中条.png" />
 						</view>
 					</view>
 				</view>
@@ -597,8 +599,6 @@
 				bottom: 6rpx;
 				width: 34rpx;
 				height: 6rpx;
-				border-radius: 999rpx;
-				background: #ff7a22;
 				transform: translateX(-50%);
 			}
 
@@ -609,9 +609,14 @@
 		position: relative;
 		font-size: 30rpx;
 		color: #434343;
-		padding: 14rpx 22rpx 21rpx;
+		padding: 22rpx 10rpx 0rpx 21rpx;
 		display: inline-block;
-		margin-right: 30rpx;
+	}
+	
+	.tab-item-text {
+		position: relative;
+		padding: 0rpx 0rpx 31rpx;
+		display: inline-block;
 	}
 
 	.tab-item .tab-text {
@@ -625,13 +630,19 @@
 	}
 
 	.tab-item .badge {
-		display: inline-block;
+		display: inline-flex;
+		align-items: flex-start;
+		justify-content: center; 
+		min-width: 20rpx;
+		height: 25rpx;
+		line-height: 25rpx;
 		background-color: #333;
 		color: #fff;
 		font-size: 20rpx;
 		padding: 2rpx 10rpx;
 		border-radius: 20rpx;
 		margin-left: 8rpx;
+		margin-top: -1rpx;
 		vertical-align: middle;
 	}
 
@@ -639,10 +650,8 @@
 		position: absolute;
 		left: 50%;
 		bottom: 6rpx;
-		width: 34rpx;
-		height: 6rpx;
-		border-radius: 999rpx;
-		background: #ff7a22;
+		width: 44rpx;
+		height: 11rpx;
 		transform: translateX(-50%);
 	}
 
@@ -672,7 +681,7 @@
 
 	/* 3. 搜索框样式 */
 	.search-box-wrapper {
-		padding: 20rpx 30rpx;
+		padding: 10rpx 20rpx 30rpx;
 		background-color: #fff;
 	}
 

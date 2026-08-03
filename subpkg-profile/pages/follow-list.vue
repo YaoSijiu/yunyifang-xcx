@@ -4,11 +4,11 @@
 		<view class="tab-header">
 			<view class="tab-item" :class="{ active: currentTab === 0 }" @click="switchTab(0)">
 				<text>我的关注</text>
-				<view v-if="currentTab === 0" class="tab-underline"></view>
+				<image v-if="currentTab === 0" class="tab-underline" src="/static/common/选中条.png" />
 			</view>
 			<view class="tab-item" :class="{ active: currentTab === 1 }" @click="switchTab(1)">
 				<text>我的粉丝</text>
-				<view v-if="currentTab === 1" class="tab-underline"></view>
+				<image v-if="currentTab === 1" class="tab-underline" src="/static/common/选中条.png" />
 			</view>
 		</view>
 
@@ -272,11 +272,12 @@ export default {
 }
 
 .tab-underline {
-	width: 60rpx;
-	height: 6rpx;
-	background-color: #F37738;
-	border-radius: 3rpx;
-	margin-top: 12rpx;
+	position: absolute;
+	left: 50%;
+	bottom: 6rpx;
+	width: 44rpx;
+	height: 11rpx;
+	transform: translateX(-50%);
 }
 
 .list-container {

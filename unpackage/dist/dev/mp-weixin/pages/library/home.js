@@ -126,11 +126,13 @@ var render = function () {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   var g0 = !_vm.loading && _vm.visibleCards.length === 0
+  var g1 = _vm.visibleCards.length
   _vm.$mp.data = Object.assign(
     {},
     {
       $root: {
         g0: g0,
+        g1: g1,
       },
     }
   )

@@ -26,11 +26,13 @@
 	font-weight: 600;
 }
 .tab-underline.data-v-4005a116 {
-	width: 60rpx;
-	height: 6rpx;
-	background-color: #F37738;
-	border-radius: 3rpx;
-	margin-top: 12rpx;
+	position: absolute;
+	left: 50%;
+	bottom: 6rpx;
+	width: 44rpx;
+	height: 11rpx;
+	-webkit-transform: translateX(-50%);
+	        transform: translateX(-50%);
 }
 .list-container.data-v-4005a116 {
 	background-color: #FFFFFF;

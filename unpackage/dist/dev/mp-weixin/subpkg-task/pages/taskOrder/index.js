@@ -104,6 +104,42 @@ var render = function () {
   var _c = _vm._self._c || _h
   var l6 = _vm.__map(_vm.orderList, function (item, __i1__) {
     var $orig = _vm.__get_orig(item)
+    var g0 =
+      item.expanded &&
+      item.taskDetailVisible &&
+      !item.taskDetailLoading &&
+      !item.taskDetailError
+        ? item.taskDetailImages && item.taskDetailImages.length > 0
+        : null
+    var g1 =
+      item.expanded &&
+      item.taskDetailVisible &&
+      !item.taskDetailLoading &&
+      !item.taskDetailError
+        ? item.taskDetailImages && item.taskDetailImages.length > 0
+        : null
+    var g2 =
+      item.expanded &&
+      item.taskDetailVisible &&
+      !item.taskDetailLoading &&
+      !item.taskDetailError &&
+      g1
+        ? item.taskDetailImages.length
+        : null
+    var g3 =
+      item.expanded &&
+      item.taskDetailVisible &&
+      !item.taskDetailLoading &&
+      !item.taskDetailError
+        ? item.taskDetailProfessions && item.taskDetailProfessions.length
+        : null
+    var g4 =
+      item.expanded &&
+      item.taskDetailVisible &&
+      !item.taskDetailLoading &&
+      !item.taskDetailError
+        ? item.taskDetailGuarantees && item.taskDetailGuarantees.length
+        : null
     var m0 =
       item.expanded && !item.timelineLoading
         ? _vm.shouldShowInviteEmptyActions(item)
@@ -112,19 +148,19 @@ var render = function () {
       item.expanded && !item.timelineLoading && m0
         ? _vm.getOrderFooterActions(item)
         : null
-    var g0 =
+    var g5 =
       item.expanded && !item.timelineLoading && !m0
         ? item.timelineLoaded && item.timelineList.length === 0
         : null
     var l1 =
-      item.expanded && !item.timelineLoading && !m0 && !g0
+      item.expanded && !item.timelineLoading && !m0 && !g5
         ? _vm.getServiceTimeline(item)
         : null
     var l2 =
       item.expanded &&
       !item.timelineLoading &&
       !m0 &&
-      !g0 &&
+      !g5 &&
       item.detailType === "quote"
         ? _vm.getOrderFooterActions(item)
         : null
@@ -132,7 +168,7 @@ var render = function () {
       item.expanded &&
       !item.timelineLoading &&
       !m0 &&
-      !g0 &&
+      !g5 &&
       !(item.detailType === "service" && item.waitingDeliveryConfirm) &&
       item.detailType === "service" &&
       item.orderStatus === "in_service"
@@ -142,7 +178,7 @@ var render = function () {
       item.expanded &&
       !item.timelineLoading &&
       !m0 &&
-      !g0 &&
+      !g5 &&
       !(item.detailType === "service" && item.waitingDeliveryConfirm) &&
       item.detailType === "service" &&
       item.orderStatus === "in_service"
@@ -152,7 +188,7 @@ var render = function () {
       item.expanded &&
       !item.timelineLoading &&
       !m0 &&
-      !g0 &&
+      !g5 &&
       !(item.detailType === "service" && item.waitingDeliveryConfirm) &&
       item.detailType === "service" &&
       item.orderStatus === "in_service"
@@ -162,7 +198,7 @@ var render = function () {
       item.expanded &&
       !item.timelineLoading &&
       !m0 &&
-      !g0 &&
+      !g5 &&
       !(item.detailType === "service" && item.waitingDeliveryConfirm) &&
       item.detailType === "service" &&
       item.orderStatus === "in_service"
@@ -172,7 +208,7 @@ var render = function () {
       item.expanded &&
       !item.timelineLoading &&
       !m0 &&
-      !g0 &&
+      !g5 &&
       item.detailType === "refund"
         ? _vm.getOrderFooterActions(item)
         : null
@@ -180,15 +216,20 @@ var render = function () {
       item.expanded &&
       !item.timelineLoading &&
       !m0 &&
-      !g0 &&
+      !g5 &&
       item.detailType === "done"
         ? _vm.getOrderFooterActions(item)
         : null
     return {
       $orig: $orig,
+      g0: g0,
+      g1: g1,
+      g2: g2,
+      g3: g3,
+      g4: g4,
       m0: m0,
       l0: l0,
-      g0: g0,
+      g5: g5,
       l1: l1,
       l2: l2,
       l3: l3,
@@ -199,7 +240,7 @@ var render = function () {
       l5: l5,
     }
   })
-  var g1 = !_vm.loading && _vm.orderList.length === 0
+  var g6 = !_vm.loading && _vm.orderList.length === 0
   if (!_vm._isMounted) {
     _vm.e0 = function ($event, action, item) {
       var _temp = arguments[arguments.length - 1].currentTarget.dataset,
@@ -252,7 +293,7 @@ var render = function () {
     {
       $root: {
         l6: l6,
-        g1: g1,
+        g6: g6,
       },
     }
   )
@@ -626,6 +667,186 @@ var _default = {
         url: "/subpkg-profile/pages/withdrawalcenter/detail/index?".concat(query)
       });
     },
+    toggleTaskDetail: function toggleTaskDetail(item) {
+      var _this4 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
+        return _regenerator.default.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                if (!(!item || !item.orderNo)) {
+                  _context.next = 2;
+                  break;
+                }
+                return _context.abrupt("return");
+              case 2:
+                if (!item.taskDetailVisible) {
+                  _context.next = 5;
+                  break;
+                }
+                item.taskDetailVisible = false;
+                return _context.abrupt("return");
+              case 5:
+                item.taskDetailVisible = true;
+                if (!(item.taskDetailLoaded || item.taskDetailLoading)) {
+                  _context.next = 8;
+                  break;
+                }
+                return _context.abrupt("return");
+              case 8:
+                _context.next = 10;
+                return _this4.fetchTaskDetail(item);
+              case 10:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
+    },
+    fetchTaskDetail: function fetchTaskDetail(item) {
+      var _this5 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee2() {
+        var res, detail, images, professions, guarantees;
+        return _regenerator.default.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                if (!(!item || !item.orderNo || item.taskDetailLoading)) {
+                  _context2.next = 2;
+                  break;
+                }
+                return _context2.abrupt("return");
+              case 2:
+                _this5.updateOrderItem(item.id, function (orderItem) {
+                  return _objectSpread(_objectSpread({}, orderItem), {}, {
+                    taskDetailLoading: true,
+                    taskDetailError: ''
+                  });
+                });
+                _context2.prev = 3;
+                _context2.next = 6;
+                return _request.default.get('/wechat/withdrawal/taskDetail', {
+                  orderNo: item.orderNo
+                });
+              case 6:
+                res = _context2.sent;
+                detail = _this5.extractTaskDetailData(res);
+                images = _this5.normalizeImageList(detail.imageList).map(function (url) {
+                  return _this5.buildImageUrl(url);
+                }).filter(Boolean);
+                professions = _this5.normalizeProfessionList(detail.professionList);
+                guarantees = _this5.normalizeGuaranteeList(detail.guaranteeList);
+                _this5.updateOrderItem(item.id, function (orderItem) {
+                  return _objectSpread(_objectSpread({}, orderItem), {}, {
+                    taskDetail: detail,
+                    taskDetailImages: images,
+                    taskDetailProfessions: professions,
+                    taskDetailGuarantees: guarantees,
+                    taskDetailPosterIndex: 0,
+                    taskDetailLoaded: true,
+                    taskDetailLoading: false,
+                    taskDetailError: ''
+                  });
+                });
+                _context2.next = 17;
+                break;
+              case 14:
+                _context2.prev = 14;
+                _context2.t0 = _context2["catch"](3);
+                _this5.updateOrderItem(item.id, function (orderItem) {
+                  return _objectSpread(_objectSpread({}, orderItem), {}, {
+                    taskDetailLoading: false,
+                    taskDetailError: _context2.t0 && _context2.t0.msg || '订单详情加载失败'
+                  });
+                });
+              case 17:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, null, [[3, 14]]);
+      }))();
+    },
+    extractTaskDetailData: function extractTaskDetailData(res) {
+      var candidates = [res && res.data, res && res.data && res.data.data, res];
+      return candidates.find(function (item) {
+        return item && (0, _typeof2.default)(item) === 'object' && !Array.isArray(item);
+      }) || {};
+    },
+    normalizeImageList: function normalizeImageList(value) {
+      if (!value) {
+        return [];
+      }
+      if (Array.isArray(value)) {
+        return value.filter(Boolean);
+      }
+      if (typeof value === 'string') {
+        var text = value.trim();
+        if (!text) {
+          return [];
+        }
+        if (text[0] === '[') {
+          try {
+            var parsed = JSON.parse(text);
+            return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
+          } catch (e) {
+            return [];
+          }
+        }
+        return text.split(',').map(function (item) {
+          return item.trim();
+        }).filter(Boolean);
+      }
+      return [];
+    },
+    normalizeProfessionList: function normalizeProfessionList(value) {
+      if (!Array.isArray(value)) {
+        return [];
+      }
+      return value.map(function (item) {
+        if (!item) {
+          return '';
+        }
+        if (typeof item === 'string') {
+          return item.trim();
+        }
+        return String(item.professionCategoryName || item.categoryName || item.professionName || item.name || item.label || item.description || '').trim();
+      }).filter(Boolean);
+    },
+    normalizeGuaranteeList: function normalizeGuaranteeList(value) {
+      if (!Array.isArray(value)) {
+        return [];
+      }
+      return value.map(function (item) {
+        if (!item) {
+          return '';
+        }
+        if (typeof item === 'string') {
+          return item.trim();
+        }
+        return String(item.description || '').trim();
+      }).filter(Boolean);
+    },
+    onTaskDetailPosterChange: function onTaskDetailPosterChange(event, item) {
+      if (!item) {
+        return;
+      }
+      this.updateOrderItem(item.id, function (orderItem) {
+        return _objectSpread(_objectSpread({}, orderItem), {}, {
+          taskDetailPosterIndex: event.detail.current || 0
+        });
+      });
+    },
+    previewTaskDetailImage: function previewTaskDetailImage(item, index) {
+      if (!item || !item.taskDetailImages || !item.taskDetailImages.length) {
+        return;
+      }
+      uni.previewImage({
+        urls: item.taskDetailImages,
+        current: item.taskDetailImages[index] || item.taskDetailImages[0]
+      });
+    },
     openRejectPopup: function openRejectPopup(item) {
       if (!item || item.rejectLoading) {
         return;
@@ -660,62 +881,62 @@ var _default = {
       this.fetchOrderList(1, true);
     },
     fetchOrderList: function fetchOrderList(pageNum, isRefresh) {
-      var _this4 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
+      var _this6 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee3() {
         var currentRequestSeq, res, pageData, rows, nextList;
-        return _regenerator.default.wrap(function _callee$(_context) {
+        return _regenerator.default.wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context.prev = _context.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
-                currentRequestSeq = ++_this4.requestSeq;
-                _this4.loading = true;
-                _context.prev = 2;
-                _context.next = 5;
-                return _request.default.get('/wechat/tOrder/page', _this4.buildQueryParams(pageNum));
+                currentRequestSeq = ++_this6.requestSeq;
+                _this6.loading = true;
+                _context3.prev = 2;
+                _context3.next = 5;
+                return _request.default.get('/wechat/tOrder/page', _this6.buildQueryParams(pageNum));
               case 5:
-                res = _context.sent;
-                if (!(currentRequestSeq !== _this4.requestSeq)) {
-                  _context.next = 8;
+                res = _context3.sent;
+                if (!(currentRequestSeq !== _this6.requestSeq)) {
+                  _context3.next = 8;
                   break;
                 }
-                return _context.abrupt("return");
+                return _context3.abrupt("return");
               case 8:
-                pageData = _this4.extractPageData(res);
+                pageData = _this6.extractPageData(res);
                 rows = pageData.rows;
                 nextList = rows.filter(function (item) {
                   return item && (0, _typeof2.default)(item) === 'object';
                 }).map(function (item, index) {
-                  return _this4.normalizeOrder(item, index, pageNum);
+                  return _this6.normalizeOrder(item, index, pageNum);
                 });
-                _this4.pageNum = pageNum;
-                _this4.total = Number(pageData.total) || rows.length;
-                _this4.orderList = isRefresh ? nextList : _this4.orderList.concat(nextList);
-                _this4.finished = rows.length < _this4.pageSize || _this4.orderList.length >= _this4.total;
-                _context.next = 20;
+                _this6.pageNum = pageNum;
+                _this6.total = Number(pageData.total) || rows.length;
+                _this6.orderList = isRefresh ? nextList : _this6.orderList.concat(nextList);
+                _this6.finished = rows.length < _this6.pageSize || _this6.orderList.length >= _this6.total;
+                _context3.next = 20;
                 break;
               case 17:
-                _context.prev = 17;
-                _context.t0 = _context["catch"](2);
-                if (currentRequestSeq === _this4.requestSeq) {
-                  _this4.finished = isRefresh;
-                  console.error('订单列表数据处理失败', _context.t0);
+                _context3.prev = 17;
+                _context3.t0 = _context3["catch"](2);
+                if (currentRequestSeq === _this6.requestSeq) {
+                  _this6.finished = isRefresh;
+                  console.error('订单列表数据处理失败', _context3.t0);
                   uni.showToast({
                     title: '订单数据加载失败',
                     icon: 'none'
                   });
                 }
               case 20:
-                _context.prev = 20;
-                if (currentRequestSeq === _this4.requestSeq) {
-                  _this4.loading = false;
+                _context3.prev = 20;
+                if (currentRequestSeq === _this6.requestSeq) {
+                  _this6.loading = false;
                 }
-                return _context.finish(20);
+                return _context3.finish(20);
               case 23:
               case "end":
-                return _context.stop();
+                return _context3.stop();
             }
           }
-        }, _callee, null, [[2, 17, 20, 23]]);
+        }, _callee3, null, [[2, 17, 20, 23]]);
       }))();
     },
     extractPageData: function extractPageData(res) {
@@ -738,13 +959,13 @@ var _default = {
       };
     },
     buildQueryParams: function buildQueryParams(pageNum) {
-      var _this5 = this;
+      var _this7 = this;
       var params = {
         pageNum: pageNum,
         pageSize: this.pageSize
       };
       var currentTab = this.tabs.find(function (item) {
-        return item.value === _this5.activeTab;
+        return item.value === _this7.activeTab;
       });
       if (currentTab && currentTab.status) {
         params.orderStatus = currentTab.status;
@@ -829,47 +1050,56 @@ var _default = {
           reason: '订单已婉拒',
           subtitle: this.buildParticipantSubtitle(item.orderStatus)
         },
+        taskDetailVisible: false,
+        taskDetailLoading: false,
+        taskDetailLoaded: false,
+        taskDetailError: '',
+        taskDetail: {},
+        taskDetailImages: [],
+        taskDetailProfessions: [],
+        taskDetailGuarantees: [],
+        taskDetailPosterIndex: 0,
         expanded: false
       };
     },
     fetchTimeline: function fetchTimeline(id) {
-      var _this6 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee2() {
+      var _this8 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee4() {
         var currentItem, res, list, sortedList, normalizedList, waitingDeliveryConfirm;
-        return _regenerator.default.wrap(function _callee2$(_context2) {
+        return _regenerator.default.wrap(function _callee4$(_context4) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
-                currentItem = _this6.orderList.find(function (orderItem) {
+                currentItem = _this8.orderList.find(function (orderItem) {
                   return orderItem.id === id;
                 });
                 if (!(!currentItem || !currentItem.orderNo)) {
-                  _context2.next = 3;
+                  _context4.next = 3;
                   break;
                 }
-                return _context2.abrupt("return");
+                return _context4.abrupt("return");
               case 3:
-                _this6.updateOrderItem(id, function (orderItem) {
+                _this8.updateOrderItem(id, function (orderItem) {
                   return _objectSpread(_objectSpread({}, orderItem), {}, {
                     timelineLoading: true
                   });
                 });
-                _context2.prev = 4;
-                _context2.next = 7;
+                _context4.prev = 4;
+                _context4.next = 7;
                 return _request.default.post('/wechat/tOrder/timeline', {
                   orderNo: currentItem.orderNo
                 });
               case 7:
-                res = _context2.sent;
-                list = _this6.extractTimelineList(res);
+                res = _context4.sent;
+                list = _this8.extractTimelineList(res);
                 sortedList = list.slice().sort(function (a, b) {
-                  return _this6.parseTimeValue(a && a.createTime) - _this6.parseTimeValue(b && b.createTime);
+                  return _this8.parseTimeValue(a && a.createTime) - _this8.parseTimeValue(b && b.createTime);
                 });
                 normalizedList = sortedList.map(function (record) {
-                  return _this6.normalizeTimelineRecord(record);
+                  return _this8.normalizeTimelineRecord(record);
                 }).filter(Boolean);
-                waitingDeliveryConfirm = _this6.hasPendingDeliveryApply(normalizedList);
-                _this6.updateOrderItem(id, function (orderItem) {
+                waitingDeliveryConfirm = _this8.hasPendingDeliveryApply(normalizedList);
+                _this8.updateOrderItem(id, function (orderItem) {
                   return _objectSpread(_objectSpread({}, orderItem), {}, {
                     timelineList: normalizedList,
                     timelineLoaded: true,
@@ -879,12 +1109,12 @@ var _default = {
                     participant: normalizedList.length > 0 ? _objectSpread(_objectSpread({}, orderItem.participant), normalizedList[0]) : orderItem.participant
                   });
                 });
-                _context2.next = 18;
+                _context4.next = 18;
                 break;
               case 15:
-                _context2.prev = 15;
-                _context2.t0 = _context2["catch"](4);
-                _this6.updateOrderItem(id, function (orderItem) {
+                _context4.prev = 15;
+                _context4.t0 = _context4["catch"](4);
+                _this8.updateOrderItem(id, function (orderItem) {
                   return _objectSpread(_objectSpread({}, orderItem), {}, {
                     timelineLoaded: false,
                     timelineLoading: false
@@ -892,10 +1122,10 @@ var _default = {
                 });
               case 18:
               case "end":
-                return _context2.stop();
+                return _context4.stop();
             }
           }
-        }, _callee2, null, [[4, 15]]);
+        }, _callee4, null, [[4, 15]]);
       }))();
     },
     extractTimelineList: function extractTimelineList(res) {
@@ -1183,33 +1413,33 @@ var _default = {
       return item.publisherUserId || '';
     },
     showContact: function showContact(item) {
-      var _this7 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee3() {
+      var _this9 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee5() {
         var userId, res, data;
-        return _regenerator.default.wrap(function _callee3$(_context3) {
+        return _regenerator.default.wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
                 if (!(!item || item.contactLoading)) {
-                  _context3.next = 2;
+                  _context5.next = 2;
                   break;
                 }
-                return _context3.abrupt("return");
+                return _context5.abrupt("return");
               case 2:
-                userId = _this7.getPublisherContactUserId(item);
+                userId = _this9.getPublisherContactUserId(item);
                 if (userId) {
-                  _context3.next = 6;
+                  _context5.next = 6;
                   break;
                 }
                 uni.showToast({
                   title: '发单人用户ID缺失，无法获取联系信息',
                   icon: 'none'
                 });
-                return _context3.abrupt("return");
+                return _context5.abrupt("return");
               case 6:
                 item.contactLoading = true;
-                _context3.prev = 7;
-                _context3.next = 10;
+                _context5.prev = 7;
+                _context5.next = 10;
                 return _request.default.post('/wechat/tOrder/contact', {
                   userId: userId
                 }, {
@@ -1217,67 +1447,67 @@ var _default = {
                   loadingText: '获取联系中...'
                 });
               case 10:
-                res = _context3.sent;
-                data = _this7.extractContactData(res);
-                _this7.contactPopup = {
+                res = _context5.sent;
+                data = _this9.extractContactData(res);
+                _this9.contactPopup = {
                   visible: true,
                   phone: data.phone ? String(data.phone) : '',
                   wxNumber: data.wxNumber ? String(data.wxNumber) : ''
                 };
-                _context3.next = 17;
+                _context5.next = 17;
                 break;
               case 15:
-                _context3.prev = 15;
-                _context3.t0 = _context3["catch"](7);
+                _context5.prev = 15;
+                _context5.t0 = _context5["catch"](7);
               case 17:
-                _context3.prev = 17;
+                _context5.prev = 17;
                 item.contactLoading = false;
-                return _context3.finish(17);
+                return _context5.finish(17);
               case 20:
               case "end":
-                return _context3.stop();
+                return _context5.stop();
             }
           }
-        }, _callee3, null, [[7, 15, 17, 20]]);
+        }, _callee5, null, [[7, 15, 17, 20]]);
       }))();
     },
     rejectOrder: function rejectOrder(item, rejectContent) {
-      var _this8 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee4() {
-        return _regenerator.default.wrap(function _callee4$(_context4) {
+      var _this10 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee6() {
+        return _regenerator.default.wrap(function _callee6$(_context6) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context6.prev = _context6.next) {
               case 0:
                 if (!(!item || item.rejectLoading)) {
-                  _context4.next = 2;
+                  _context6.next = 2;
                   break;
                 }
-                return _context4.abrupt("return");
+                return _context6.abrupt("return");
               case 2:
                 if (item.orderNo) {
-                  _context4.next = 5;
+                  _context6.next = 5;
                   break;
                 }
                 uni.showToast({
                   title: '订单编号缺失，无法婉拒',
                   icon: 'none'
                 });
-                return _context4.abrupt("return");
+                return _context6.abrupt("return");
               case 5:
                 if (rejectContent) {
-                  _context4.next = 8;
+                  _context6.next = 8;
                   break;
                 }
                 uni.showToast({
                   title: '请选择婉拒理由',
                   icon: 'none'
                 });
-                return _context4.abrupt("return");
+                return _context6.abrupt("return");
               case 8:
                 item.rejectLoading = true;
-                _this8.rejectPopupLoading = true;
-                _context4.prev = 10;
-                _context4.next = 13;
+                _this10.rejectPopupLoading = true;
+                _context6.prev = 10;
+                _context6.next = 13;
                 return _request.default.post('/wechat/tOrder/reject', {
                   orderNo: item.orderNo,
                   rejectContent: rejectContent
@@ -1290,53 +1520,53 @@ var _default = {
                   title: '婉拒成功',
                   icon: 'success'
                 });
-                _this8.rejectPopupVisible = false;
-                _this8.rejectTargetItem = null;
-                _this8.resetList();
-                _context4.next = 21;
+                _this10.rejectPopupVisible = false;
+                _this10.rejectTargetItem = null;
+                _this10.resetList();
+                _context6.next = 21;
                 break;
               case 19:
-                _context4.prev = 19;
-                _context4.t0 = _context4["catch"](10);
+                _context6.prev = 19;
+                _context6.t0 = _context6["catch"](10);
               case 21:
-                _context4.prev = 21;
+                _context6.prev = 21;
                 item.rejectLoading = false;
-                _this8.rejectPopupLoading = false;
-                return _context4.finish(21);
+                _this10.rejectPopupLoading = false;
+                return _context6.finish(21);
               case 25:
               case "end":
-                return _context4.stop();
+                return _context6.stop();
             }
           }
-        }, _callee4, null, [[10, 19, 21, 25]]);
+        }, _callee6, null, [[10, 19, 21, 25]]);
       }))();
     },
     acceptOrder: function acceptOrder(item) {
-      var _this9 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee5() {
-        return _regenerator.default.wrap(function _callee5$(_context5) {
+      var _this11 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee7() {
+        return _regenerator.default.wrap(function _callee7$(_context7) {
           while (1) {
-            switch (_context5.prev = _context5.next) {
+            switch (_context7.prev = _context7.next) {
               case 0:
                 if (!(!item || item.acceptLoading)) {
-                  _context5.next = 2;
+                  _context7.next = 2;
                   break;
                 }
-                return _context5.abrupt("return");
+                return _context7.abrupt("return");
               case 2:
                 if (item.orderNo) {
-                  _context5.next = 5;
+                  _context7.next = 5;
                   break;
                 }
                 uni.showToast({
                   title: '订单编号缺失，无法接单',
                   icon: 'none'
                 });
-                return _context5.abrupt("return");
+                return _context7.abrupt("return");
               case 5:
                 item.acceptLoading = true;
-                _context5.prev = 6;
-                _context5.next = 9;
+                _context7.prev = 6;
+                _context7.next = 9;
                 return _request.default.post('/wechat/tOrder/accept', {
                   orderNo: item.orderNo
                 }, {
@@ -1348,39 +1578,39 @@ var _default = {
                   title: '接单成功',
                   icon: 'success'
                 });
-                _this9.resetList();
-                _context5.next = 15;
+                _this11.resetList();
+                _context7.next = 15;
                 break;
               case 13:
-                _context5.prev = 13;
-                _context5.t0 = _context5["catch"](6);
+                _context7.prev = 13;
+                _context7.t0 = _context7["catch"](6);
               case 15:
-                _context5.prev = 15;
+                _context7.prev = 15;
                 item.acceptLoading = false;
-                return _context5.finish(15);
+                return _context7.finish(15);
               case 18:
               case "end":
-                return _context5.stop();
+                return _context7.stop();
             }
           }
-        }, _callee5, null, [[6, 13, 15, 18]]);
+        }, _callee7, null, [[6, 13, 15, 18]]);
       }))();
     },
     applyDelivery: function applyDelivery(item) {
-      var _this10 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee6() {
+      var _this12 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee8() {
         var confirmRes;
-        return _regenerator.default.wrap(function _callee6$(_context6) {
+        return _regenerator.default.wrap(function _callee8$(_context8) {
           while (1) {
-            switch (_context6.prev = _context6.next) {
+            switch (_context8.prev = _context8.next) {
               case 0:
                 if (!(!item.orderNo || item.deliveryLoading)) {
-                  _context6.next = 2;
+                  _context8.next = 2;
                   break;
                 }
-                return _context6.abrupt("return");
+                return _context8.abrupt("return");
               case 2:
-                _context6.next = 4;
+                _context8.next = 4;
                 return new Promise(function (resolve) {
                   uni.showModal({
                     title: '确认交稿',
@@ -1395,16 +1625,16 @@ var _default = {
                   });
                 });
               case 4:
-                confirmRes = _context6.sent;
+                confirmRes = _context8.sent;
                 if (confirmRes.confirm) {
-                  _context6.next = 7;
+                  _context8.next = 7;
                   break;
                 }
-                return _context6.abrupt("return");
+                return _context8.abrupt("return");
               case 7:
                 item.deliveryLoading = true;
-                _context6.prev = 8;
-                _context6.next = 11;
+                _context8.prev = 8;
+                _context8.next = 11;
                 return _request.default.post('/wechat/tOrder/applyDelivery', {
                   orderNo: item.orderNo
                 }, {
@@ -1416,22 +1646,22 @@ var _default = {
                   title: '交稿申请已提交',
                   icon: 'success'
                 });
-                _this10.resetList();
-                _context6.next = 17;
+                _this12.resetList();
+                _context8.next = 17;
                 break;
               case 15:
-                _context6.prev = 15;
-                _context6.t0 = _context6["catch"](8);
+                _context8.prev = 15;
+                _context8.t0 = _context8["catch"](8);
               case 17:
-                _context6.prev = 17;
+                _context8.prev = 17;
                 item.deliveryLoading = false;
-                return _context6.finish(17);
+                return _context8.finish(17);
               case 20:
               case "end":
-                return _context6.stop();
+                return _context8.stop();
             }
           }
-        }, _callee6, null, [[8, 15, 17, 20]]);
+        }, _callee8, null, [[8, 15, 17, 20]]);
       }))();
     },
     openExtraChargePopup: function openExtraChargePopup(item) {
@@ -1485,48 +1715,48 @@ var _default = {
       };
     },
     confirmQuoteInviteOrder: function confirmQuoteInviteOrder() {
-      var _this11 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee7() {
+      var _this13 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee9() {
         var item, amount;
-        return _regenerator.default.wrap(function _callee7$(_context7) {
+        return _regenerator.default.wrap(function _callee9$(_context9) {
           while (1) {
-            switch (_context7.prev = _context7.next) {
+            switch (_context9.prev = _context9.next) {
               case 0:
-                if (!_this11.quoteInvitePopup.submitting) {
-                  _context7.next = 2;
+                if (!_this13.quoteInvitePopup.submitting) {
+                  _context9.next = 2;
                   break;
                 }
-                return _context7.abrupt("return");
+                return _context9.abrupt("return");
               case 2:
-                item = _this11.quoteInvitePopup.item;
+                item = _this13.quoteInvitePopup.item;
                 if (!(!item || !item.orderNo)) {
-                  _context7.next = 6;
+                  _context9.next = 6;
                   break;
                 }
                 uni.showToast({
                   title: '订单编号缺失，无法报价',
                   icon: 'none'
                 });
-                return _context7.abrupt("return");
+                return _context9.abrupt("return");
               case 6:
-                amount = _this11.parseAmountValue(_this11.quoteInvitePopup.amount);
+                amount = _this13.parseAmountValue(_this13.quoteInvitePopup.amount);
                 if (!(Number.isNaN(amount) || amount < 0.01 || amount > 99999999.99)) {
-                  _context7.next = 10;
+                  _context9.next = 10;
                   break;
                 }
                 uni.showToast({
                   title: '请输入0.01至99999999.99的金额',
                   icon: 'none'
                 });
-                return _context7.abrupt("return");
+                return _context9.abrupt("return");
               case 10:
-                _this11.quoteInvitePopup.submitting = true;
+                _this13.quoteInvitePopup.submitting = true;
                 item.quoteLoading = true;
-                _context7.prev = 12;
-                _context7.next = 15;
+                _context9.prev = 12;
+                _context9.next = 15;
                 return _request.default.post('/wechat/tOrder/quoteInviteOrder', {
                   orderNo: item.orderNo,
-                  quoteAmount: Number(_this11.formatSubmitAmount(amount))
+                  quoteAmount: Number(_this13.formatSubmitAmount(amount))
                 }, {
                   loading: true,
                   loadingText: '报价提交中...'
@@ -1536,74 +1766,74 @@ var _default = {
                   title: '报价已提交',
                   icon: 'success'
                 });
-                _this11.quoteInvitePopup = {
+                _this13.quoteInvitePopup = {
                   visible: false,
                   item: null,
                   amount: '',
                   submitting: false
                 };
-                _this11.resetList();
-                _context7.next = 23;
+                _this13.resetList();
+                _context9.next = 23;
                 break;
               case 20:
-                _context7.prev = 20;
-                _context7.t0 = _context7["catch"](12);
-                _this11.quoteInvitePopup.submitting = false;
+                _context9.prev = 20;
+                _context9.t0 = _context9["catch"](12);
+                _this13.quoteInvitePopup.submitting = false;
               case 23:
-                _context7.prev = 23;
+                _context9.prev = 23;
                 item.quoteLoading = false;
-                return _context7.finish(23);
+                return _context9.finish(23);
               case 26:
               case "end":
-                return _context7.stop();
+                return _context9.stop();
             }
           }
-        }, _callee7, null, [[12, 20, 23, 26]]);
+        }, _callee9, null, [[12, 20, 23, 26]]);
       }))();
     },
     confirmExtraCharge: function confirmExtraCharge() {
-      var _this12 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee8() {
+      var _this14 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee10() {
         var item, amount;
-        return _regenerator.default.wrap(function _callee8$(_context8) {
+        return _regenerator.default.wrap(function _callee10$(_context10) {
           while (1) {
-            switch (_context8.prev = _context8.next) {
+            switch (_context10.prev = _context10.next) {
               case 0:
-                if (!_this12.extraChargePopup.submitting) {
-                  _context8.next = 2;
+                if (!_this14.extraChargePopup.submitting) {
+                  _context10.next = 2;
                   break;
                 }
-                return _context8.abrupt("return");
+                return _context10.abrupt("return");
               case 2:
-                item = _this12.extraChargePopup.item;
+                item = _this14.extraChargePopup.item;
                 if (!(!item || !item.orderNo)) {
-                  _context8.next = 6;
+                  _context10.next = 6;
                   break;
                 }
                 uni.showToast({
                   title: '订单编号缺失，无法加钱',
                   icon: 'none'
                 });
-                return _context8.abrupt("return");
+                return _context10.abrupt("return");
               case 6:
-                amount = _this12.parseAmountValue(_this12.extraChargePopup.amount);
+                amount = _this14.parseAmountValue(_this14.extraChargePopup.amount);
                 if (!(Number.isNaN(amount) || amount < 0.01 || amount > 99999999.99)) {
-                  _context8.next = 10;
+                  _context10.next = 10;
                   break;
                 }
                 uni.showToast({
                   title: '请输入0.01至99999999.99的金额',
                   icon: 'none'
                 });
-                return _context8.abrupt("return");
+                return _context10.abrupt("return");
               case 10:
-                _this12.extraChargePopup.submitting = true;
+                _this14.extraChargePopup.submitting = true;
                 item.extraChargeLoading = true;
-                _context8.prev = 12;
-                _context8.next = 15;
+                _context10.prev = 12;
+                _context10.next = 15;
                 return _request.default.post('/wechat/outSourcing/extraCharge', {
                   orderNo: item.orderNo,
-                  extraAmount: Number(_this12.formatSubmitAmount(amount)),
+                  extraAmount: Number(_this14.formatSubmitAmount(amount)),
                   operationType: 'receiver_apply'
                 }, {
                   loading: true,
@@ -1614,51 +1844,51 @@ var _default = {
                   title: '加价申请已提交',
                   icon: 'success'
                 });
-                _this12.extraChargePopup = {
+                _this14.extraChargePopup = {
                   visible: false,
                   item: null,
                   amount: '',
                   submitting: false
                 };
                 if (item.expanded) {
-                  _this12.fetchTimeline(item.id);
+                  _this14.fetchTimeline(item.id);
                 } else {
-                  _this12.resetList();
+                  _this14.resetList();
                 }
-                _context8.next = 23;
+                _context10.next = 23;
                 break;
               case 20:
-                _context8.prev = 20;
-                _context8.t0 = _context8["catch"](12);
-                _this12.extraChargePopup.submitting = false;
+                _context10.prev = 20;
+                _context10.t0 = _context10["catch"](12);
+                _this14.extraChargePopup.submitting = false;
               case 23:
-                _context8.prev = 23;
+                _context10.prev = 23;
                 item.extraChargeLoading = false;
-                return _context8.finish(23);
+                return _context10.finish(23);
               case 26:
               case "end":
-                return _context8.stop();
+                return _context10.stop();
             }
           }
-        }, _callee8, null, [[12, 20, 23, 26]]);
+        }, _callee10, null, [[12, 20, 23, 26]]);
       }))();
     },
     handleRefund: function handleRefund(item, refundTimeline, action) {
-      var _this13 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee9() {
-        return _regenerator.default.wrap(function _callee9$(_context9) {
+      var _this15 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee11() {
+        return _regenerator.default.wrap(function _callee11$(_context11) {
           while (1) {
-            switch (_context9.prev = _context9.next) {
+            switch (_context11.prev = _context11.next) {
               case 0:
                 if (!(!item || item.refundHandleLoading)) {
-                  _context9.next = 2;
+                  _context11.next = 2;
                   break;
                 }
-                return _context9.abrupt("return");
+                return _context11.abrupt("return");
               case 2:
                 item.refundHandleLoading = true;
-                _context9.prev = 3;
-                _context9.next = 6;
+                _context11.prev = 3;
+                _context11.next = 6;
                 return _request.default.post('/wechat/outSourcing/handleRefund', {
                   orderNo: item.orderNo,
                   timelineId: refundTimeline.timelineId,
@@ -1672,22 +1902,22 @@ var _default = {
                   title: action === 'agree' ? '已同意退款' : '已拒绝退款',
                   icon: 'success'
                 });
-                _this13.resetList();
-                _context9.next = 12;
+                _this15.resetList();
+                _context11.next = 12;
                 break;
               case 10:
-                _context9.prev = 10;
-                _context9.t0 = _context9["catch"](3);
+                _context11.prev = 10;
+                _context11.t0 = _context11["catch"](3);
               case 12:
-                _context9.prev = 12;
+                _context11.prev = 12;
                 item.refundHandleLoading = false;
-                return _context9.finish(12);
+                return _context11.finish(12);
               case 15:
               case "end":
-                return _context9.stop();
+                return _context11.stop();
             }
           }
-        }, _callee9, null, [[3, 10, 12, 15]]);
+        }, _callee11, null, [[3, 10, 12, 15]]);
       }))();
     }
   }

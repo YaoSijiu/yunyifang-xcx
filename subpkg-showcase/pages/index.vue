@@ -20,24 +20,24 @@
 							<text class="field-title">橱窗标题</text>
 							<text class="field-count">{{ form.title.length }}/30</text>
 						</view>
-						<input class="plain-input" v-model="form.title" maxlength="30" placeholder="最多输入30个字符(15个汉字）" placeholder-class="placeholder-text" />
+						<input class="plain-input" v-model="form.title" maxlength="30" placeholder="最多输入30个字" placeholder-class="placeholder-text" />
 					</view>
 
-					<view class="field-block">
+					<view class="field-block.no-margin">
 						<view class="field-header">
 							<text class="field-title">商品描述</text>
 							<text class="field-count">{{ form.description.length }}/100</text>
 						</view>
-						<textarea class="plain-textarea" v-model="form.description" maxlength="100" placeholder="最多输入100个字符(50个汉字）" placeholder-class="placeholder-text"></textarea>
+						<textarea class="plain-textarea" v-model="form.description" maxlength="100" placeholder="最多输入100个字" placeholder-class="placeholder-text"></textarea>
 					</view>
 
-					<view class="field-block no-margin">
+					<!-- <view class="field-block no-margin">
 						<view class="field-header">
 							<text class="field-title">需求描述</text>
 							<text class="field-count">{{ form.requirement.length }}/100</text>
 						</view>
-						<textarea class="plain-textarea large" v-model="form.requirement" maxlength="100" placeholder="最多输入100个字符(50个汉字）" placeholder-class="placeholder-text"></textarea>
-					</view>
+						<textarea class="plain-textarea large" v-model="form.requirement" maxlength="100" placeholder="最多输入100个字" placeholder-class="placeholder-text"></textarea>
+					</view> -->
 				</view>
 
 				<view class="form-card service-card">
@@ -569,9 +569,30 @@ export default {
 				});
 				return false;
 			}
+			if (this.form.title.length > 30) {
+				uni.showToast({
+					title: '橱窗标题不能超过30个字符',
+					icon: 'none'
+				});
+				return false;
+			}
 			if (!this.form.description.trim()) {
 				uni.showToast({
 					title: '请输入商品描述',
+					icon: 'none'
+				});
+				return false;
+			}
+			if (this.form.description.length > 100) {
+				uni.showToast({
+					title: '商品描述不能超过100个字符',
+					icon: 'none'
+				});
+				return false;
+			}
+			if (this.form.requirement && this.form.requirement.length > 100) {
+				uni.showToast({
+					title: '需求描述不能超过100个字符',
 					icon: 'none'
 				});
 				return false;
@@ -680,8 +701,8 @@ export default {
 }
 
 .page-canvas {
-	min-height: 2050rpx;
-	padding: 20rpx 30rpx 150rpx;
+	min-height: 1600rpx;
+	padding: 20rpx 30rpx 130rpx;
 	box-sizing: border-box;
 }
 
@@ -778,7 +799,7 @@ export default {
 
 .plain-textarea {
 	width: 100%;
-	height: 150rpx;
+	height: 220rpx;
 	margin-top: 18rpx;
 	font-size: 28rpx;
 	line-height: 40rpx;
@@ -793,7 +814,7 @@ export default {
 
 .placeholder-text,
 .line-placeholder {
-	color: #D4D4D4;
+	color: #888888;
 	font-size: 28rpx;
 }
 
@@ -802,7 +823,6 @@ export default {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	border-bottom: 1rpx solid #eeeeee;
 }
 
 .line-label {
@@ -815,7 +835,7 @@ export default {
 	flex: 1;
 	min-width: 0;
 	min-height: 68rpx;
-	border: 1rpx solid #979797;
+	border: 1rpx solid #D9D9D9;
 	border-radius: 6rpx;
 	display: flex;
 	align-items: center;
@@ -838,7 +858,7 @@ export default {
 .line-input {
 	flex: 1;
 	height: 68rpx;
-	border: 1rpx solid #979797;
+	border: 1rpx solid #D9D9D9;
 	border-radius: 6rpx;
 	padding: 0 30rpx;
 	box-sizing: border-box;

@@ -96,12 +96,13 @@
 							</view>
 						</view>
 						<button
-							class="task-action-btn"
-							:class="{ 'task-action-btn-quote': item.participantType === 'quote', 'task-action-btn-accept': item.participantType === 'accept' }"
-							@click.stop="handleQuickAction(item)"
-						>
-							{{ item.participantType === 'quote' ? '报价' : '接单' }}
-						</button>
+						v-if="!item.isOwnTask"
+						class="task-action-btn"
+						:class="{ 'task-action-btn-quote': item.participantType === 'quote', 'task-action-btn-accept': item.participantType === 'accept' }"
+						@click.stop="handleQuickAction(item)"
+					>
+						{{ item.participantType === 'quote' ? '报价' : '接单' }}
+					</button>
 						<button
 							class="task-share-btn"
 							open-type="share"
@@ -349,10 +350,11 @@ export default {
 			const participantList = this.normalizeParticipantList(item, participantType);
 			const participantCount = this.resolveParticipantCount(item, participantType, participantList.length);
 			return {
-				channelId: item.channelId ? String(item.channelId) : '',
-				taskId: item.taskId ? String(item.taskId) : '',
-				name: item.nickName || '未命名用户',
-				publishDate: this.formatPublishDate(item.publishTime),
+			channelId: item.channelId ? String(item.channelId) : '',
+			taskId: item.taskId ? String(item.taskId) : '',
+			name: item.nickName || '未命名用户',
+			publishDate: this.formatPublishDate(item.publishTime),
+			publishTime: item.publishTime || '',
 				deadlineText: this.buildDeadlineText(item.deliveryDate),
 				desc: item.taskDesc || item.taskTitle || '暂无任务描述',
 				price: this.formatPrice(item.budgetAmount, item.isOtherPartyQuote),
@@ -367,8 +369,31 @@ export default {
 				participants: participantList,
 				displayParticipants: participantList.slice(0, 3),
 				hasMoreParticipants: participantCount > 3 || participantList.length > 3,
-				professionList
+				professionList,
+				isOwnTask: this.checkIsOwnTask(item)
 			};
+		},
+		getCurrentUserId() {
+			const isTeamMode = !!uni.getStorageSync('isTeamMode');
+			const userInfo = uni.getStorageSync('userInfo') || {};
+			if (isTeamMode) {
+				return uni.getStorageSync('teamOwnerId') || userInfo.id || userInfo.userId || '';
+			}
+			return userInfo.id || userInfo.userId || '';
+		},
+		checkIsOwnTask(item) {
+			if (!item) {
+				return false;
+			}
+			const currentUserId = this.getCurrentUserId();
+			if (!currentUserId) {
+				return false;
+			}
+			const ownerUserId = item.userId || item.publishUserId || item.publisherUserId || item.wxUserId || item.publishWxUserId || '';
+			if (ownerUserId && String(ownerUserId) === String(currentUserId)) {
+				return true;
+			}
+			return false;
 		},
 		normalizeParticipantList(item, participantType) {
 			const avatarList = this.normalizeParticipantAvatarList(item.participantAvatarList);
@@ -491,7 +516,7 @@ export default {
 		formatPrice(budgetAmount, isOtherPartyQuote) {
 			const hasAmount = budgetAmount !== '' && budgetAmount !== null && budgetAmount !== undefined;
 			if (Number(isOtherPartyQuote) === 1) {
-				return hasAmount ? `￥${budgetAmount}` : '￥？';
+				return hasAmount ? `￥${budgetAmount}` : '￥?';
 			}
 			if (!hasAmount) {
 				return '预算待定';
@@ -522,10 +547,10 @@ export default {
 				return;
 			}
 			uni.navigateTo({
-				url: `/subpkg-task/pages/detail/index?id=${item.channelId}&channelId=${item.channelId}&taskId=${item.taskId}`
-			});
-		},
-		handleParticipantClick(participant) {
+			url: `/subpkg-task/pages/detail/index?id=${item.channelId}&channelId=${item.channelId}&taskId=${item.taskId}&publishTime=${encodeURIComponent(item.publishTime || '')}`
+		});
+	},
+	handleParticipantClick(participant) {
 			if (!participant || !participant.userId) {
 				uni.showToast({
 					title: '用户信息缺失',
@@ -552,9 +577,9 @@ export default {
 				return;
 			}
 			const actionType = item.participantType === 'quote' ? 'quote' : 'accept';
-			uni.navigateTo({
-				url: `/subpkg-task/pages/detail/index?id=${item.channelId}&channelId=${item.channelId}&taskId=${item.taskId}&autoAction=${actionType}`
-			});
+		uni.navigateTo({
+			url: `/subpkg-task/pages/detail/index?id=${item.channelId}&channelId=${item.channelId}&taskId=${item.taskId}&autoAction=${actionType}&publishTime=${encodeURIComponent(item.publishTime || '')}`
+		});
 		},
 		handleShareTask() {
 			// open-type="share" 触发原生分享；这里仅阻止卡片点击冒泡。
@@ -841,7 +866,6 @@ button::after {
 	padding: 22rpx 23rpx 0;
 	font-family: PingFang SC;
 	font-size: 28rpx;
-	line-height: 16rpx;
 	color: #000000;
 	margin-bottom: 10rpx;
 }

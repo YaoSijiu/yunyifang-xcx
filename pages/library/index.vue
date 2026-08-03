@@ -15,19 +15,19 @@
 				<!-- Tab 0: 主页 (仅在个人模式下显示) -->
 				<view v-if="!isTeamMode" class="nav-item" @click="changeTab(0)">
 					<text :class="currentTab == 0 ? 'active' : ''">主页</text>
-					<view v-if="currentTab == 0" class="yellow-underline"></view>
+					<image v-if="currentTab == 0" class="yellow-underline" src="/static/common/选中条.png" />
 				</view>
 
 				<!-- Tab 1: 作品 -->
 				<view class="nav-item" @click="changeTab(1)">
 					<text :class="currentTab == 1 ? 'active' : ''">作品</text>
-					<view v-if="currentTab == 1" class="yellow-underline"></view>
+					<image v-if="currentTab == 1" class="yellow-underline" src="/static/common/选中条.png" />
 				</view>
 
 				<!-- Tab 2: 作品集 -->
 				<view class="nav-item" @click="changeTab(2)">
 					<text :class="currentTab == 2 ? 'active' : ''">作品集</text>
-					<view v-if="currentTab == 2" class="yellow-underline"></view>
+					<image v-if="currentTab == 2" class="yellow-underline" src="/static/common/选中条.png" />
 				</view>
 			</view>
 		</view>
@@ -3621,12 +3621,11 @@
 	.yellow-underline {
 		position: absolute;
 		left: 50%;
-		bottom: -6rpx;
+		bottom: 6rpx;
 		transform: translateX(-50%);
-		width: 34rpx;
-		height: 6rpx;
-		border-radius: 999rpx;
-		background: #ff7a22;
+		width: 44rpx;
+		height: 11rpx;
+		top:55rpx;
 	}
 
 	/* tab-content */

@@ -14,7 +14,7 @@
 			<view class="cell-item">
 				<text class="cell-label">昵称</text>
 				<view class="cell-right">
-					<input class="cell-input" v-model="profileData.nickname" placeholder="轻触摸编辑"  @input="checkNicknameLength" />
+					<input class="cell-input" v-model="profileData.nickname" placeholder="轻触摸编辑" maxlength="8" @input="checkNicknameLength" />
 					<!-- <text class="arrow"></text> -->
 				</view>
 			</view>
@@ -331,6 +331,13 @@ export default {
 			if (!this.profileData.nickname) {
 				uni.showToast({
 					title: '请输入昵称',
+					icon: 'none'
+				});
+				return;
+			}
+			if (this.profileData.nickname.length > 10) {
+				uni.showToast({
+					title: '昵称不能超过10个字符',
 					icon: 'none'
 				});
 				return;

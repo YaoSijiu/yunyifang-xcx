@@ -1100,9 +1100,23 @@ var _default = {
         });
         return false;
       }
+      if (this.form.title.length > 30) {
+        uni.showToast({
+          title: '任务标题不能超过30个字符',
+          icon: 'none'
+        });
+        return false;
+      }
       if (!this.form.description.trim()) {
         uni.showToast({
           title: '请输入需求描述',
+          icon: 'none'
+        });
+        return false;
+      }
+      if (this.form.description.length > 100) {
+        uni.showToast({
+          title: '需求描述不能超过100个字符',
           icon: 'none'
         });
         return false;
@@ -1233,6 +1247,9 @@ var _default = {
       }
       if (payload.publishType.indexOf('invite') > -1 && this.inviteeWxUserId) {
         payload.inviteeWxUserId = Number(this.inviteeWxUserId);
+      }
+      if (this.isShowcaseInviteMode && this.sourceShowcaseId) {
+        payload.showcaseId = Number(this.sourceShowcaseId);
       }
       return payload;
     },

@@ -2191,7 +2191,7 @@
 		color: #999;
 		/* 灰色文字 */
 		font-size: 28rpx;
-		font-family: sans-serif;
+		font-family: PingFang SC;
 	}
 
 	.upload-icon {

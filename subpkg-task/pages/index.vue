@@ -11,7 +11,7 @@
 							class="plain-input title-input"
 							v-model="form.title"
 							maxlength="30"
-							placeholder="最多输入30个字符(15个汉字）"
+							placeholder="最多输入30个字"
 							placeholder-class="placeholder-text"
 						/>
 					</view>
@@ -25,7 +25,7 @@
 							class="plain-textarea"
 							v-model="form.description"
 							maxlength="100"
-							placeholder="最多输入100个字符(50个汉字）"
+							placeholder="最多输入100个字"
 							placeholder-class="placeholder-text"
 						></textarea>
 					</view>
@@ -795,9 +795,23 @@ export default {
 				});
 				return false;
 			}
+			if (this.form.title.length > 30) {
+				uni.showToast({
+					title: '任务标题不能超过30个字符',
+					icon: 'none'
+				});
+				return false;
+			}
 			if (!this.form.description.trim()) {
 				uni.showToast({
 					title: '请输入需求描述',
+					icon: 'none'
+				});
+				return false;
+			}
+			if (this.form.description.length > 100) {
+				uni.showToast({
+					title: '需求描述不能超过100个字符',
 					icon: 'none'
 				});
 				return false;
@@ -913,6 +927,9 @@ export default {
 			}
 			if (payload.publishType.indexOf('invite') > -1 && this.inviteeWxUserId) {
 				payload.inviteeWxUserId = Number(this.inviteeWxUserId);
+			}
+			if (this.isShowcaseInviteMode && this.sourceShowcaseId) {
+				payload.showcaseId = Number(this.sourceShowcaseId);
 			}
 			return payload;
 		},
@@ -1269,7 +1286,7 @@ export default {
 	flex: 1;
 	min-width: 0;
 	min-height: 68rpx;
-	border: 1rpx solid #979797;
+	border: 1rpx solid #d9d9d9;
 	border-radius: 6rpx;
 	display: flex;
 	align-items: center;
@@ -1310,7 +1327,7 @@ export default {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	border-bottom: 1rpx solid #eeeeee;
+	
 }
 
 .budget-label {
@@ -1323,7 +1340,7 @@ export default {
 .budget-input {
 	flex: 1;
 	height: 68rpx;
-	border: 1rpx solid #979797;
+	border: 1rpx solid #d9d9d9;
 	border-radius: 6rpx;
 	padding: 0 30rpx;
 	box-sizing: border-box;

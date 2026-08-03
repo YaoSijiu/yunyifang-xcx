@@ -119,8 +119,6 @@
   bottom: 6rpx;
   width: 34rpx;
   height: 6rpx;
-  border-radius: 999rpx;
-  background: #ff7a22;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
 }
@@ -128,9 +126,13 @@
   position: relative;
   font-size: 30rpx;
   color: #434343;
-  padding: 14rpx 22rpx 21rpx;
+  padding: 22rpx 10rpx 0rpx 21rpx;
   display: inline-block;
-  margin-right: 30rpx;
+}
+.tab-item-text.data-v-44ee474d {
+  position: relative;
+  padding: 0rpx 0rpx 31rpx;
+  display: inline-block;
 }
 .tab-item .tab-text.data-v-44ee474d {
   font-size: 30rpx;
@@ -141,23 +143,27 @@
   color: #1a1a1a;
 }
 .tab-item .badge.data-v-44ee474d {
-  display: inline-block;
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
+  min-width: 20rpx;
+  height: 25rpx;
+  line-height: 25rpx;
   background-color: #333;
   color: #fff;
   font-size: 20rpx;
   padding: 2rpx 10rpx;
   border-radius: 20rpx;
   margin-left: 8rpx;
+  margin-top: -1rpx;
   vertical-align: middle;
 }
 .yellow-underline.data-v-44ee474d {
   position: absolute;
   left: 50%;
   bottom: 6rpx;
-  width: 34rpx;
-  height: 6rpx;
-  border-radius: 999rpx;
-  background: #ff7a22;
+  width: 44rpx;
+  height: 11rpx;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
 }
@@ -185,7 +191,7 @@
 }
 /* 3. 搜索框样式 */
 .search-box-wrapper.data-v-44ee474d {
-  padding: 20rpx 30rpx;
+  padding: 10rpx 20rpx 30rpx;
   background-color: #fff;
 }
 .search-icon.data-v-44ee474d {

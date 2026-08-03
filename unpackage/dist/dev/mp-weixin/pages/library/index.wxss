@@ -221,13 +221,12 @@ to {
 .yellow-underline.data-v-462487d5 {
   position: absolute;
   left: 50%;
-  bottom: -6rpx;
+  bottom: 6rpx;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
-  width: 34rpx;
-  height: 6rpx;
-  border-radius: 999rpx;
-  background: #ff7a22;
+  width: 44rpx;
+  height: 11rpx;
+  top: 55rpx;
 }
 /* tab-content */
 .tab-content.data-v-462487d5 {

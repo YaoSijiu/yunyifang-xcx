@@ -1,4 +1,4 @@
-<template>
+﻿<template>
 	<view class="my-showcase-page">
 		<view class="fixed-header">
 			<view class="tab-row">
@@ -10,7 +10,7 @@
 					@click="switchTab(item.status)"
 				>
 					<text>{{ item.label }}</text>
-					<view v-if="activeStatus === item.status" class="tab-line"></view>
+					<image v-if="activeStatus === item.status" class="tab-line" src="/static/common/选中条.png" />
 				</view>
 			</view>
 		</view>
@@ -492,7 +492,7 @@ button::after {
 }
 
 .tab-item.active {
-	font-weight: 700;
+	font-weight: bold;;
 	color: #1a1a1a;
 }
 
@@ -500,11 +500,10 @@ button::after {
 	position: absolute;
 	left: 50%;
 	bottom: 6rpx;
-	width: 34rpx;
-	height: 6rpx;
-	border-radius: 999rpx;
-	background: #ff7a22;
+	width: 44rpx;
+	height: 11rpx;
 	transform: translateX(-50%);
+	top: 65rpx;
 }
 
 .list-scroll {
@@ -572,6 +571,7 @@ button::after {
 .card-title {
 	display: block;
 	font-size: 36rpx;
+	font-weight: bold;
 	line-height: 51rpx;
 	color: #000000;
 	white-space: nowrap;
@@ -639,7 +639,7 @@ button::after {
 	color: #979797;
 	background: #ffffff;
 	font-size: 24rpx;
-	line-height: 48rpx;
+	line-height: 46rpx;
 	text-align: center;
 }
 

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
 	<view class="task-detail-page">
 		<scroll-view scroll-y class="page-scroll">
 			<view class="page-canvas">
@@ -13,19 +13,16 @@
 
 				<template v-else>
 					<view class="publisher-card">
-					<view class="publisher-row">
-						<image class="publisher-avatar" :src="detail.publisher.avatar" mode="aspectFill" @click.stop="goPublisherHome"></image>
-						<view class="publisher-info">
-							<text class="publisher-name">{{ detail.publisher.name }}</text>
-							<text v-if="detail.publisher.publishTime" class="publish-time">发布于{{ detail.publisher.publishTime }}</text>
-						</view>
-						<view class="publisher-right">
-							<text v-if="detail.statusText" class="publisher-status">{{ detail.statusText }}</text>
-							<text class="deadline-text">{{ detail.deadlineText }}</text>
-						</view>
-					</view>
-						<view class="meta-row">
-							<text v-if="detail.hasBudgetAmount" class="budget-text">{{ detail.budgetText }}</text>
+						<view class="publisher-row">
+							<image class="publisher-avatar" :src="detail.publisher.avatar" mode="aspectFill" @click.stop="goPublisherHome"></image>
+							<view class="publisher-info">
+								<text class="publisher-name">{{ detail.publisher.name }}</text>
+								<text v-if="detail.publisher.publishTime" class="publish-time">发布于{{ detail.publisher.publishTime }}</text>
+							</view>
+							<view class="publisher-right">
+								<!-- <text v-if="detail.statusText" class="publisher-status">{{ detail.statusText }}</text> -->
+								<text class="deadline-text">{{ detail.deadlineText }}</text>
+							</view>
 						</view>
 					</view>
 
@@ -76,10 +73,6 @@
 					</view>
 
 					<view v-if="showBidderCard" class="content-card bidder-card">
-						<view class="bidder-header">
-							<text class="section-title">报价人</text>
-							<text class="bidder-count">{{ bidders.length }}人报价</text>
-						</view>
 						<scroll-view scroll-y class="bidder-scroll" :show-scrollbar="false">
 							<view v-if="bidders.length === 0" class="bidder-empty">
 								<text>暂无报价</text>
@@ -91,8 +84,9 @@
 									<text class="bidder-time">{{ item.time }}</text>
 								</view>
 								<view class="bidder-right">
-									<text class="bidder-price">{{ item.priceText }}</text>
-								</view>
+								<text v-if="item.type === 'quote' && item.hasPrice" class="bidder-price">已报价：{{ item.priceText }}</text>
+								<text v-else class="bidder-price">{{ item.priceText }}</text>
+							</view>
 							</view>
 						</scroll-view>
 					</view>
@@ -102,12 +96,16 @@
 			</view>
 		</scroll-view>
 
-		<view v-if="!hideBottomBar" class="bottom-bar">
+		<view class="bottom-bar">
 			<view v-if="detail.canQuote" class="quote-tip">
-				<text class="quote-tip-mark">?</text>
+				<!-- <text class="quote-tip-mark">?</text> -->
+				<text class="budget-text">￥？</text>
 				<text class="quote-tip-text">需要乙方报价</text>
 			</view>
-			<view class="bottom-bar-right">
+			<view v-if="!detail.canQuote" class="quote-tip">
+				<text v-if="detail.hasBudgetAmount" class="budget-text">{{ detail.budgetText }}</text>
+			</view>
+			<view v-if="!hideBottomBar" class="bottom-bar-right">
 				<button
 					class="apply-btn"
 					:class="{
@@ -119,10 +117,10 @@
 				>
 					{{ actionButtonText }}
 				</button>
-				<button class="share-btn" :open-type="shareOpenType" @click.stop="handleShareClick">
-					<image class="share-icon" src="/static/profile/橱窗分享按钮.svg" mode="aspectFit"></image>
-				</button>
 			</view>
+			<button class="share-btn" :open-type="shareOpenType" @click.stop="handleShareClick">
+				<image class="share-icon" src="/static/profile/橱窗分享按钮-深色.png" mode="aspectFit"></image>
+			</button>
 		</view>
 
 		<view v-if="showQuotePopup" class="popup-mask" @click="closeQuotePopup">
@@ -165,7 +163,7 @@ const createDefaultDetail = () => ({
 	statusText: '',
 	title: '',
 	description: '',
-	deadlineText: '交稿时间待定',
+	deadlineText: '截稿时间待定',
 	budgetText: '预算待定',
 	hasBudgetAmount: false,
 	canQuote: false,
@@ -194,6 +192,7 @@ export default {
 			bidders: [],
 			showQuotePopup: false,
 			hasQuoted: false,
+			hasAccepted: false,
 			applySubmitting: false,
 			quoteSubmitting: false,
 			loginPromptVisible: false,
@@ -229,7 +228,7 @@ export default {
 			if (this.detail.canQuote) {
 				return this.quoteSubmitting || this.hasQuoted;
 			}
-			return this.applySubmitting;
+			return this.applySubmitting || this.hasAccepted;
 		},
 		actionButtonText() {
 			if (!this.detail.canQuote && this.applySubmitting) {
@@ -243,6 +242,9 @@ export default {
 			}
 			if (this.detail.canQuote) {
 				return '报价';
+			}
+			if (this.hasAccepted) {
+				return '已接单';
 			}
 			return '申请接单';
 		}
@@ -361,8 +363,9 @@ export default {
 			this.detail = normalizedDetail;
 			this.taskId = normalizedDetail.taskId || this.taskId;
 			this.ownerUserId = this.resolveOwnerUserId(data || {});
-			this.bidders = this.normalizeBidders(data && data.quoteUserList);
+			this.bidders = this.normalizeBidders(data || {});
 			this.hasQuoted = this.checkHasQuoted(data && data.quoteUserList);
+			this.hasAccepted = this.checkHasAccepted(data || {});
 			this.quoteForm.price = '';
 			this.currentPoster = 0;
 		},
@@ -398,7 +401,15 @@ export default {
 			nextDetail.canQuote = canQuote;
 			nextDetail.publisher = {
 				name: data.nickName || this.detail.publisher.name || '发布者',
-				publishTime: this.formatPublishTime(data.publishTime || data.createTime || this.detail.publisher.publishTime),
+				publishTime: this.formatPublishTime(
+					data.publishTime ||
+					data.createTime ||
+					data.gmtCreate ||
+					data.updateTime ||
+					data.time ||
+					(data.publisher && (data.publisher.publishTime || data.publisher.createTime)) ||
+					this.detail.publisher.publishTime
+				),
 				avatar: this.buildImageUrl(data.avatarUrl) || this.detail.publisher.avatar || DEFAULT_AVATAR
 			};
 			nextDetail.posters = posters;
@@ -410,15 +421,51 @@ export default {
 				.filter(Boolean);
 			return nextDetail;
 		},
-		normalizeBidders(list) {
-			return (Array.isArray(list) ? list : []).map(item => ({
-				id: item && item.quoteId ? String(item.quoteId) : `${Date.now()}-${Math.random()}`,
+		normalizeBidders(data) {
+			const result = [];
+			const isQuoteType = Number(data.isOtherPartyQuote) === 1;
+			const quoteList = Array.isArray(data.quoteUserList) ? data.quoteUserList : [];
+			quoteList.forEach(item => {
+			const id = item && item.quoteId ? String(item.quoteId) : `${Date.now()}-${Math.random()}`;
+			result.push({
+				id,
+				type: isQuoteType ? 'quote' : 'accepted',
 				userId: item && item.quoteUserId ? String(item.quoteUserId) : '',
 				avatar: this.buildImageUrl(item && item.quoteUserAvatar ? item.quoteUserAvatar : '') || DEFAULT_AVATAR,
 				name: item && item.quoteUserName ? item.quoteUserName : '匿名用户',
 				time: this.formatBidderTime(item && item.quoteTime),
-				priceText: this.formatCurrency(item && item.quotePrice)
-			}));
+				priceText: this.formatCurrency(item && item.quotePrice),
+				hasPrice: !!(item && item.quotePrice !== null && item.quotePrice !== undefined && item.quotePrice !== '')
+			});
+		});
+			const acceptListCandidates = [
+				data.receiverList,
+				data.acceptUserList,
+				data.orderUserList,
+				data.participantList
+			];
+			acceptListCandidates.forEach(list => {
+				if (!Array.isArray(list)) return;
+				list.forEach(item => {
+					if (!item) return;
+					const id = item.quoteId || item.receiverId || item.acceptId || item.orderId || `${Date.now()}-${Math.random()}`;
+					const price = item.quotePrice || item.receiverPrice || item.acceptPrice || item.orderPrice || item.price;
+					const time = item.quoteTime || item.receiverTime || item.acceptTime || item.orderTime || item.createTime;
+					const avatar = item.quoteUserAvatar || item.receiverAvatarUrl || item.acceptAvatarUrl || item.orderUserAvatar || '';
+					const name = item.quoteUserName || item.receiverUserName || item.acceptUserName || item.orderUserName || '匿名用户';
+					const userId = item.quoteUserId || item.receiverUserId || item.acceptUserId || item.orderUserId || '';
+					result.push({
+						id: String(id),
+						type: 'accepted',
+						userId: String(userId || ''),
+						avatar: this.buildImageUrl(avatar) || DEFAULT_AVATAR,
+						name,
+						time: this.formatBidderTime(time),
+						priceText: this.formatCurrency(price)
+					});
+				});
+			});
+			return result;
 		},
 		buildImageUrl(url) {
 			if (!url) {
@@ -434,13 +481,13 @@ export default {
 			if (deliveryDate) {
 				const text = String(deliveryDate).trim().replace(/-/g, '/');
 				const date = text.length >= 16 ? text.slice(0, 16) : text;
-				return date ? `交稿时间：${date}` : '交稿时间待定';
+				return date ? `截稿时间：${date}` : '截稿时间待定';
 			}
 			const days = Number(deliveryDays);
 			if (Number.isFinite(days) && days > 0) {
-				return `交稿天数：${days}天`;
+				return `截稿天数：${days}天`;
 			}
-			return '交稿时间待定';
+			return '截稿时间待定';
 		},
 		formatBudgetText(amount, isOtherPartyQuote) {
 			if (amount === '' || amount === null || amount === undefined) {
@@ -515,6 +562,44 @@ export default {
 				return !!quoteUserId && quoteUserId === String(currentUserId);
 			});
 		},
+		checkHasAccepted(data) {
+			const currentUserId = this.getCurrentUserId();
+			if (!currentUserId) {
+				return false;
+			}
+			// 接单型任务：检查 quoteUserList 中是否包含当前用户
+			if (Number(data && data.isOtherPartyQuote) !== 1) {
+				const quoteList = Array.isArray(data && data.quoteUserList) ? data.quoteUserList : [];
+				const foundInQuote = quoteList.some(item => {
+					const quoteUserId = item && item.quoteUserId ? String(item.quoteUserId) : '';
+					return !!quoteUserId && quoteUserId === String(currentUserId);
+				});
+				if (foundInQuote) {
+					return true;
+				}
+			}
+			const listCandidates = [
+				data && data.receiverList,
+				data && data.acceptUserList,
+				data && data.orderUserList,
+				data && data.participantList
+			];
+			for (const list of listCandidates) {
+				if (Array.isArray(list) && list.length > 0) {
+					const found = list.some(item => {
+						if (!item) {
+							return false;
+						}
+						const userId = item.userId || item.receiverUserId || item.acceptUserId || item.orderUserId || item.wxUserId || '';
+						return !!userId && String(userId) === String(currentUserId);
+					});
+					if (found) {
+						return true;
+					}
+				}
+			}
+			return false;
+		},
 		goBack() {
 			if (getCurrentPages().length > 1) {
 				uni.navigateBack();
@@ -565,13 +650,6 @@ export default {
 			if (this.applyButtonDisabled) {
 				return;
 			}
-			if (this.hasQuoted) {
-				uni.showToast({
-					title: '您已报过价',
-					icon: 'none'
-				});
-				return;
-			}
 			if (this.detail.canQuote) {
 				this.showQuotePopup = true;
 				return;
@@ -593,6 +671,7 @@ export default {
 					loading: true,
 					loadingText: '提交中...'
 				});
+				this.hasAccepted = true;
 				await this.fetchDetail();
 				uni.showToast({
 					title: (res && res.msg) || '申请成功',
@@ -752,7 +831,7 @@ export default {
 }
 
 .page-canvas {
-	min-height: 1933rpx;
+	min-height: 1500rpx;
 	padding-bottom: 0;
 }
 
@@ -817,6 +896,7 @@ export default {
 .publisher-name {
 	font-size: 30rpx;
 	line-height: 42rpx;
+	font-weight: bold;
 	color: #000000;
 }
 
@@ -824,7 +904,7 @@ export default {
 	font-size: 20rpx;
 	line-height: 28rpx;
 	color: #979797;
-	margin-top: 4rpx;
+	margin-top: -1rpx;
 }
 
 .publisher-status {
@@ -834,7 +914,7 @@ export default {
 }
 
 .deadline-text {
-	margin-top: 6rpx;
+	margin-top: 35rpx;
 	font-size: 20rpx;
 	line-height: 28rpx;
 	color: #979797;
@@ -917,15 +997,16 @@ export default {
 
 .task-title {
 	display: block;
-	font-size: 30rpx;
+	font-size: 32rpx;
 	line-height: 42rpx;
 	color: #000000;
+	font-weight: bold;
 }
 
 .task-desc {
 	display: block;
 	margin-top: 16rpx;
-	font-size: 26rpx;
+	font-size: 28rpx;
 	line-height: 36rpx;
 	color: #000000;
 }
@@ -938,6 +1019,7 @@ export default {
 .section-title {
 	font-size: 30rpx;
 	line-height: 42rpx;
+	font-weight: bold;
 	color: #000000;
 }
 
@@ -1013,25 +1095,12 @@ export default {
 	padding: 30rpx 36rpx 22rpx;
 }
 
-.bidder-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-}
-
-.bidder-count {
-	font-size: 22rpx;
-	line-height: 30rpx;
-	color: #979797;
-}
-
 .bidder-scroll {
-	height: 280rpx;
-	margin-top: 16rpx;
+	min-height: 120rpx;
 }
 
 .bidder-empty {
-	height: 280rpx;
+	min-height: 120rpx;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -1067,6 +1136,7 @@ export default {
 .bidder-name {
 	font-size: 32rpx;
 	line-height: 45rpx;
+	font-weight: bold;
 	color: #000000;
 }
 
@@ -1082,12 +1152,12 @@ export default {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-end;
-	max-width: 260rpx;
+	max-width: 300rpx;
 }
 
 .bidder-price {
-	font-size: 32rpx;
-	line-height: 45rpx;
+	font-size: 30rpx;
+	line-height: 42rpx;
 	color: #f37738;
 }
 
@@ -1113,6 +1183,7 @@ export default {
 .bottom-bar-right {
 	display: flex;
 	align-items: center;
+	margin-left: auto;
 }
 
 .quote-tip {
@@ -1120,20 +1191,20 @@ export default {
 	align-items: center;
 }
 
-.quote-tip-mark {
-	width: 34rpx;
-	height: 34rpx;
-	border-radius: 50%;
-	background: #fff1e9;
-	border: 1rpx solid #f37738;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 22rpx;
-	color: #f37738;
-	margin-right: 10rpx;
-	box-sizing: border-box;
-}
+// .quote-tip-mark {
+// 	width: 34rpx;
+// 	height: 34rpx;
+// 	border-radius: 50%;
+// 	background: #fff1e9;
+// 	border: 1rpx solid #f37738;
+// 	display: flex;
+// 	align-items: center;
+// 	justify-content: center;
+// 	font-size: 22rpx;
+// 	color: #f37738;
+// 	margin-right: 10rpx;
+// 	box-sizing: border-box;
+// }
 
 .quote-tip-text {
 	font-size: 24rpx;
@@ -1160,7 +1231,7 @@ export default {
 }
 
 .apply-btn-disabled {
-	opacity: 0.6;
+	background: #cccccc !important;
 }
 
 .share-btn {

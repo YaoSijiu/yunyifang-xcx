@@ -30,7 +30,7 @@
 						<view v-if="posterUrls.length > 0" class="poster-count">{{ currentPosterIndex + 1 }}/{{ posterUrls.length }}</view>
 					</view>
 
-					<text class="showcase-title">{{ detail.showcaseTitle || 'UF设计' }}</text>
+					<text class="showcase-title">{{ detail.showcaseTitle}}</text>
 					<view v-if="guaranteeTags.length > 0" class="hero-guarantees">
 						<text class="hero-guarantee" v-for="item in guaranteeTags" :key="item.key">{{ item.text }}</text>
 					</view>
@@ -39,7 +39,7 @@
 					<view class="deal-row">
 						<text class="showcase-price">{{ priceText }}</text>
 						<view class="sold-wrap">
-							<view class="sold-icon"></view>
+							<image class="sold-icon" src="/static/icon/支付.png" />
 							<text>{{ salesText }}</text>
 						</view>
 						<button
@@ -53,9 +53,11 @@
 
 				<view class="seller-card">
 					<image class="seller-avatar" :src="avatarUrl" mode="aspectFill" @click.stop="goToSellerHome"></image>
-					<text class="seller-name">{{ detail.nickName || 'UF设计' }}</text>
+					<view class="seller-name-container">
+						<text class="seller-name">{{ detail.nickName}}</text>
+					</view>
 					<view class="seller-location">
-						<text class="location-icon"></text>
+						<image class="location-icon" src="/static/icon/位置.png" />
 						<text>{{ cityText }}</text>
 					</view>
 					<button
@@ -78,8 +80,8 @@
 					</view>
 					<view class="seller-divider"></view>
 					<view class="seller-stats">
-						<text>完稿率：100%</text>
-						<text>平均接单时间：1H</text>
+						<text>{{ completionRateText }}</text>
+						<text>{{ avgAcceptTimeText }}</text>
 					</view>
 				</view>
 
@@ -91,36 +93,38 @@
 				<view class="review-card">
 					<view class="section-title">评价</view>
 					<view class="review-tabs">
-						<view
-							class="review-tab"
-							:class="{ active: activeReviewTab === 'image' }"
-							@click="switchReviewTab('image')"
-						>带图评价
-						<view v-if="activeReviewTab === 'image'" class="review-underline"></view>
-						</view>
-						<view
-							class="review-tab"
-							:class="{ active: activeReviewTab === 'all' }"
-							@click="switchReviewTab('all')"
-						>最新评价 <text>{{ commentTotalText }}</text>
-						<view v-if="activeReviewTab === 'all'" class="review-underline"></view>
-						</view>
+					<view
+						class="review-tab"
+						:class="{ active: activeReviewTab === 'image' }"
+						@click="switchReviewTab('image')"
+					>
+						<text class="tab-label">带图评价</text>
+						<text class="tab-count">{{ imageCommentCountText }}</text>
 					</view>
+					<view
+						class="review-tab"
+						:class="{ active: activeReviewTab === 'all' }"
+						@click="switchReviewTab('all')"
+					>
+						<text class="tab-label">最新评价</text>
+						<text class="tab-count">{{ totalCommentCountText }}</text>
+					</view>
+				</view>
 					<view v-if="comments.length === 0 && !commentLoading" class="comment-empty">暂无评价</view>
 					<view class="comment-item" v-for="item in comments" :key="item.id">
 						<image class="comment-avatar" :src="item.avatar" mode="aspectFill"></image>
 						<view class="comment-content">
+							<text class="comment-name">{{ item.name }}</text>
 							<view class="comment-head">
-								<text class="comment-name">{{ item.name }}</text>
+								<view class="comment-stars">
+									<text
+										v-for="star in 5"
+										:key="star"
+										class="comment-star"
+										:class="{ active: star <= item.rating }"
+									>★</text>
+								</view>
 								<text class="comment-time">{{ item.time }}</text>
-							</view>
-							<view class="comment-stars">
-								<text
-									v-for="star in 5"
-									:key="star"
-									class="comment-star"
-									:class="{ active: star <= item.rating }"
-								>★</text>
 							</view>
 							<text class="comment-text">{{ item.content }}</text>
 							<view v-if="item.imageUrls.length > 0" class="comment-images">
@@ -143,11 +147,11 @@
 		</scroll-view>
 
 		<view class="bottom-actions" v-if="!loading && !loadError">
-			<button class="bottom-share-btn" open-type="share" @click.stop="handleShareClick">
-				<image class="bottom-share-icon" src="/static/profile/橱窗分享按钮.svg" mode="aspectFit"></image>
+			<button class="bottom-share-btn" :open-type="shareOpenType" @click.stop="handleShareClick">
+				<image class="bottom-share-icon" src="/static/profile/橱窗分享按钮-深色.png" mode="aspectFit"></image>
 			</button>
 			<button v-if="!isOwnShowcase" class="buy-btn" :disabled="orderLoading" @click="handleBuyClick">{{ orderLoading ? '下单中' : '购买' }}</button>
-			<button v-if="!isOwnShowcase" class="hire-btn" @click="handleHire">约稿</button>
+			<button v-if="!isOwnShowcase" class="hire-btn" :class="{ 'hire-btn--inviting': isInviting }" :disabled="isInviting" @click="handleHire">{{ isInviting ? '约稿中' : '约稿' }}</button>
 		</view>
 
 		<view class="pay-mask" v-if="showPayPopup" @click="closePayPopup">
@@ -155,7 +159,7 @@
 				<view class="pay-product">
 					<image class="pay-cover" :src="payCoverUrl" mode="aspectFill"></image>
 					<view class="pay-info">
-						<text class="pay-title">{{ detail.showcaseTitle || '凤梨酥包装设计' }}</text>
+						<text class="pay-title">{{ detail.showcaseTitle}}</text>
 						<text class="pay-price">{{ priceText }}</text>
 						<view class="count-row">
 							<text class="count-label">份数</text>
@@ -217,6 +221,7 @@ export default {
 			followLoading: false,
 			favoriteLoading: false,
 			orderLoading: false,
+			isInviting: false,
 			currentPosterIndex: 0,
 			showPayPopup: false,
 			buyCount: 1,
@@ -231,7 +236,8 @@ export default {
 			showInviteSentPopup: false,
 			officialQrCode: '',
 			officialQrCodeLoading: false,
-			selectedDeliveryDate: ''
+			selectedDeliveryDate: '',
+			loginPromptVisible: false
 		};
 	},
 	computed: {
@@ -241,6 +247,12 @@ export default {
 		currentUserId() {
 			const userInfo = uni.getStorageSync('userInfo') || {};
 			return userInfo.id || userInfo.userId || '';
+		},
+		isLoggedIn() {
+			return !!uni.getStorageSync('token');
+		},
+		shareOpenType() {
+			return this.isLoggedIn ? 'share' : '';
 		},
 		isOwnShowcase() {
 			if (!this.followUserId || !this.currentUserId) {
@@ -310,7 +322,7 @@ export default {
 		},
 		salesText() {
 			const count = Number(this.detail.salesCount);
-			return `已售${Number.isFinite(count) ? count : 98}`;
+			return `已售${Number.isFinite(count) ? count : 0}`;
 		},
 		cityText() {
 			return this.detail.regionName || this.detail.cityName || this.detail.city || this.detail.address || '地区未知';
@@ -320,10 +332,10 @@ export default {
 			if (!Number.isFinite(rating) || rating < 0) {
 				return 0;
 			}
-			return Math.min(5, rating);
+			return Math.min(5, rating)+1;
 		},
 		sellerStarRating() {
-			return Math.max(0, Math.min(5, Math.round(this.sellerRatingValue)));
+			return Math.max(0, Math.min(5, Math.round(this.sellerRatingValue)-1));
 		},
 		sellerRatingText() {
 			if (this.sellerRatingValue <= 0) {
@@ -342,8 +354,40 @@ export default {
 			}
 			return `粉丝${Math.floor(count)}`;
 		},
+		completionRateText() {
+			const rate = Number(this.detail.completionRate);
+			if (!Number.isFinite(rate) || rate < 0) {
+				return '完稿率：100%';
+			}
+			return `完稿率：${Math.min(100, Math.round(rate))}%`;
+		},
+		avgAcceptTimeText() {
+			const minutes = Number(this.detail.avgAcceptMinutes);
+			if (!Number.isFinite(minutes) || minutes <= 0) {
+				return '平均接单时间：1H内';
+			}
+			if (minutes < 60) {
+				return `平均接单时间：${Math.round(minutes)}分钟`;
+			}
+			const hours = Math.round(minutes / 60);
+			return `平均接单时间：${hours}H`;
+		},
+		totalCommentCountText() {
+			const count = Number(this.detail.totalCommentCount);
+			if (!Number.isFinite(count) || count <= 0) {
+				return '0';
+			}
+			return count > 99 ? '99+' : String(count);
+		},
+		imageCommentCountText() {
+			const count = Number(this.detail.imageCommentCount);
+			if (!Number.isFinite(count) || count <= 0) {
+				return '0';
+			}
+			return count > 99 ? '99+' : String(count);
+		},
 		detailDescription() {
-			return this.detail.serviceDesc || '在中国，插画虽然发展的较晚，但追其溯源，方远流长。插画经过解放后黑板报、版画、宣传画格式的发展，以及20世纪80年代后对国际流行风格的借鉴，90年代中后期随着电脑技术的普及，更多使用电脑进行插画设计的新锐作者涌现。';
+			return this.detail.serviceDesc;
 		}
 	},
 	onLoad(options) {
@@ -377,6 +421,7 @@ export default {
 				return;
 			}
 			uni.removeStorageSync('showcase_invite_sent_result');
+			this.isInviting = true;
 			this.showInviteSentPopup = true;
 			this.loadOfficialAccountQrCode();
 		},
@@ -394,10 +439,11 @@ export default {
 					title: this.detail.showcaseTitle || '橱窗详情'
 				});
 				await Promise.all([
-					this.checkFollowStatus(),
-					this.checkFavoriteStatus()
-				]);
-				this.resetComments();
+				this.checkFollowStatus(),
+				this.checkFavoriteStatus(),
+				this.checkInviteStatus()
+			]);
+			this.resetComments();
 			} catch (e) {
 				this.loadError = (e && e.msg) || '橱窗详情加载失败';
 			} finally {
@@ -525,7 +571,8 @@ export default {
 				return '';
 			}
 			const text = String(value).replace(/-/g, '/');
-			return text.length >= 10 ? text.slice(0, 10) : text;
+			const formatted = text.length >= 10 ? text.slice(0, 10) : text;
+			return formatted.replace(/\//g, '-');
 		},
 		normalizeCoverList(value) {
 			if (!value) {
@@ -623,7 +670,30 @@ export default {
 			});
 		},
 		handleShareClick() {
-			// open-type="share" 会触发好友分享；朋友圈由右上角菜单承载。
+			if (this.isLoggedIn) {
+				return;
+			}
+			if (this.loginPromptVisible) {
+				return;
+			}
+			this.loginPromptVisible = true;
+			uni.showModal({
+				title: '提示',
+				content: '登录后可使用该功能',
+				confirmText: '去登录',
+				cancelText: '取消',
+				complete: () => {
+					this.loginPromptVisible = false;
+				},
+				success: (res) => {
+					if (res.confirm) {
+						uni.setStorageSync('login_redirect', `/subpkg-showcase/pages/detail/index?id=${this.showcaseId}`);
+						uni.navigateTo({
+							url: '/subpkg-others/pages/login/index'
+						});
+					}
+				}
+			});
 		},
 		goToSellerHome() {
 			if (!this.followUserId) {
@@ -746,6 +816,21 @@ export default {
 				console.warn('查询关注状态失败', e);
 			}
 		},
+		async checkInviteStatus() {
+			if (!this.showcaseId || !uni.getStorageSync('token') || this.isOwnShowcase) {
+				this.isInviting = false;
+				return;
+			}
+			try {
+				const res = await request.get('/wechat/showCase/invite/check', {
+					showcaseId: this.getOrderShowcaseId()
+				});
+				this.isInviting = res.data === true;
+			} catch (e) {
+				this.isInviting = false;
+				console.warn('查询约稿状态失败', e);
+			}
+		},
 		async handleFollow() {
 			if (this.followLoading || !this.showFollowButton) {
 				return;
@@ -775,7 +860,7 @@ export default {
 			}
 		},
 		handleHire() {
-			if (this.isOwnShowcase) {
+			if (this.isOwnShowcase || this.isInviting) {
 				return;
 			}
 			if (!this.followUserId) {
@@ -1139,6 +1224,7 @@ button::after {
 	margin: 24rpx 32rpx 0;
 	max-width: 650rpx;
 	font-size: 34rpx;
+	font-weight: bold;
 	line-height: 48rpx;
 	color: #000000;
 	white-space: nowrap;
@@ -1187,7 +1273,8 @@ button::after {
 }
 
 .sold-wrap {
-	margin-left: 20rpx;
+	margin-left: 44rpx;
+	margin-top: 5rpx;
 	display: flex;
 	align-items: center;
 	font-size: 24rpx;
@@ -1200,26 +1287,15 @@ button::after {
 	position: relative;
 	width: 32rpx;
 	height: 28rpx;
-	margin-right: 8rpx;
-	background: #545454;
+	margin-right: 19rpx;
 	border-radius: 50%;
 }
 
-.sold-icon::after {
-	content: '';
-	position: absolute;
-	left: 8rpx;
-	top: 9rpx;
-	width: 16rpx;
-	height: 8rpx;
-	border-left: 4rpx solid #ffffff;
-	border-bottom: 4rpx solid #ffffff;
-	transform: rotate(-35deg);
-}
+
 
 .favorite-btn {
 	margin-left: auto;
-	width: 140rpx;
+	width: 150rpx;
 	height: 48rpx;
 	border: 1rpx solid #5a8fea;
 	border-radius: 36rpx;
@@ -1256,22 +1332,32 @@ button::after {
 }
 
 .seller-name {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #000000;
+	display: inline-block;
+	vertical-align: middle;
+	max-width: 195rpx;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.seller-name-container{
+	word-break: break-word;
 	margin-left: 100rpx;
 	font-size: 32rpx;
 	line-height: 45rpx;
 	color: #000000;
 	display: inline-block;
 	vertical-align: middle;
-	max-width: 280rpx;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	max-width: 195rpx;
 }
 
 .seller-location {
 	display: inline-flex;
 	align-items: center;
-	margin-left: 12rpx;
+	margin-left: 16rpx;
 	vertical-align: middle;
 	font-size: 22rpx;
 	line-height: 45rpx;
@@ -1282,29 +1368,16 @@ button::after {
 	position: relative;
 	width: 20rpx;
 	height: 25rpx;
-	margin-right: 8rpx;
-	border-radius: 50% 50% 50% 0;
-	background: #000000;
-	transform: rotate(-45deg);
+	margin-right: 17rpx;
+	margin-left: 1rpx;
 	flex-shrink: 0;
-}
-
-.location-icon::after {
-	content: '';
-	position: absolute;
-	left: 6rpx;
-	top: 6rpx;
-	width: 8rpx;
-	height: 8rpx;
-	border-radius: 50%;
-	background: #ffffff;
 }
 
 .follow-btn {
 	position: absolute;
 	right: 32rpx;
-	top: 30rpx;
-	width: 120rpx;
+	top: 50rpx;
+	width: 150rpx;
 	height: 48rpx;
 	border: 1rpx solid #ff8b5a;
 	border-radius: 36rpx;
@@ -1356,7 +1429,7 @@ button::after {
 }
 
 .seller-stats {
-	margin-top: 16rpx;
+	margin-top: 27rpx;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -1364,6 +1437,7 @@ button::after {
 	line-height: 34rpx;
 	color: #979797;
 }
+
 
 .description-card {
 	margin-top: 16rpx;
@@ -1374,6 +1448,7 @@ button::after {
 
 .section-title {
 	font-size: 32rpx;
+	font-weight: bold;
 	line-height: 45rpx;
 	color: #000000;
 }
@@ -1399,35 +1474,35 @@ button::after {
 	display: inline-flex;
 	align-items: center;
 	margin-top: 24rpx;
+	padding-left: 14rpx;
 }
 
 .review-tab {
-	position: relative;
-	font-size: 30rpx;
-	color: #434343;
-	padding: 14rpx 22rpx 21rpx;
+	height: 24rpx;
+	min-width: 109rpx;
+	display: flex;
+	align-items: center;
+	padding: 12rpx 24rpx;
+	font-size: 24rpx;
+	color: #000000;
+	border-radius: 32rpx;
+	background: #f5f5f5;
 	margin-right: 30rpx;
 }
 
-.review-tab text {
-	color: #979797;
-	margin-left: 6rpx;
-}
-
 .review-tab.active {
-	font-weight: 700;
-	color: #1a1a1a;
+	background: #FFF1E9;
 }
 
-.review-underline {
-	position: absolute;
-	left: 50%;
-	bottom: 6rpx;
-	width: 34rpx;
-	height: 6rpx;
-	border-radius: 999rpx;
-	background: #ff7a22;
-	transform: translateX(-50%);
+.tab-label {
+	flex-shrink: 0;
+}
+
+.tab-count {
+	margin-left: 8rpx;
+	font-size: 22rpx;
+	line-height: 30rpx;
+	color: #979797;
 }
 
 .comment-empty,
@@ -1467,6 +1542,7 @@ button::after {
 
 .comment-name {
 	font-size: 30rpx;
+	font-weight: bold;
 	line-height: 42rpx;
 	color: #000000;
 }
@@ -1485,9 +1561,9 @@ button::after {
 }
 
 .comment-star {
-	margin-right: 4rpx;
-	font-size: 24rpx;
-	line-height: 32rpx;
+	margin-right: 2rpx;
+	font-size: 30rpx;
+	line-height: 34rpx;
 	color: #d6d6d6;
 }
 
@@ -1528,7 +1604,7 @@ button::after {
 	bottom: 0;
 	z-index: 18;
 	height: 98rpx;
-	padding: 0 32rpx;
+	padding: 0 30rpx;
 	padding-bottom: env(safe-area-inset-bottom);
 	background: #ffffff;
 	box-shadow: 0 -1rpx 0 #dddddd;
@@ -1563,7 +1639,7 @@ button::after {
 
 .buy-btn {
 	margin-left: auto;
-	margin-right: 20rpx;
+	margin-right: 38rpx;
 	border: 1rpx solid #f37738;
 	color: #f37738;
 	background: #ffffff;
@@ -1576,6 +1652,15 @@ button::after {
 .hire-btn {
 	color: #ffffff;
 	background: #f37738;
+}
+
+.hire-btn--inviting {
+	background: #979797;
+	color: #ffffff;
+}
+button.hire-btn.hire-btn--inviting[disabled] {
+	background: #979797; 
+	color: #ffffff;
 }
 
 .pay-mask {
@@ -1704,6 +1789,7 @@ button::after {
 .pay-title {
 	display: block;
 	font-size: 36rpx;
+	font-weight: bold;
 	line-height: 50rpx;
 	color: #000000;
 	white-space: nowrap;
@@ -1762,6 +1848,7 @@ button::after {
 }
 
 .pay-guarantees {
+	align-items: center;   
 	display: flex;
 	flex-wrap: wrap;
 	gap: 10rpx 8rpx;
@@ -1776,6 +1863,8 @@ button::after {
 	font-size: 20rpx;
 	line-height: 28rpx;
 	color: #000000;
+	display: flex;
+	align-items: center;
 }
 
 .pay-empty {
