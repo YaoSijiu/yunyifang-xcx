@@ -798,8 +798,9 @@ export default {
 					.filter(item => item && typeof item === 'object')
 					.map((item, index) => this.normalizeOrder(item, index, pageNum))
 				this.pageNum = pageNum
-				this.total = Number(pageData.total) || rows.length
-				this.orderList = isRefresh ? nextList : this.orderList.concat(nextList)
+			this.total = Number(pageData.total) || rows.length
+			const combinedList = isRefresh ? nextList : this.orderList.concat(nextList)
+			this.orderList = this.sortOrderList(combinedList)
 				this.finished = rows.length < this.pageSize || this.orderList.length >= this.total
 			} catch (e) {
 				if (currentRequestSeq === this.requestSeq) {
@@ -830,6 +831,14 @@ export default {
 				rows: list || [],
 				total: list ? list.length : 0
 			}
+		},
+		sortOrderList(list) {
+			const isBottomStatus = (item) => item && item.orderStatus === 'cancelled'
+			return list.slice().sort((a, b) => {
+				const aBottom = isBottomStatus(a) ? 1 : 0
+				const bBottom = isBottomStatus(b) ? 1 : 0
+				return aBottom - bBottom
+			})
 		},
 		buildQueryParams(pageNum) {
 			const params = {
@@ -988,7 +997,21 @@ export default {
 			return [item.participant]
 		},
 		getOrderFooterActions(item) {
-			if (!item || item.waitingDeliveryConfirm) {
+			if (!item) {
+				return []
+			}
+			// 退款申请待处理时优先显示退款处理按钮（即使已申请交稿）
+			if (this.getPendingRefundTimeline(item)) {
+				return [{
+					key: 'handleRefund',
+					text: '处理退款',
+					loadingText: '处理中',
+					loading: item.refundHandleLoading,
+					className: 'primary-btn refund-handle-btn',
+					disabled: item.refundHandleLoading
+				}]
+			}
+			if (item.waitingDeliveryConfirm) {
 				return []
 			}
 			if (this.shouldShowInviteEmptyActions(item)) {
@@ -1759,9 +1782,11 @@ page {
 
 .expanded.theme-pending .amount-text,
 .expanded.theme-service .amount-text,
-.expanded.theme-rejected .amount-text,
 .expanded.theme-refund .amount-text {
 	color: #f37738;
+}
+.expanded.theme-rejected .amount-text {
+	color: #A3A3A3;
 }
 
 .expanded.theme-pending .time-text,

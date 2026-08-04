@@ -1,10 +1,6 @@
 <template>
 	<view class="container">
-
-		<!-- 1. 顶部背景图（仅在主页 Tab=0 时显示） -->
-
-
-		<!-- 2. 顶部 Tab 导航栏 -->
+		<!-- 顶部 Tab 导航栏 -->
 		<!-- 当不在主页时，给导航栏加个背景色，防止透明透底 :class="{ 'nav-white': currentTab !== 0 }"-->
 		<view class="nav">
 			<view class="nav-left">
@@ -53,7 +49,20 @@
 						<!-- 用户卡片 -->
 						<view class="user-card">
 							<view class="username">{{ userInfo.nickName || '无名之辈' }}</view>
-							<view class="sub">{{ userInfo.title || '这个设计师很懒，什么也没留下' }}</view>
+							
+							<view class="selle-row">
+								<view class="seller-rating">
+									<!-- <view class="stars">
+										<text v-for="star in 5" :key="star" class="seller-star"
+											:class="{ active: star <= sellerStarRating }">★</text>
+									</view> -->
+									<text class="seller-score">{{ sellerRatingText }}/{{ sellerFansText }}</text>
+								</view>
+								<view class="seller-location">
+									<image class="location-icon" src="/static/icon/位置.png" />
+									<text>{{ cityText }}</text>
+								</view>
+							</view>
 
 							<view class="btn-row">
 								<view class="btn wx" @click="copyWechat">
@@ -63,6 +72,14 @@
 									<image class="icon" src="/static/yunyiku/电话.png"></image>
 								</view>
 							</view>
+							
+							<view class="sub" :class="{ 'sub-expanded': bioExpanded }"
+								>{{ userInfo.title || '这个设计师很懒，什么也没留下' }}</view>
+							<view v-if="bioOverflowing" class="bio-toggle" @click="toggleBio">
+								<view class="chevron" :class="{ 'chevron-up': bioExpanded }"></view>
+							</view>
+							<!-- 隐藏测量元素：用于计算完整文本高度 -->
+							<view class="sub-measure">{{ userInfo.title || '这个设计师很懒，什么也没留下' }}</view>
 						</view>
 
 						<view class="showcase-section">
@@ -473,6 +490,9 @@
 				// 新增：作品集管理弹窗相关
 				showCollectionPopup: false,
 				currentCollectionItem: null,
+				// 简介展开/收起
+				bioExpanded: false,
+				bioOverflowing: false,
 				// 筛选弹窗
 				showFilterPopup: false,
 				showCollectionFilterPopup: false,
@@ -497,6 +517,36 @@
 			},
 			showcaseCount() {
 				return Number(this.showcaseTotal) || this.showcaseList.length;
+			},
+			cityText() {
+				return this.userRegionText || this.userInfo.regionName || this.userInfo.cityName || this.userInfo.city || this.userInfo.address || '地区未知';
+			},
+			sellerRatingValue() {
+				const rating = Number(this.userInfo.rating);
+				if (!Number.isFinite(rating) || rating <= 0) {
+					return 0;
+				}
+				return Math.min(5, rating);
+			},
+			sellerStarRating() {
+				return Math.max(0, Math.min(5, Math.floor(this.sellerRatingValue)));
+			},
+			sellerRatingText() {
+				if (this.sellerRatingValue <= 0) {
+					return '暂无评分';
+				}
+				return `${this.sellerRatingValue.toFixed(1)}分`;
+			},
+			sellerFansText() {
+				const count = Number(this.userInfo.fansCount);
+				if (!Number.isFinite(count) || count < 0) {
+					return '粉丝0';
+				}
+				if (count >= 10000) {
+					const text = (count / 10000).toFixed(1).replace(/\.0$/, '');
+					return `粉丝${text}万`;
+				}
+				return `粉丝${Math.floor(count)}`;
 			}
 		},
 		onLoad(options) {
@@ -806,6 +856,7 @@
 					// 尝试获取指定用户的信息
 					const res = await this.$request.get(`/wechat/user/getUserInfo?userId=${this.userId}`);
 					if (res.code === 200 && res.data) {
+						console.log('visitor-home getUserInfo返回:', res.data);
 						this.userInfo = {
 							...this.userInfo,
 							...res.data,
@@ -819,6 +870,8 @@
 								title: `${res.data.nickName}的主页`
 							});
 						}
+						this.checkBioOverflow();
+						this.loadUserRegion();
 					}
 				} catch (e) {
 					console.error('获取访客信息失败', e);
@@ -1355,6 +1408,30 @@
 						icon: 'none'
 					});
 				}
+			},
+
+			async loadUserRegion() {
+				try {
+					const res = await this.$request.get(`/wechat/basic/userRegion?userId=${this.userId}`);
+					const data = res.data || {};
+					this.userRegionText = data.fullName || [data.provinceName, data.cityName, data.districtName || data.regionName].filter(Boolean).join('');
+				} catch (e) {
+					// 地区接口不支持或未设置
+				}
+			},
+			checkBioOverflow() {
+				this.$nextTick(() => {
+					const query = uni.createSelectorQuery().in(this);
+					query.select('.sub').boundingClientRect();
+					query.select('.sub-measure').boundingClientRect();
+					query.exec((res) => {
+						if (!res || !res[0] || !res[1]) return;
+						this.bioOverflowing = res[1].height - res[0].height > 2;
+					});
+				});
+			},
+			toggleBio() {
+				this.bioExpanded = !this.bioExpanded;
 			}
 		}
 
@@ -1603,7 +1680,7 @@
 		transform: translateX(-50%);
 		width: 44rpx;
 		height: 11rpx;
-		top:55rpx;
+		top:50rpx;
 	}
 
 	/* tab-content */
@@ -1666,7 +1743,7 @@
 		background: #fff;
 		border-radius: 20rpx;
 		// box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.05);
-		padding: 80rpx 0 80rpx;
+		padding: 80rpx 0 10rpx;
 		text-align: center;
 	}
 
@@ -1679,9 +1756,9 @@
 		text-align: center;
 		font-size: 28rpx;
 		color: #777;
-		margin-top: 8rpx;
+		margin-top: 32rpx;
 		width: 70%;
-		margin: 8rpx auto 0;
+		margin: 32rpx auto 0;
 		display: -webkit-box;
 		-webkit-line-clamp: 3;
 		-webkit-box-orient: vertical;
@@ -1689,11 +1766,55 @@
 		text-overflow: ellipsis;
 	}
 
-	.btn-row {
-		margin-top: 50rpx;
+	.sub.sub-expanded {
+		display: block;
+		-webkit-line-clamp: unset;
+		-webkit-box-orient: initial;
+		overflow: visible;
+		text-overflow: initial;
+	}
+
+	.bio-toggle {
 		display: flex;
 		justify-content: center;
-		gap: 80rpx;
+		align-items: center;
+		margin-top: 24rpx;
+		height: 24rpx;
+	}
+
+	.chevron {
+		width: 0;
+		height: 0;
+		border-left: 15rpx solid transparent;
+		border-right: 15rpx solid transparent; 
+		border-top: 15rpx solid #979797;  
+		transition: transform 0.3s;
+		margin-top: -8rpx;
+	}
+
+	.chevron.chevron-up {
+		transform: rotate(-180deg);
+		margin-top: 4rpx;
+	}
+
+	.sub-measure {
+		position: absolute;
+		left: -9999rpx;
+		top: 0;
+		width: 70%;
+		font-size: 28rpx;
+		line-height: 1.5;
+		color: #777;
+		visibility: hidden;
+		white-space: pre-wrap;
+		word-break: break-all;
+	}
+
+	.btn-row {
+		margin-top: 40rpx;
+		display: flex;
+		justify-content: center;
+		gap: 62rpx;
 	}
 
 	.btn {
@@ -2252,4 +2373,54 @@
 		align-items: center;
 		color: #999;
 	}
+	
+	.seller-location {
+		display: inline-flex;
+		align-items: center;
+		margin-top: 10rpx;
+		vertical-align: middle;
+		font-size: 22rpx;
+		line-height: 45rpx;
+		color: #666666;
+	}
+	.seller-rating {
+		margin-top: 8rpx;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.stars {
+		display: flex;
+		align-items: center;
+		height: 34rpx;
+	}
+	.seller-star {
+		margin-right: 2rpx;
+		font-size: 30rpx;
+		line-height: 34rpx;
+		color: #d6d6d6;
+	}
+	.seller-star.active {
+		color: #f37738;
+	}
+	.seller-score {
+		margin-left: 18rpx;
+		font-size: 24rpx;
+		line-height: 34rpx;
+		color: #979797;
+	}
+	.location-icon {
+		position: relative;
+		width: 20rpx;
+		height: 25rpx;
+		margin-right: 17rpx;
+		margin-left: 1rpx;
+		flex-shrink: 0;
+	}
+	
+	.selle-row {
+			display: flex;
+			justify-content: center;
+			gap: 36rpx;
+		}
 </style>

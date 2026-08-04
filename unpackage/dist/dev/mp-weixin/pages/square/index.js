@@ -324,6 +324,7 @@ var _env = _interopRequireDefault(__webpack_require__(/*! @/config/env.js */ 39)
 //
 //
 //
+//
 
 var DEFAULT_AVATAR = '/static/yunyiku/avatar.png';
 var DEFAULT_CATEGORY_OPTION = {
@@ -655,7 +656,8 @@ var _default = {
         displayParticipants: participantList.slice(0, 3),
         hasMoreParticipants: participantCount > 3 || participantList.length > 3,
         professionList: professionList,
-        isOwnTask: this.checkIsOwnTask(item)
+        isOwnTask: this.checkIsOwnTask(item),
+        hasOperated: !!item.hasOperated
       };
     },
     getCurrentUserId: function getCurrentUserId() {
@@ -830,6 +832,13 @@ var _default = {
       if (!item || !item.channelId) {
         uni.showToast({
           title: '任务信息缺失',
+          icon: 'none'
+        });
+        return;
+      }
+      if (item.hasOperated) {
+        uni.showToast({
+          title: item.participantType === 'quote' ? '您已报价，请勿重复提交' : '您已接单，请勿重复提交',
           icon: 'none'
         });
         return;

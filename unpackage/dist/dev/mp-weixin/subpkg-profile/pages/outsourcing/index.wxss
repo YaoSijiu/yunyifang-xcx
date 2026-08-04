@@ -62,6 +62,10 @@ page.data-v-4db8e645 {
 	border-radius: 50%;
 	box-sizing: border-box;
 }
+.tab-scroll.data-v-4db8e645 {
+	width: 100%;
+	white-space: nowrap;
+}
 .tabs.data-v-4db8e645 {
 	display: inline-flex;
 	align-items: center;
@@ -297,6 +301,9 @@ page.data-v-4db8e645 {
 }
 .expanded .amount.data-v-4db8e645 {
 	color: #f37738;
+}
+.order-card.expanded.card-rejected .amount.data-v-4db8e645 {
+	color: #999999;
 }
 .deliver-date.data-v-4db8e645 {
 	display: block;
@@ -856,7 +863,9 @@ page.data-v-4db8e645 {
 }
 .refund-btn.data-v-4db8e645,
 .outline-btn.data-v-4db8e645,
-.primary-btn.data-v-4db8e645 {
+.reviewed-btn.data-v-4db8e645,
+.primary-btn.data-v-4db8e645,
+.cancel-order-btn.data-v-4db8e645 {
 	display: inline-flex;
 	align-items: flex-start;
 	justify-content: center;
@@ -880,10 +889,20 @@ page.data-v-4db8e645 {
 	color: #f37738;
 	background: #ffffff;
 }
+.reviewed-btn.data-v-4db8e645 {
+	border: 1rpx solid #dddddd;
+	color: #666666;
+	background: #f7f7f7;
+}
 .primary-btn.data-v-4db8e645 {
 	min-width: 150rpx;
 	background: #f37738;
 	color: #ffffff;
+}
+.cancel-order-btn.data-v-4db8e645 {
+	border: none;
+	color: #666666;
+	background: #dfdfdf;
 }
 .primary-btn.disabled-action.data-v-4db8e645 {
 	opacity: 0.65;

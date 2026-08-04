@@ -121,8 +121,8 @@ export default {
 }
 
 .back-arrow {
-	width: 12px;
-	height: 12px;
+	width: 8px;
+	height: 8px;
 	border-left: 2.5px solid #333333;
 	border-bottom: 2.5px solid #333333;
 	transform: rotate(45deg);
@@ -134,7 +134,7 @@ export default {
 	left: 50%;
 	transform: translateX(-50%);
 	font-size: 38rpx;
-	font-weight: 500;
+	font-weight: normal;
 	color: #333333;
 	text-align: center;
 	max-width: 400rpx;

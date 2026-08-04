@@ -542,13 +542,13 @@ var _default = {
     },
     sellerRatingValue: function sellerRatingValue() {
       var rating = Number(this.detail.rating);
-      if (!Number.isFinite(rating) || rating < 0) {
+      if (!Number.isFinite(rating) || rating <= 0) {
         return 0;
       }
-      return Math.min(5, rating) + 1;
+      return Math.min(5, rating);
     },
     sellerStarRating: function sellerStarRating() {
-      return Math.max(0, Math.min(5, Math.round(this.sellerRatingValue) - 1));
+      return Math.max(0, Math.min(5, Math.floor(this.sellerRatingValue)));
     },
     sellerRatingText: function sellerRatingText() {
       if (this.sellerRatingValue <= 0) {

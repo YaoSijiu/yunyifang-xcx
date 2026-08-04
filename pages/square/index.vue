@@ -95,13 +95,14 @@
 								<text v-if="item.hasMoreParticipants" class="participant-more">...</text>
 							</view>
 						</view>
-						<button
+								<button
 						v-if="!item.isOwnTask"
 						class="task-action-btn"
-						:class="{ 'task-action-btn-quote': item.participantType === 'quote', 'task-action-btn-accept': item.participantType === 'accept' }"
+						:class="{ 'task-action-btn-quote': item.participantType === 'quote', 'task-action-btn-accept': item.participantType === 'accept', 'task-action-btn-disabled': item.hasOperated }"
+						:disabled="item.hasOperated"
 						@click.stop="handleQuickAction(item)"
 					>
-						{{ item.participantType === 'quote' ? '报价' : '接单' }}
+						{{ item.hasOperated ? (item.participantType === 'quote' ? '已报价' : '已接单') : (item.participantType === 'quote' ? '报价' : '接单') }}
 					</button>
 						<button
 							class="task-share-btn"
@@ -370,7 +371,8 @@ export default {
 				displayParticipants: participantList.slice(0, 3),
 				hasMoreParticipants: participantCount > 3 || participantList.length > 3,
 				professionList,
-				isOwnTask: this.checkIsOwnTask(item)
+				isOwnTask: this.checkIsOwnTask(item),
+				hasOperated: !!item.hasOperated
 			};
 		},
 		getCurrentUserId() {
@@ -572,6 +574,13 @@ export default {
 			if (!item || !item.channelId) {
 				uni.showToast({
 					title: '任务信息缺失',
+					icon: 'none'
+				});
+				return;
+			}
+			if (item.hasOperated) {
+				uni.showToast({
+					title: item.participantType === 'quote' ? '您已报价，请勿重复提交' : '您已接单，请勿重复提交',
 					icon: 'none'
 				});
 				return;
@@ -963,6 +972,11 @@ button::after {
 
 .task-action-btn::after {
 	border: 0;
+}
+
+.task-action-btn-disabled {
+	background: #cccccc;
+	color: #ffffff;
 }
 
 .share-icon {

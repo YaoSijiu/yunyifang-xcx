@@ -342,6 +342,10 @@ button.data-v-d4e6bb4e::after {
 .task-action-btn.data-v-d4e6bb4e::after {
   border: 0;
 }
+.task-action-btn-disabled.data-v-d4e6bb4e {
+  background: #cccccc;
+  color: #ffffff;
+}
 .share-icon.data-v-d4e6bb4e {
   width: 34rpx;
   height: 34rpx;

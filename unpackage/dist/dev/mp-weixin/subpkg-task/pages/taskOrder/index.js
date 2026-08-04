@@ -883,7 +883,7 @@ var _default = {
     fetchOrderList: function fetchOrderList(pageNum, isRefresh) {
       var _this6 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee3() {
-        var currentRequestSeq, res, pageData, rows, nextList;
+        var currentRequestSeq, res, pageData, rows, nextList, combinedList;
         return _regenerator.default.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
@@ -910,12 +910,13 @@ var _default = {
                 });
                 _this6.pageNum = pageNum;
                 _this6.total = Number(pageData.total) || rows.length;
-                _this6.orderList = isRefresh ? nextList : _this6.orderList.concat(nextList);
+                combinedList = isRefresh ? nextList : _this6.orderList.concat(nextList);
+                _this6.orderList = _this6.sortOrderList(combinedList);
                 _this6.finished = rows.length < _this6.pageSize || _this6.orderList.length >= _this6.total;
-                _context3.next = 20;
+                _context3.next = 21;
                 break;
-              case 17:
-                _context3.prev = 17;
+              case 18:
+                _context3.prev = 18;
                 _context3.t0 = _context3["catch"](2);
                 if (currentRequestSeq === _this6.requestSeq) {
                   _this6.finished = isRefresh;
@@ -925,18 +926,18 @@ var _default = {
                     icon: 'none'
                   });
                 }
-              case 20:
-                _context3.prev = 20;
+              case 21:
+                _context3.prev = 21;
                 if (currentRequestSeq === _this6.requestSeq) {
                   _this6.loading = false;
                 }
-                return _context3.finish(20);
-              case 23:
+                return _context3.finish(21);
+              case 24:
               case "end":
                 return _context3.stop();
             }
           }
-        }, _callee3, null, [[2, 17, 20, 23]]);
+        }, _callee3, null, [[2, 18, 21, 24]]);
       }))();
     },
     extractPageData: function extractPageData(res) {
@@ -957,6 +958,16 @@ var _default = {
         rows: list || [],
         total: list ? list.length : 0
       };
+    },
+    sortOrderList: function sortOrderList(list) {
+      var isBottomStatus = function isBottomStatus(item) {
+        return item && item.orderStatus === 'cancelled';
+      };
+      return list.slice().sort(function (a, b) {
+        var aBottom = isBottomStatus(a) ? 1 : 0;
+        var bBottom = isBottomStatus(b) ? 1 : 0;
+        return aBottom - bBottom;
+      });
     },
     buildQueryParams: function buildQueryParams(pageNum) {
       var _this7 = this;
@@ -1141,7 +1152,21 @@ var _default = {
       return [item.participant];
     },
     getOrderFooterActions: function getOrderFooterActions(item) {
-      if (!item || item.waitingDeliveryConfirm) {
+      if (!item) {
+        return [];
+      }
+      // 退款申请待处理时优先显示退款处理按钮（即使已申请交稿）
+      if (this.getPendingRefundTimeline(item)) {
+        return [{
+          key: 'handleRefund',
+          text: '处理退款',
+          loadingText: '处理中',
+          loading: item.refundHandleLoading,
+          className: 'primary-btn refund-handle-btn',
+          disabled: item.refundHandleLoading
+        }];
+      }
+      if (item.waitingDeliveryConfirm) {
         return [];
       }
       if (this.shouldShowInviteEmptyActions(item)) {

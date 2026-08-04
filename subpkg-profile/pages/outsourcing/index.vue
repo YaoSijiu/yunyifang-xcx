@@ -1,18 +1,20 @@
 ﻿<template>
 	<view class="outsourcing-page">
 		<view class="header-panel">
-			<view class="tabs">
-				<view
-					v-for="tab in tabs"
-					:key="tab.value"
-					class="tab-item"
-					:class="{ active: activeTab === tab.value }"
-					@click="changeTab(tab.value)"
-				>
-					<text>{{ tab.label }}</text>
-					<image v-if="activeTab === tab.value" class="active-mark" src="/static/common/选中条.png" />
+			<scroll-view class="tab-scroll" scroll-x enable-flex :show-scrollbar="false">
+				<view class="tabs">
+					<view
+						v-for="tab in tabs"
+						:key="tab.value"
+						class="tab-item"
+						:class="{ active: activeTab === tab.value }"
+						@click="changeTab(tab.value)"
+					>
+						<text>{{ tab.label }}</text>
+						<image v-if="activeTab === tab.value" class="active-mark" src="/static/common/选中条.png" />
+					</view>
 				</view>
-			</view>
+			</scroll-view>
 
 			<view class="search-bar">
 			<view class="search-icon"></view>
@@ -342,7 +344,7 @@
 					<text class="review-rating-label">评分</text>
 					<view class="review-stars">
 						<text
-							v-for="star in 5"
+							v-for="star in [1,2,3,4,5]"
 							:key="star"
 							class="review-star"
 							:class="{ active: star <= reviewPopup.rating }"
@@ -420,6 +422,7 @@ const DISPLAY_STATUS_CLASS_MAP = {
 	channel_open: 'status-green',
 	channel_assigned: 'status-blue',
 	pending_accept: 'status-blue',
+	pending_pay: 'status-orange',
 	in_service: 'status-blue',
 	delivery_pending_confirm: 'status-orange',
 	cancelled: 'status-gray',
@@ -429,6 +432,7 @@ const DISPLAY_STATUS_CLASS_MAP = {
 const CARD_THEME_MAP = {
 	'待接单': 'card-pending',
 	'待处理': 'card-pending',
+	'待支付': 'card-pending',
 	'服务中': 'card-service',
 	'已接受': 'card-service',
 	'退款中': 'card-refund',
@@ -521,6 +525,7 @@ export default {
 			requestSeq: 0,
 			tabs: [
 				{ label: '全部', value: 'all', status: '' },
+				{ label: '待处理', value: 'pending', status: 'pending' },
 				{ label: '服务中', value: 'service', status: 'in_service' },
 				{ label: '待确认', value: 'confirm', status: 'delivery_pending_confirm' },
 				{ label: '退款中', value: 'refund', status: 'refunding' },
@@ -666,9 +671,10 @@ export default {
 				const rows = Array.isArray(res.rows) ? res.rows : []
 				const nextList = rows.map(item => this.normalizeOrder(item))
 				this.pageNum = pageNum
-				this.total = Number(res.total) || 0
-				this.orderList = isRefresh ? nextList : this.orderList.concat(nextList)
-				this.finished = rows.length < this.pageSize || this.orderList.length >= this.total
+			this.total = Number(res.total) || 0
+			const combinedList = isRefresh ? nextList : this.orderList.concat(nextList)
+			this.orderList = this.sortOrderList(combinedList)
+			this.finished = rows.length < this.pageSize || this.orderList.length >= this.total
 			} catch (e) {
 				if (currentRequestSeq === this.requestSeq) {
 					this.finished = isRefresh
@@ -693,6 +699,14 @@ export default {
 				params.search = search
 			}
 			return params
+	},
+		sortOrderList(list) {
+			const isBottomStatus = (item) => item && item.displayStatus === 'cancelled'
+			return list.slice().sort((a, b) => {
+				const aBottom = isBottomStatus(a) ? 1 : 0
+				const bBottom = isBottomStatus(b) ? 1 : 0
+				return aBottom - bBottom
+			})
 		},
 		normalizeOrder(item) {
 			const bizType = item.bizType === 'order' ? 'order' : 'channel'
@@ -702,7 +716,9 @@ export default {
 			const statusClass = DISPLAY_STATUS_CLASS_MAP[displayStatus] || channelStatus.className || 'status-gray'
 			const isQuoteMode = bizType === 'channel' ? Number(item.isOtherPartyQuote) === 1 : item.sourceType === 'quote'
 			const isCompletedOrder = bizType === 'order' && displayStatus === 'completed'
-			const waitingInviteAccept = bizType === 'channel' && item.sourceType === 'invite' && displayStatus === 'pending_accept'
+		const isPendingAcceptOrder = bizType === 'order' && displayStatus === 'pending_accept'
+		const isPendingPayOrder = bizType === 'order' && displayStatus === 'pending_pay'
+		const waitingInviteAccept = bizType === 'channel' && item.sourceType === 'invite' && displayStatus === 'pending_accept'
 			const participantTypeText = isQuoteMode ? '报价记录' : '约稿记录'
 			const actionList = Array.isArray(item.actionList) ? item.actionList : []
 			const receiverName = item.receiverUserName || ''
@@ -752,10 +768,14 @@ export default {
 				participantLoaded: false,
 				participantLoading: false,
 				contactLoading: false,
-				footerActionsVisible: bizType === 'order' && (this.hasAction(actionList, 'refund', 'refund_order') || this.hasAction(actionList, 'contact') || this.hasAction(actionList, 'apply_delivery') || isCompletedOrder),
+				footerActionsVisible: bizType === 'order' && (this.hasAction(actionList, 'refund', 'refund_order') || this.hasAction(actionList, 'contact') || this.hasAction(actionList, 'apply_delivery') || isCompletedOrder || isPendingAcceptOrder || isPendingPayOrder),
 				showCancel: bizType === 'channel',
 				showEdit: bizType === 'channel',
 				cancelChannelLoading: false,
+				showCancelOrder: isPendingAcceptOrder || isPendingPayOrder,
+				showPayOrder: isPendingPayOrder,
+				cancelOrderLoading: false,
+				payOrderLoading: false,
 				showRefund: this.hasAction(actionList, 'refund', 'refund_order'),
 				showAddBudget: !isCompletedOrder && this.hasAction(actionList, 'contact'),
 				showExtendDelivery: !isCompletedOrder && (this.hasAction(actionList, 'refund', 'refund_order') || this.hasAction(actionList, 'contact') || this.hasAction(actionList, 'apply_delivery')),
@@ -773,8 +793,10 @@ export default {
 				rejectedRefundTimeline: null,
 				pendingInviteQuoteTimeline: null,
 				confirmDeliveryLoading: false,
-				reviewCheckLoading: false,
-				showReview: isCompletedOrder,
+			reviewCheckLoading: false,
+			showReview: isCompletedOrder,
+			reviewed: false,
+			reviewStatusChecked: false,
 				showInvoice: false,
 				showMoreAction: bizType === 'order' && !isCompletedOrder && this.hasAction(actionList, 'contact'),
 				showCurrentUserAvatar: bizType === 'order',
@@ -794,19 +816,43 @@ export default {
 			}
 		},
 		async toggleExpand(id) {
-			const target = this.orderList.find(item => item.id === id)
-			if (!target) {
-				return
+		const target = this.orderList.find(item => item.id === id)
+		if (!target) {
+			return
+		}
+		target.expanded = !target.expanded
+		if (target.participantLoaded) {
+			const sourceList = target.participantList.length ? target.participantList : target.participantPreviewList
+			target.displayParticipants = target.expanded ? sourceList : sourceList.slice(0, 1)
+		}
+		if (target.expanded && !target.participantLoaded && !target.participantLoading) {
+			await this.fetchParticipants(target)
+		}
+		if (target.expanded && target.showReview && !target.reviewStatusChecked && !target.reviewCheckLoading) {
+			this.checkReviewStatus(target)
+		}
+	},
+	async checkReviewStatus(item) {
+		if (!item || !item.orderNo || item.reviewStatusChecked || item.reviewCheckLoading) {
+			return
+		}
+		item.reviewCheckLoading = true
+		try {
+			const res = await request.get('/wechat/comment/order/check', {
+				orderNo: item.orderNo
+			}, {
+				loading: false
+			})
+			const msg = res && res.msg
+			if (msg !== null && msg !== undefined && String(msg).trim()) {
+				item.reviewed = true
 			}
-			target.expanded = !target.expanded
-			if (target.participantLoaded) {
-				const sourceList = target.participantList.length ? target.participantList : target.participantPreviewList
-				target.displayParticipants = target.expanded ? sourceList : sourceList.slice(0, 1)
-			}
-			if (target.expanded && !target.participantLoaded && !target.participantLoading) {
-				await this.fetchParticipants(target)
-			}
-		},
+			item.reviewStatusChecked = true
+		} catch (e) {
+		} finally {
+			item.reviewCheckLoading = false
+		}
+	},
 		async fetchParticipants(item) {
 			if ((item.bizType === 'channel' && !item.channelId) || (item.bizType === 'order' && !item.orderNo)) {
 				return
@@ -884,6 +930,8 @@ export default {
 				|| item.showReview
 				|| item.showAgreeRefundReject
 				|| item.showAppeal
+				|| item.showCancelOrder
+				|| item.showPayOrder
 		},
 		hasAction(actionList, ...codes) {
 			return Array.isArray(actionList) && codes.some(code => actionList.includes(code))
@@ -986,6 +1034,26 @@ export default {
 				return []
 			}
 			const actions = []
+			if (item.showPayOrder) {
+				actions.push({
+					key: 'payOrder',
+					text: '支付',
+					loadingText: '支付中',
+					loading: item.payOrderLoading,
+					className: 'outline-btn',
+					disabled: item.payOrderLoading
+				})
+			}
+			if (item.showCancelOrder) {
+				actions.push({
+					key: 'cancelOrder',
+					text: '取消',
+					loadingText: '取消中',
+					loading: item.cancelOrderLoading,
+					className: 'cancel-order-btn',
+					disabled: item.cancelOrderLoading
+				})
+			}
 			if (item.showHandleInviteQuote) {
 				actions.push({
 					key: 'handleInviteQuote',
@@ -1048,6 +1116,16 @@ export default {
 				})
 			}
 			if (item.showReview) {
+			if (item.reviewed) {
+				actions.push({
+					key: 'review',
+					text: '已评价',
+					loadingText: '已评价',
+					loading: false,
+					className: 'reviewed-btn',
+					disabled: true
+				})
+			} else {
 				actions.push({
 					key: 'review',
 					text: '评价',
@@ -1057,6 +1135,7 @@ export default {
 					disabled: item.reviewCheckLoading
 				})
 			}
+		}
 			if (item.showAppeal) {
 				actions.push({
 					key: 'appeal',
@@ -1090,6 +1169,14 @@ export default {
 			return actions
 		},
 		handleOutsourcingFooterAction(type, item) {
+			if (type === 'payOrder') {
+				this.payOrder(item)
+				return
+			}
+			if (type === 'cancelOrder') {
+				this.cancelOrderItem(item)
+				return
+			}
 			if (type === 'refund') {
 				this.refundOrder(item)
 				return
@@ -2334,13 +2421,16 @@ export default {
 					loadingText: '检查中...'
 				})
 				const msg = res && res.msg
-				if (msg !== null && msg !== undefined && String(msg).trim()) {
-					uni.showToast({
-						title: String(msg),
-						icon: 'none'
-					})
-					return
-				}
+			if (msg !== null && msg !== undefined && String(msg).trim()) {
+				item.reviewed = true
+				item.reviewStatusChecked = true
+				uni.showToast({
+					title: String(msg),
+					icon: 'none'
+				})
+				return
+			}
+			item.reviewStatusChecked = true
 				this.reviewPopup = {
 					visible: true,
 					item,
@@ -2536,11 +2626,15 @@ export default {
 					loadingText: '提交中...'
 				})
 				uni.showToast({
-					title: '评价成功',
-					icon: 'success'
-				})
-				this.reviewPopup.submitting = false
-				this.closeReviewPopup()
+				title: '评价成功',
+				icon: 'success'
+			})
+			if (item) {
+				item.reviewed = true
+				item.reviewStatusChecked = true
+			}
+			this.reviewPopup.submitting = false
+			this.closeReviewPopup()
 			} catch (e) {
 			} finally {
 				this.reviewPopup.submitting = false
@@ -2579,6 +2673,92 @@ export default {
 			} finally {
 				item.confirmDeliveryLoading = false
 			}
+		},
+		async payOrder(item) {
+			if (!item || !item.orderNo || item.payOrderLoading) {
+				return
+			}
+			item.payOrderLoading = true
+			try {
+				const res = await request.post('/wechat/outSourcing/payOrder', {
+					orderNo: item.orderNo
+				}, {
+					loading: true,
+					loadingText: '下单中...'
+				})
+				const payParams = this.parseExtraChargePayParams(res)
+				if (!payParams) {
+					uni.showToast({
+						title: '支付参数异常',
+						icon: 'none'
+					})
+					return
+				}
+				await this.requestExtraChargePayment(payParams)
+				uni.showToast({
+					title: '支付成功',
+					icon: 'success'
+				})
+				this.resetList()
+			} catch (e) {
+				if (e && e.errMsg && e.errMsg.indexOf('cancel') !== -1) {
+					uni.showToast({
+						title: '已取消支付',
+						icon: 'none'
+					})
+				}
+			} finally {
+				item.payOrderLoading = false
+			}
+		},
+		cancelOrderItem(item) {
+			if (!item || !item.orderNo || item.cancelOrderLoading) {
+				return
+			}
+			const isPendingAccept = item.displayStatus === 'pending_accept'
+			const content = `确认取消「${item.taskTitle || '该订单'}」吗？`
+			uni.showModal({
+				title: '确认取消',
+				content,
+				confirmText: '确认',
+				cancelText: '再想想',
+				success: async modalRes => {
+					if (!modalRes.confirm) {
+						return
+					}
+					item.cancelOrderLoading = true
+					try {
+						const url = isPendingAccept
+							? '/wechat/tOrder/cancelPendingAccept'
+							: '/wechat/tOrder/cancelPendingPay'
+						const res = await request.post(url, {
+							orderNo: item.orderNo
+						}, {
+							loading: true,
+							loadingText: '取消中...'
+						})
+						if (res && res.code && Number(res.code) !== 200) {
+							uni.showToast({
+								title: res.msg || '取消失败',
+								icon: 'none'
+							})
+							return
+						}
+						uni.showToast({
+							title: '取消成功',
+							icon: 'success'
+						})
+						this.resetList()
+					} catch (e) {
+						uni.showToast({
+							title: '取消失败，请稍后重试',
+							icon: 'none'
+						})
+					} finally {
+						item.cancelOrderLoading = false
+					}
+				}
+			})
 		}
 	}
 }
@@ -2656,6 +2836,11 @@ page {
 	border: 4rpx solid #000000;
 	border-radius: 50%;
 	box-sizing: border-box;
+}
+
+.tab-scroll {
+	width: 100%;
+	white-space: nowrap;
 }
 
 .tabs {
@@ -2908,6 +3093,9 @@ page {
 
 .expanded .amount {
 	color: #f37738;
+}
+.order-card.expanded.card-rejected .amount {
+	color: #999999;
 }
 
 .deliver-date {
@@ -3541,7 +3729,9 @@ page {
 
 .refund-btn,
 .outline-btn,
-.primary-btn {
+.reviewed-btn,
+.primary-btn,
+.cancel-order-btn {
 	display: inline-flex;
 	align-items: flex-start;
 	justify-content: center;
@@ -3568,10 +3758,22 @@ page {
 	background: #ffffff;
 }
 
+.reviewed-btn {
+	border: 1rpx solid #dddddd;
+	color: #666666;
+	background: #f7f7f7;
+}
+
 .primary-btn {
 	min-width: 150rpx;
 	background: #f37738;
 	color: #ffffff;
+}
+
+.cancel-order-btn {
+	border: none;
+	color: #666666;
+	background: #dfdfdf;
 }
 
 .primary-btn.disabled-action {

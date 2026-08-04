@@ -349,6 +349,7 @@ export default {
 	width: 540rpx;
 	height: 132rpx;
 	font-size: 36rpx;
+	font-weight: bold;
 	line-height: 66rpx;
 	color: #000000;
 	text-align: center;
@@ -403,6 +404,7 @@ export default {
 	padding-left: 27rpx;
 	box-sizing: border-box;
 	font-size: 26rpx;
+	font-weight: bold;
 	line-height: 40rpx;
 	color: #000000;
 }

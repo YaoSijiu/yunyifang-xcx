@@ -359,6 +359,9 @@ var _default = {
       // 新增：作品集管理弹窗相关
       showCollectionPopup: false,
       currentCollectionItem: null,
+      // 简介展开/收起
+      bioExpanded: false,
+      bioOverflowing: false,
       // 筛选弹窗
       showFilterPopup: false,
       showCollectionFilterPopup: false,
@@ -386,6 +389,36 @@ var _default = {
     },
     showcaseCount: function showcaseCount() {
       return Number(this.showcaseTotal) || this.showcaseList.length;
+    },
+    cityText: function cityText() {
+      return this.userRegionText || this.userInfo.regionName || this.userInfo.cityName || this.userInfo.city || this.userInfo.address || '地区未知';
+    },
+    sellerRatingValue: function sellerRatingValue() {
+      var rating = Number(this.userInfo.rating);
+      if (!Number.isFinite(rating) || rating <= 0) {
+        return 0;
+      }
+      return Math.min(5, rating);
+    },
+    sellerStarRating: function sellerStarRating() {
+      return Math.max(0, Math.min(5, Math.floor(this.sellerRatingValue)));
+    },
+    sellerRatingText: function sellerRatingText() {
+      if (this.sellerRatingValue <= 0) {
+        return '暂无评分';
+      }
+      return "".concat(this.sellerRatingValue.toFixed(1), "\u5206");
+    },
+    sellerFansText: function sellerFansText() {
+      var count = Number(this.userInfo.fansCount);
+      if (!Number.isFinite(count) || count < 0) {
+        return '粉丝0';
+      }
+      if (count >= 10000) {
+        var text = (count / 10000).toFixed(1).replace(/\.0$/, '');
+        return "\u7C89\u4E1D".concat(text, "\u4E07");
+      }
+      return "\u7C89\u4E1D".concat(Math.floor(count));
     }
   },
   onLoad: function onLoad(options) {
@@ -767,6 +800,7 @@ var _default = {
               case 3:
                 res = _context4.sent;
                 if (res.code === 200 && res.data) {
+                  console.log('visitor-home getUserInfo返回:', res.data);
                   _this5.userInfo = _objectSpread(_objectSpread(_objectSpread({}, _this5.userInfo), res.data), {}, {
                     avatar: res.data.avatarUrl || res.data.avatar || _this5.userInfo.avatar,
                     background: res.data.homeBackground || res.data.background || ''
@@ -778,6 +812,8 @@ var _default = {
                       title: "".concat(res.data.nickName, "\u7684\u4E3B\u9875")
                     });
                   }
+                  _this5.checkBioOverflow();
+                  _this5.loadUserRegion();
                 }
                 _context4.next = 10;
                 break;
@@ -1444,6 +1480,49 @@ var _default = {
           icon: 'none'
         });
       }
+    },
+    loadUserRegion: function loadUserRegion() {
+      var _this14 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee11() {
+        var res, data;
+        return _regenerator.default.wrap(function _callee11$(_context12) {
+          while (1) {
+            switch (_context12.prev = _context12.next) {
+              case 0:
+                _context12.prev = 0;
+                _context12.next = 3;
+                return _this14.$request.get("/wechat/basic/userRegion?userId=".concat(_this14.userId));
+              case 3:
+                res = _context12.sent;
+                data = res.data || {};
+                _this14.userRegionText = data.fullName || [data.provinceName, data.cityName, data.districtName || data.regionName].filter(Boolean).join('');
+                _context12.next = 10;
+                break;
+              case 8:
+                _context12.prev = 8;
+                _context12.t0 = _context12["catch"](0);
+              case 10:
+              case "end":
+                return _context12.stop();
+            }
+          }
+        }, _callee11, null, [[0, 8]]);
+      }))();
+    },
+    checkBioOverflow: function checkBioOverflow() {
+      var _this15 = this;
+      this.$nextTick(function () {
+        var query = uni.createSelectorQuery().in(_this15);
+        query.select('.sub').boundingClientRect();
+        query.select('.sub-measure').boundingClientRect();
+        query.exec(function (res) {
+          if (!res || !res[0] || !res[1]) return;
+          _this15.bioOverflowing = res[1].height - res[0].height > 2;
+        });
+      });
+    },
+    toggleBio: function toggleBio() {
+      this.bioExpanded = !this.bioExpanded;
     }
   }
 };

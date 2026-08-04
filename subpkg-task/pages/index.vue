@@ -1106,7 +1106,7 @@ export default {
 }
 
 .page-canvas {
-	min-height: 1914rpx;
+	min-height: 1600rpx;
 	padding: 20rpx 30rpx 150rpx;
 	box-sizing: border-box;
 	background: #f7f7f7;

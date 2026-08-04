@@ -70,7 +70,7 @@
 					<view class="seller-rating">
 						<view class="stars">
 							<text
-								v-for="star in 5"
+								v-for="star in [1,2,3,4,5]"
 								:key="star"
 								class="seller-star"
 								:class="{ active: star <= sellerStarRating }"
@@ -118,7 +118,7 @@
 							<view class="comment-head">
 								<view class="comment-stars">
 									<text
-										v-for="star in 5"
+										v-for="star in [1,2,3,4,5]"
 										:key="star"
 										class="comment-star"
 										:class="{ active: star <= item.rating }"
@@ -329,13 +329,13 @@ export default {
 		},
 		sellerRatingValue() {
 			const rating = Number(this.detail.rating);
-			if (!Number.isFinite(rating) || rating < 0) {
+			if (!Number.isFinite(rating) || rating <= 0) {
 				return 0;
 			}
-			return Math.min(5, rating)+1;
+			return Math.min(5, rating);
 		},
 		sellerStarRating() {
-			return Math.max(0, Math.min(5, Math.round(this.sellerRatingValue)-1));
+			return Math.max(0, Math.min(5, Math.floor(this.sellerRatingValue)));
 		},
 		sellerRatingText() {
 			if (this.sellerRatingValue <= 0) {

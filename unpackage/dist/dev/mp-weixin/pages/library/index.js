@@ -524,6 +524,9 @@ var _default = {
       // 新增：作品集管理弹窗相关
       showCollectionPopup: false,
       currentCollectionItem: null,
+      // 简介展开/收起
+      bioExpanded: false,
+      bioOverflowing: false,
       // 筛选弹窗
       showFilterPopup: false,
       showCollectionFilterPopup: false,
@@ -611,6 +614,36 @@ var _default = {
     },
     showcaseCount: function showcaseCount() {
       return Number(this.showcaseTotal) || this.showcaseList.length;
+    },
+    cityText: function cityText() {
+      return this.userRegionText || this.userInfo.regionName || this.userInfo.cityName || this.userInfo.city || this.userInfo.address || '地区未知';
+    },
+    sellerRatingValue: function sellerRatingValue() {
+      var rating = Number(this.userInfo.rating);
+      if (!Number.isFinite(rating) || rating <= 0) {
+        return 0;
+      }
+      return Math.min(5, rating);
+    },
+    sellerStarRating: function sellerStarRating() {
+      return Math.max(0, Math.min(5, Math.floor(this.sellerRatingValue)));
+    },
+    sellerRatingText: function sellerRatingText() {
+      if (this.sellerRatingValue <= 0) {
+        return '暂无评分';
+      }
+      return "".concat(this.sellerRatingValue.toFixed(1), "\u5206");
+    },
+    sellerFansText: function sellerFansText() {
+      var count = Number(this.userInfo.fansCount);
+      if (!Number.isFinite(count) || count < 0) {
+        return '粉丝0';
+      }
+      if (count >= 10000) {
+        var text = (count / 10000).toFixed(1).replace(/\.0$/, '');
+        return "\u7C89\u4E1D".concat(text, "\u4E07");
+      }
+      return "\u7C89\u4E1D".concat(Math.floor(count));
     },
     currentIsSingleColumn: function currentIsSingleColumn() {
       // 使用 currentSwiperIndex 来获取当前实际显示的标签页索引
@@ -2193,12 +2226,61 @@ var _default = {
         url: '/subpkg-profile/pages/edit'
       });
     },
+    loadUserRegion: function loadUserRegion() {
+      var _this24 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee15() {
+        var teamOwnerId, url, res, data;
+        return _regenerator.default.wrap(function _callee15$(_context16) {
+          while (1) {
+            switch (_context16.prev = _context16.next) {
+              case 0:
+                _context16.prev = 0;
+                teamOwnerId = uni.getStorageSync('teamOwnerId');
+                url = '/wechat/basic/userRegion';
+                if (_this24.isTeamMode && teamOwnerId) {
+                  url += "?userId=".concat(teamOwnerId);
+                }
+                _context16.next = 6;
+                return _this24.$request.get(url);
+              case 6:
+                res = _context16.sent;
+                data = res.data || {};
+                _this24.userRegionText = data.fullName || [data.provinceName, data.cityName, data.districtName || data.regionName].filter(Boolean).join('');
+                _context16.next = 13;
+                break;
+              case 11:
+                _context16.prev = 11;
+                _context16.t0 = _context16["catch"](0);
+              case 13:
+              case "end":
+                return _context16.stop();
+            }
+          }
+        }, _callee15, null, [[0, 11]]);
+      }))();
+    },
+    checkBioOverflow: function checkBioOverflow() {
+      var _this25 = this;
+      this.$nextTick(function () {
+        var query = uni.createSelectorQuery().in(_this25);
+        query.select('.sub').boundingClientRect();
+        query.select('.sub-measure').boundingClientRect();
+        query.exec(function (res) {
+          if (!res || !res[0] || !res[1]) return;
+          _this25.bioOverflowing = res[1].height - res[0].height > 2;
+        });
+      });
+    },
+    toggleBio: function toggleBio() {
+      this.bioExpanded = !this.bioExpanded;
+    },
     updateUserInfo: function updateUserInfo(data) {
       this.userInfo = _objectSpread(_objectSpread(_objectSpread({}, this.userInfo), data), {}, {
         // 兼容处理：优先使用 avatarUrl/homeBackground，如果没有则回退到 avatar/background
         avatar: data.avatarUrl || data.avatar || '',
         background: data.homeBackground || data.background || ''
       });
+      this.checkBioOverflow();
     },
     resolveUrl: function resolveUrl(url) {
       if (!url) return '';
@@ -2209,185 +2291,110 @@ var _default = {
     },
     // 获取最新用户信息并更新缓存
     fetchUserInfo: function fetchUserInfo() {
-      var _this24 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee15() {
+      var _this26 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee16() {
         var teamOwnerId, url, res, oldUserInfo, newUserInfo;
-        return _regenerator.default.wrap(function _callee15$(_context16) {
+        return _regenerator.default.wrap(function _callee16$(_context17) {
           while (1) {
-            switch (_context16.prev = _context16.next) {
+            switch (_context17.prev = _context17.next) {
               case 0:
-                if (_this24.loggedIn) {
-                  _context16.next = 3;
+                if (_this26.loggedIn) {
+                  _context17.next = 3;
                   break;
                 }
-                _this24.userInfo = createDefaultHomeUserInfo();
-                return _context16.abrupt("return");
+                _this26.userInfo = createDefaultHomeUserInfo();
+                return _context17.abrupt("return");
               case 3:
-                _context16.prev = 3;
+                _context17.prev = 3;
                 teamOwnerId = uni.getStorageSync('teamOwnerId');
                 url = '/wechat/user/getUserInfo';
-                if (_this24.isTeamMode && teamOwnerId) {
+                if (_this26.isTeamMode && teamOwnerId) {
                   url += "?userId=".concat(teamOwnerId);
                 }
-                _context16.next = 9;
-                return _this24.$request.get(url);
+                _context17.next = 9;
+                return _this26.$request.get(url);
               case 9:
-                res = _context16.sent;
+                res = _context17.sent;
                 if (!(res.code === 200 && res.data)) {
-                  _context16.next = 21;
+                  _context17.next = 24;
                   break;
                 }
-                if (!(_this24.isTeamMode && teamOwnerId)) {
-                  _context16.next = 14;
+                console.log('library getUserInfo返回:', res.data);
+                if (!(_this26.isTeamMode && teamOwnerId)) {
+                  _context17.next = 16;
                   break;
                 }
-                _this24.updateUserInfo(res.data);
-                return _context16.abrupt("return");
-              case 14:
+                _this26.updateUserInfo(res.data);
+                _this26.loadUserRegion();
+                return _context17.abrupt("return");
+              case 16:
                 // 更新本地 userInfo，保留 token
                 oldUserInfo = uni.getStorageSync('userInfo') || {};
                 newUserInfo = _objectSpread(_objectSpread({}, oldUserInfo), res.data);
                 if (res.data.groupSetting) {
                   // 将数据库中的 sort 值映射到布局
                   // sort 0: 单列，1: 双列
-                  _this24.homeLayout.isSingleColumn = res.data.groupSetting.sort === 0;
+                  _this26.homeLayout.isSingleColumn = res.data.groupSetting.sort === 0;
                   // 保存当前的布局类型
-                  _this24.layoutType = res.data.groupSetting.sort || 0;
+                  _this26.layoutType = res.data.groupSetting.sort || 0;
                 }
                 uni.setStorageSync('userInfo', newUserInfo);
-                _this24.updateUserInfo(newUserInfo);
-                _context16.next = 22;
-                break;
-              case 21:
-                if (res.code === 601 && !_this24.isFlowWarningShown) {
-                  // 流量不足，显示流量不足弹窗
-                  _this24.isFlowWarningShown = true;
-                  uni.$emit('show-storage-warning', {
-                    msg: '您的流量已用完，请及时购买流量包，否则将影响账户正常使用。',
-                    data: '/subpkg-profile/pages/storage-management'
-                  });
-                }
-              case 22:
-                _context16.next = 27;
+                _this26.updateUserInfo(newUserInfo);
+                _this26.loadUserRegion();
+                _context17.next = 25;
                 break;
               case 24:
-                _context16.prev = 24;
-                _context16.t0 = _context16["catch"](3);
-                console.error('刷新用户信息失败', _context16.t0);
-              case 27:
-              case "end":
-                return _context16.stop();
-            }
-          }
-        }, _callee15, null, [[3, 24]]);
-      }))();
-    },
-    // 获取用户设为常用的作品列表
-    getHomeWorkList: function getHomeWorkList() {
-      var _this25 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee16() {
-        var _yield$_this25$$reque, code, rows, total;
-        return _regenerator.default.wrap(function _callee16$(_context17) {
-          while (1) {
-            switch (_context17.prev = _context17.next) {
-              case 0:
-                _context17.next = 2;
-                return _this25.$request.get("/wechat/works/findUserWorksPage?pageNum=".concat(_this25.pageNum, "&pageSize=").concat(_this25.pageSize, "&status=1"));
-              case 2:
-                _yield$_this25$$reque = _context17.sent;
-                code = _yield$_this25$$reque.code;
-                rows = _yield$_this25$$reque.rows;
-                total = _yield$_this25$$reque.total;
-                if (code == 200) {
-                  _this25.homeWork.data = rows;
-                  _this25.homeWork.total = total;
-                } else if (code === 601 && !_this25.isFlowWarningShown) {
+                if (res.code === 601 && !_this26.isFlowWarningShown) {
                   // 流量不足，显示流量不足弹窗
-                  _this25.isFlowWarningShown = true;
+                  _this26.isFlowWarningShown = true;
                   uni.$emit('show-storage-warning', {
                     msg: '您的流量已用完，请及时购买流量包，否则将影响账户正常使用。',
                     data: '/subpkg-profile/pages/storage-management'
                   });
                 }
-              case 7:
+              case 25:
+                _context17.next = 30;
+                break;
+              case 27:
+                _context17.prev = 27;
+                _context17.t0 = _context17["catch"](3);
+                console.error('刷新用户信息失败', _context17.t0);
+              case 30:
               case "end":
                 return _context17.stop();
             }
           }
-        }, _callee16);
+        }, _callee16, null, [[3, 27]]);
       }))();
     },
-    // 获取用户作品列表
-    getUserWorksData: function getUserWorksData() {
-      var _arguments = arguments,
-        _this26 = this;
+    // 获取用户设为常用的作品列表
+    getHomeWorkList: function getHomeWorkList() {
+      var _this27 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee17() {
-        var isLoadMore, url, _yield$_this26$$reque, code, rows, total;
+        var _yield$_this27$$reque, code, rows, total;
         return _regenerator.default.wrap(function _callee17$(_context18) {
           while (1) {
             switch (_context18.prev = _context18.next) {
               case 0:
-                isLoadMore = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : false;
-                if (_this26.loggedIn) {
-                  _context18.next = 7;
-                  break;
-                }
-                _this26.allWorks.worksData = [];
-                _this26.allWorks.total = 0;
-                _this26.worksLoadingMore = false;
-                _this26.worksNoMore = false;
-                return _context18.abrupt("return");
-              case 7:
-                if (!isLoadMore) {
-                  _context18.next = 14;
-                  break;
-                }
-                if (!(_this26.worksNoMore || _this26.worksLoadingMore)) {
-                  _context18.next = 10;
-                  break;
-                }
-                return _context18.abrupt("return");
-              case 10:
-                _this26.worksLoadingMore = true;
-                _this26.worksPageNum++;
-                _context18.next = 16;
-                break;
-              case 14:
-                _this26.worksPageNum = 1;
-                _this26.worksNoMore = false;
-              case 16:
-                // 构建请求参数，包含搜索关键词
-                url = "/wechat/works/findUserWorksPage?pageNum=".concat(_this26.worksPageNum, "&pageSize=").concat(_this26.pageSize);
-                if (_this26.workSearchKeyword.trim()) {
-                  url += "&title=".concat(encodeURIComponent(_this26.workSearchKeyword.trim()));
-                }
-                _context18.next = 20;
-                return _this26.$request.get(url);
-              case 20:
-                _yield$_this26$$reque = _context18.sent;
-                code = _yield$_this26$$reque.code;
-                rows = _yield$_this26$$reque.rows;
-                total = _yield$_this26$$reque.total;
+                _context18.next = 2;
+                return _this27.$request.get("/wechat/works/findUserWorksPage?pageNum=".concat(_this27.pageNum, "&pageSize=").concat(_this27.pageSize, "&status=1"));
+              case 2:
+                _yield$_this27$$reque = _context18.sent;
+                code = _yield$_this27$$reque.code;
+                rows = _yield$_this27$$reque.rows;
+                total = _yield$_this27$$reque.total;
                 if (code == 200) {
-                  if (isLoadMore) {
-                    _this26.allWorks.worksData = _this26.allWorks.worksData.concat(rows);
-                  } else {
-                    _this26.allWorks.worksData = rows;
-                  }
-                  _this26.allWorks.total = total;
-                  // 判断是否已加载全部
-                  if (_this26.allWorks.worksData.length >= total || rows.length < _this26.pageSize) {
-                    _this26.worksNoMore = true;
-                  }
-                } else if (code === 601) {
+                  _this27.homeWork.data = rows;
+                  _this27.homeWork.total = total;
+                } else if (code === 601 && !_this27.isFlowWarningShown) {
                   // 流量不足，显示流量不足弹窗
+                  _this27.isFlowWarningShown = true;
                   uni.$emit('show-storage-warning', {
                     msg: '您的流量已用完，请及时购买流量包，否则将影响账户正常使用。',
                     data: '/subpkg-profile/pages/storage-management'
                   });
                 }
-                _this26.worksLoadingMore = false;
-              case 26:
+              case 7:
               case "end":
                 return _context18.stop();
             }
@@ -2395,103 +2402,67 @@ var _default = {
         }, _callee17);
       }))();
     },
-    // 检查团队权限
-    checkTeamPermissions: function checkTeamPermissions(role) {
-      var _this27 = this;
+    // 获取用户作品列表
+    getUserWorksData: function getUserWorksData() {
+      var _arguments = arguments,
+        _this28 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee18() {
+        var isLoadMore, url, _yield$_this28$$reque, code, rows, total;
         return _regenerator.default.wrap(function _callee18$(_context19) {
           while (1) {
             switch (_context19.prev = _context19.next) {
               case 0:
-                if (_this27.loggedIn) {
-                  _context19.next = 2;
-                  break;
-                }
-                return _context19.abrupt("return", false);
-              case 2:
-                _context19.prev = 2;
-                _context19.next = 5;
-                return _this27.$request.get('/wechat/basic/hasTeamRight');
-              case 5:
-                _context19.next = 7;
-                return _this27.$request.get('/wechat/basic/hasOperateRight', {
-                  role: role
-                });
-              case 7:
-                return _context19.abrupt("return", true);
-              case 10:
-                _context19.prev = 10;
-                _context19.t0 = _context19["catch"](2);
-                return _context19.abrupt("return", false);
-              case 13:
-              case "end":
-                return _context19.stop();
-            }
-          }
-        }, _callee18, null, [[2, 10]]);
-      }))();
-    },
-    // 获取用户的作品集
-    getUserCollections: function getUserCollections() {
-      var _arguments2 = arguments,
-        _this28 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee19() {
-        var isLoadMore, url, _yield$_this28$$reque, code, rows, total;
-        return _regenerator.default.wrap(function _callee19$(_context20) {
-          while (1) {
-            switch (_context20.prev = _context20.next) {
-              case 0:
-                isLoadMore = _arguments2.length > 0 && _arguments2[0] !== undefined ? _arguments2[0] : false;
+                isLoadMore = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : false;
                 if (_this28.loggedIn) {
-                  _context20.next = 7;
+                  _context19.next = 7;
                   break;
                 }
-                _this28.collectionData.data = [];
-                _this28.collectionData.total = 0;
-                _this28.collectionsLoadingMore = false;
-                _this28.collectionsNoMore = false;
-                return _context20.abrupt("return");
+                _this28.allWorks.worksData = [];
+                _this28.allWorks.total = 0;
+                _this28.worksLoadingMore = false;
+                _this28.worksNoMore = false;
+                return _context19.abrupt("return");
               case 7:
                 if (!isLoadMore) {
-                  _context20.next = 14;
+                  _context19.next = 14;
                   break;
                 }
-                if (!(_this28.collectionsNoMore || _this28.collectionsLoadingMore)) {
-                  _context20.next = 10;
+                if (!(_this28.worksNoMore || _this28.worksLoadingMore)) {
+                  _context19.next = 10;
                   break;
                 }
-                return _context20.abrupt("return");
+                return _context19.abrupt("return");
               case 10:
-                _this28.collectionsLoadingMore = true;
-                _this28.collectionsPageNum++;
-                _context20.next = 16;
+                _this28.worksLoadingMore = true;
+                _this28.worksPageNum++;
+                _context19.next = 16;
                 break;
               case 14:
-                _this28.collectionsPageNum = 1;
-                _this28.collectionsNoMore = false;
+                _this28.worksPageNum = 1;
+                _this28.worksNoMore = false;
               case 16:
                 // 构建请求参数，包含搜索关键词
-                url = "/wechat/works/findUserWorksCollectionsPage?pageNum=".concat(_this28.collectionsPageNum, "&pageSize=").concat(_this28.pageSize, "&type=0");
-                if (_this28.collectionSearchKeyword.trim()) {
-                  url += "&name=".concat(encodeURIComponent(_this28.collectionSearchKeyword.trim()));
+                url = "/wechat/works/findUserWorksPage?pageNum=".concat(_this28.worksPageNum, "&pageSize=").concat(_this28.pageSize);
+                if (_this28.workSearchKeyword.trim()) {
+                  url += "&title=".concat(encodeURIComponent(_this28.workSearchKeyword.trim()));
                 }
-                _context20.next = 20;
+                _context19.next = 20;
                 return _this28.$request.get(url);
               case 20:
-                _yield$_this28$$reque = _context20.sent;
+                _yield$_this28$$reque = _context19.sent;
                 code = _yield$_this28$$reque.code;
                 rows = _yield$_this28$$reque.rows;
                 total = _yield$_this28$$reque.total;
                 if (code == 200) {
                   if (isLoadMore) {
-                    _this28.collectionData.data = _this28.collectionData.data.concat(rows);
+                    _this28.allWorks.worksData = _this28.allWorks.worksData.concat(rows);
                   } else {
-                    _this28.collectionData.data = rows;
+                    _this28.allWorks.worksData = rows;
                   }
-                  _this28.collectionData.total = total;
+                  _this28.allWorks.total = total;
                   // 判断是否已加载全部
-                  if (_this28.collectionData.data.length >= total || rows.length < _this28.pageSize) {
-                    _this28.collectionsNoMore = true;
+                  if (_this28.allWorks.worksData.length >= total || rows.length < _this28.pageSize) {
+                    _this28.worksNoMore = true;
                   }
                 } else if (code === 601) {
                   // 流量不足，显示流量不足弹窗
@@ -2500,62 +2471,176 @@ var _default = {
                     data: '/subpkg-profile/pages/storage-management'
                   });
                 }
-                _this28.collectionsLoadingMore = false;
+                _this28.worksLoadingMore = false;
               case 26:
+              case "end":
+                return _context19.stop();
+            }
+          }
+        }, _callee18);
+      }))();
+    },
+    // 检查团队权限
+    checkTeamPermissions: function checkTeamPermissions(role) {
+      var _this29 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee19() {
+        return _regenerator.default.wrap(function _callee19$(_context20) {
+          while (1) {
+            switch (_context20.prev = _context20.next) {
+              case 0:
+                if (_this29.loggedIn) {
+                  _context20.next = 2;
+                  break;
+                }
+                return _context20.abrupt("return", false);
+              case 2:
+                _context20.prev = 2;
+                _context20.next = 5;
+                return _this29.$request.get('/wechat/basic/hasTeamRight');
+              case 5:
+                _context20.next = 7;
+                return _this29.$request.get('/wechat/basic/hasOperateRight', {
+                  role: role
+                });
+              case 7:
+                return _context20.abrupt("return", true);
+              case 10:
+                _context20.prev = 10;
+                _context20.t0 = _context20["catch"](2);
+                return _context20.abrupt("return", false);
+              case 13:
               case "end":
                 return _context20.stop();
             }
           }
-        }, _callee19);
+        }, _callee19, null, [[2, 10]]);
       }))();
     },
-    // 获取团队作品数据
-    getTeamWorksData: function getTeamWorksData() {
-      var _arguments3 = arguments,
-        _this29 = this;
+    // 获取用户的作品集
+    getUserCollections: function getUserCollections() {
+      var _arguments2 = arguments,
+        _this30 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee20() {
-        var isLoadMore, url, res, processedRows;
+        var isLoadMore, url, _yield$_this30$$reque, code, rows, total;
         return _regenerator.default.wrap(function _callee20$(_context21) {
           while (1) {
             switch (_context21.prev = _context21.next) {
               case 0:
-                isLoadMore = _arguments3.length > 0 && _arguments3[0] !== undefined ? _arguments3[0] : false;
-                if (_this29.loggedIn) {
+                isLoadMore = _arguments2.length > 0 && _arguments2[0] !== undefined ? _arguments2[0] : false;
+                if (_this30.loggedIn) {
                   _context21.next = 7;
                   break;
                 }
-                _this29.allWorks.worksData = [];
-                _this29.allWorks.total = 0;
-                _this29.worksLoadingMore = false;
-                _this29.worksNoMore = false;
+                _this30.collectionData.data = [];
+                _this30.collectionData.total = 0;
+                _this30.collectionsLoadingMore = false;
+                _this30.collectionsNoMore = false;
                 return _context21.abrupt("return");
               case 7:
                 if (!isLoadMore) {
                   _context21.next = 14;
                   break;
                 }
-                if (!(_this29.worksNoMore || _this29.worksLoadingMore)) {
+                if (!(_this30.collectionsNoMore || _this30.collectionsLoadingMore)) {
                   _context21.next = 10;
                   break;
                 }
                 return _context21.abrupt("return");
               case 10:
-                _this29.worksLoadingMore = true;
-                _this29.worksPageNum++;
+                _this30.collectionsLoadingMore = true;
+                _this30.collectionsPageNum++;
                 _context21.next = 16;
                 break;
               case 14:
-                _this29.worksPageNum = 1;
-                _this29.worksNoMore = false;
+                _this30.collectionsPageNum = 1;
+                _this30.collectionsNoMore = false;
               case 16:
-                url = "/wechat/works/findUserWorksPage?pageNum=".concat(_this29.worksPageNum, "&pageSize=").concat(_this29.pageSize, "&userId=").concat(_this29.teamUserId);
-                if (_this29.workSearchKeyword.trim()) {
-                  url += "&title=".concat(encodeURIComponent(_this29.workSearchKeyword.trim()));
+                // 构建请求参数，包含搜索关键词
+                url = "/wechat/works/findUserWorksCollectionsPage?pageNum=".concat(_this30.collectionsPageNum, "&pageSize=").concat(_this30.pageSize, "&type=0");
+                if (_this30.collectionSearchKeyword.trim()) {
+                  url += "&name=".concat(encodeURIComponent(_this30.collectionSearchKeyword.trim()));
                 }
                 _context21.next = 20;
-                return _this29.$request.get(url);
+                return _this30.$request.get(url);
               case 20:
-                res = _context21.sent;
+                _yield$_this30$$reque = _context21.sent;
+                code = _yield$_this30$$reque.code;
+                rows = _yield$_this30$$reque.rows;
+                total = _yield$_this30$$reque.total;
+                if (code == 200) {
+                  if (isLoadMore) {
+                    _this30.collectionData.data = _this30.collectionData.data.concat(rows);
+                  } else {
+                    _this30.collectionData.data = rows;
+                  }
+                  _this30.collectionData.total = total;
+                  // 判断是否已加载全部
+                  if (_this30.collectionData.data.length >= total || rows.length < _this30.pageSize) {
+                    _this30.collectionsNoMore = true;
+                  }
+                } else if (code === 601) {
+                  // 流量不足，显示流量不足弹窗
+                  uni.$emit('show-storage-warning', {
+                    msg: '您的流量已用完，请及时购买流量包，否则将影响账户正常使用。',
+                    data: '/subpkg-profile/pages/storage-management'
+                  });
+                }
+                _this30.collectionsLoadingMore = false;
+              case 26:
+              case "end":
+                return _context21.stop();
+            }
+          }
+        }, _callee20);
+      }))();
+    },
+    // 获取团队作品数据
+    getTeamWorksData: function getTeamWorksData() {
+      var _arguments3 = arguments,
+        _this31 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee21() {
+        var isLoadMore, url, res, processedRows;
+        return _regenerator.default.wrap(function _callee21$(_context22) {
+          while (1) {
+            switch (_context22.prev = _context22.next) {
+              case 0:
+                isLoadMore = _arguments3.length > 0 && _arguments3[0] !== undefined ? _arguments3[0] : false;
+                if (_this31.loggedIn) {
+                  _context22.next = 7;
+                  break;
+                }
+                _this31.allWorks.worksData = [];
+                _this31.allWorks.total = 0;
+                _this31.worksLoadingMore = false;
+                _this31.worksNoMore = false;
+                return _context22.abrupt("return");
+              case 7:
+                if (!isLoadMore) {
+                  _context22.next = 14;
+                  break;
+                }
+                if (!(_this31.worksNoMore || _this31.worksLoadingMore)) {
+                  _context22.next = 10;
+                  break;
+                }
+                return _context22.abrupt("return");
+              case 10:
+                _this31.worksLoadingMore = true;
+                _this31.worksPageNum++;
+                _context22.next = 16;
+                break;
+              case 14:
+                _this31.worksPageNum = 1;
+                _this31.worksNoMore = false;
+              case 16:
+                url = "/wechat/works/findUserWorksPage?pageNum=".concat(_this31.worksPageNum, "&pageSize=").concat(_this31.pageSize, "&userId=").concat(_this31.teamUserId);
+                if (_this31.workSearchKeyword.trim()) {
+                  url += "&title=".concat(encodeURIComponent(_this31.workSearchKeyword.trim()));
+                }
+                _context22.next = 20;
+                return _this31.$request.get(url);
+              case 20:
+                res = _context22.sent;
                 if (res.code == 200) {
                   processedRows = res.rows.map(function (item) {
                     var componentCount = 0;
@@ -2574,14 +2659,14 @@ var _default = {
                     });
                   });
                   if (isLoadMore) {
-                    _this29.allWorks.worksData = _this29.allWorks.worksData.concat(processedRows);
+                    _this31.allWorks.worksData = _this31.allWorks.worksData.concat(processedRows);
                   } else {
-                    _this29.allWorks.worksData = processedRows;
+                    _this31.allWorks.worksData = processedRows;
                   }
-                  _this29.allWorks.total = res.total;
+                  _this31.allWorks.total = res.total;
                   // 判断是否已加载全部
-                  if (_this29.allWorks.worksData.length >= res.total || processedRows.length < _this29.pageSize) {
-                    _this29.worksNoMore = true;
+                  if (_this31.allWorks.worksData.length >= res.total || processedRows.length < _this31.pageSize) {
+                    _this31.worksNoMore = true;
                   }
                 } else if (res.code === 601) {
                   // 流量不足，显示流量不足弹窗
@@ -2590,63 +2675,63 @@ var _default = {
                     data: '/subpkg-profile/pages/storage-management'
                   });
                 }
-                _this29.worksLoadingMore = false;
+                _this31.worksLoadingMore = false;
               case 23:
               case "end":
-                return _context21.stop();
+                return _context22.stop();
             }
           }
-        }, _callee20);
+        }, _callee21);
       }))();
     },
     // 获取团队作品集数据
     getTeamCollections: function getTeamCollections() {
       var _arguments4 = arguments,
-        _this30 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee21() {
+        _this32 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee22() {
         var isLoadMore, url, res, processedRows;
-        return _regenerator.default.wrap(function _callee21$(_context22) {
+        return _regenerator.default.wrap(function _callee22$(_context23) {
           while (1) {
-            switch (_context22.prev = _context22.next) {
+            switch (_context23.prev = _context23.next) {
               case 0:
                 isLoadMore = _arguments4.length > 0 && _arguments4[0] !== undefined ? _arguments4[0] : false;
-                if (_this30.loggedIn) {
-                  _context22.next = 7;
+                if (_this32.loggedIn) {
+                  _context23.next = 7;
                   break;
                 }
-                _this30.collectionData.data = [];
-                _this30.collectionData.total = 0;
-                _this30.collectionsLoadingMore = false;
-                _this30.collectionsNoMore = false;
-                return _context22.abrupt("return");
+                _this32.collectionData.data = [];
+                _this32.collectionData.total = 0;
+                _this32.collectionsLoadingMore = false;
+                _this32.collectionsNoMore = false;
+                return _context23.abrupt("return");
               case 7:
                 if (!isLoadMore) {
-                  _context22.next = 14;
+                  _context23.next = 14;
                   break;
                 }
-                if (!(_this30.collectionsNoMore || _this30.collectionsLoadingMore)) {
-                  _context22.next = 10;
+                if (!(_this32.collectionsNoMore || _this32.collectionsLoadingMore)) {
+                  _context23.next = 10;
                   break;
                 }
-                return _context22.abrupt("return");
+                return _context23.abrupt("return");
               case 10:
-                _this30.collectionsLoadingMore = true;
-                _this30.collectionsPageNum++;
-                _context22.next = 16;
+                _this32.collectionsLoadingMore = true;
+                _this32.collectionsPageNum++;
+                _context23.next = 16;
                 break;
               case 14:
-                _this30.collectionsPageNum = 1;
-                _this30.collectionsNoMore = false;
+                _this32.collectionsPageNum = 1;
+                _this32.collectionsNoMore = false;
               case 16:
                 // Using workType=1 based on assumption and pattern in create page
-                url = "/wechat/works/findUserWorksCollectionsPage?pageNum=".concat(_this30.collectionsPageNum, "&pageSize=").concat(_this30.pageSize, "&type=0&userId=").concat(_this30.teamUserId);
-                if (_this30.collectionSearchKeyword.trim()) {
-                  url += "&name=".concat(encodeURIComponent(_this30.collectionSearchKeyword.trim()));
+                url = "/wechat/works/findUserWorksCollectionsPage?pageNum=".concat(_this32.collectionsPageNum, "&pageSize=").concat(_this32.pageSize, "&type=0&userId=").concat(_this32.teamUserId);
+                if (_this32.collectionSearchKeyword.trim()) {
+                  url += "&name=".concat(encodeURIComponent(_this32.collectionSearchKeyword.trim()));
                 }
-                _context22.next = 20;
-                return _this30.$request.get(url);
+                _context23.next = 20;
+                return _this32.$request.get(url);
               case 20:
-                res = _context22.sent;
+                res = _context23.sent;
                 if (res.code == 200) {
                   processedRows = res.rows.map(function (item) {
                     var tagsCount = 0;
@@ -2665,14 +2750,14 @@ var _default = {
                     });
                   });
                   if (isLoadMore) {
-                    _this30.collectionData.data = _this30.collectionData.data.concat(processedRows);
+                    _this32.collectionData.data = _this32.collectionData.data.concat(processedRows);
                   } else {
-                    _this30.collectionData.data = processedRows;
+                    _this32.collectionData.data = processedRows;
                   }
-                  _this30.collectionData.total = res.total;
+                  _this32.collectionData.total = res.total;
                   // 判断是否已加载全部
-                  if (_this30.collectionData.data.length >= res.total || processedRows.length < _this30.pageSize) {
-                    _this30.collectionsNoMore = true;
+                  if (_this32.collectionData.data.length >= res.total || processedRows.length < _this32.pageSize) {
+                    _this32.collectionsNoMore = true;
                   }
                 } else if (res.code === 601) {
                   // 流量不足，显示流量不足弹窗
@@ -2681,13 +2766,13 @@ var _default = {
                     data: '/subpkg-profile/pages/storage-management'
                   });
                 }
-                _this30.collectionsLoadingMore = false;
+                _this32.collectionsLoadingMore = false;
               case 23:
               case "end":
-                return _context22.stop();
+                return _context23.stop();
             }
           }
-        }, _callee21);
+        }, _callee22);
       }))();
     },
     changeTab: function changeTab(index) {
@@ -2711,64 +2796,64 @@ var _default = {
     },
     // 根据标签页加载对应数据
     loadTabData: function loadTabData(index) {
-      var _this31 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee22() {
-        return _regenerator.default.wrap(function _callee22$(_context23) {
+      var _this33 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee23() {
+        return _regenerator.default.wrap(function _callee23$(_context24) {
           while (1) {
-            switch (_context23.prev = _context23.next) {
+            switch (_context24.prev = _context24.next) {
               case 0:
-                if (_this31.loggedIn) {
-                  _context23.next = 2;
+                if (_this33.loggedIn) {
+                  _context24.next = 2;
                   break;
                 }
-                return _context23.abrupt("return");
+                return _context24.abrupt("return");
               case 2:
-                if (!(index === 0 || !_this31.userInfo.id)) {
-                  _context23.next = 5;
+                if (!(index === 0 || !_this33.userInfo.id)) {
+                  _context24.next = 5;
                   break;
                 }
-                _context23.next = 5;
-                return _this31.fetchUserInfo();
+                _context24.next = 5;
+                return _this33.fetchUserInfo();
               case 5:
-                if (_this31.homeCollectionsLoaded) {
-                  _context23.next = 8;
+                if (_this33.homeCollectionsLoaded) {
+                  _context24.next = 8;
                   break;
                 }
-                _context23.next = 8;
-                return _this31.getHomeCollections();
+                _context24.next = 8;
+                return _this33.getHomeCollections();
               case 8:
                 // 根据不同标签页加载对应数据
                 if (index === 1) {
                   // 作品标签
                   // 有数据时不重新请求，保留已加载的多页数据和滚动位置
-                  if (_this31.allWorks.worksData.length === 0) {
-                    if (_this31.isTeamMode) {
-                      _this31.getTeamWorksData();
+                  if (_this33.allWorks.worksData.length === 0) {
+                    if (_this33.isTeamMode) {
+                      _this33.getTeamWorksData();
                     } else {
-                      _this31.getUserWorksData();
+                      _this33.getUserWorksData();
                     }
                   }
                 } else if (index === 2) {
                   // 作品集标签
                   // 有数据时不重新请求，保留已加载的多页数据和滚动位置
-                  if (_this31.collectionData.data.length === 0) {
-                    if (_this31.isTeamMode) {
-                      _this31.getTeamCollections();
+                  if (_this33.collectionData.data.length === 0) {
+                    if (_this33.isTeamMode) {
+                      _this33.getTeamCollections();
                     } else {
-                      _this31.getUserCollections();
+                      _this33.getUserCollections();
                     }
                   }
                 }
               case 9:
               case "end":
-                return _context23.stop();
+                return _context24.stop();
             }
           }
-        }, _callee22);
+        }, _callee23);
       }))();
     },
     handleSwiperChange: function handleSwiperChange(e) {
-      var _this32 = this;
+      var _this34 = this;
       var swiperIndex = e.detail.current;
       var newTab = this.isTeamMode ? swiperIndex + 1 : swiperIndex;
       var oldTab = this.currentSwiperIndex;
@@ -2784,26 +2869,26 @@ var _default = {
       clearTimeout(this.tabChangeTimer);
       clearTimeout(this.scrollRestoreTimer);
       this.tabChangeTimer = setTimeout(function () {
-        _this32.loadTabData(newTab);
-        _this32.scrollRestoreTimer = setTimeout(function () {
+        _this34.loadTabData(newTab);
+        _this34.scrollRestoreTimer = setTimeout(function () {
           if (newTab === 1) {
-            _this32.restoreWorksScrollPosition();
+            _this34.restoreWorksScrollPosition();
           } else if (newTab === 2) {
-            _this32.restoreCollectionsScrollPosition();
+            _this34.restoreCollectionsScrollPosition();
           }
         }, 120);
       }, 260);
     },
     navigateTo: function navigateTo(url) {
-      var _this33 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee23() {
+      var _this35 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee24() {
         var path, isLoggedIn, checkMap, ok, hasRightParams, finalUrl;
-        return _regenerator.default.wrap(function _callee23$(_context24) {
+        return _regenerator.default.wrap(function _callee24$(_context25) {
           while (1) {
-            switch (_context24.prev = _context24.next) {
+            switch (_context25.prev = _context25.next) {
               case 0:
                 path = url.split('?')[0];
-                isLoggedIn = _this33.loggedIn || _this33.hasLoginToken();
+                isLoggedIn = _this35.loggedIn || _this35.hasLoginToken();
                 checkMap = {
                   '/subpkg-library/pages/works/create': {
                     role: 'canManageWorks',
@@ -2817,58 +2902,58 @@ var _default = {
                   }
                 }; // 检查权限
                 if (!(isLoggedIn && checkMap[path])) {
-                  _context24.next = 19;
+                  _context25.next = 19;
                   break;
                 }
-                _context24.prev = 4;
-                if (!_this33.isTeamMode) {
-                  _context24.next = 11;
+                _context25.prev = 4;
+                if (!_this35.isTeamMode) {
+                  _context25.next = 11;
                   break;
                 }
-                _context24.next = 8;
-                return _this33.checkTeamPermissions(checkMap[path].role);
+                _context25.next = 8;
+                return _this35.checkTeamPermissions(checkMap[path].role);
               case 8:
-                ok = _context24.sent;
+                ok = _context25.sent;
                 if (ok) {
-                  _context24.next = 11;
+                  _context25.next = 11;
                   break;
                 }
-                return _context24.abrupt("return");
+                return _context25.abrupt("return");
               case 11:
                 // 检查操作权限
                 hasRightParams = {
                   operateType: checkMap[path].operateType,
                   type: checkMap[path].type
                 };
-                _context24.next = 14;
-                return _this33.$request.get('/wechat/basic/hasRight', hasRightParams);
+                _context25.next = 14;
+                return _this35.$request.get('/wechat/basic/hasRight', hasRightParams);
               case 14:
-                _context24.next = 19;
+                _context25.next = 19;
                 break;
               case 16:
-                _context24.prev = 16;
-                _context24.t0 = _context24["catch"](4);
-                return _context24.abrupt("return");
+                _context25.prev = 16;
+                _context25.t0 = _context25["catch"](4);
+                return _context25.abrupt("return");
               case 19:
                 // 如果是团队模式，添加 workType=1 参数
                 finalUrl = url;
-                if (_this33.isTeamMode && (path === '/subpkg-library/pages/works/create' || path === '/subpkg-library/pages/collection/create')) {
+                if (_this35.isTeamMode && (path === '/subpkg-library/pages/works/create' || path === '/subpkg-library/pages/collection/create')) {
                   if (url.includes('?')) {
                     finalUrl += '&workType=1';
                   } else {
                     finalUrl += '?workType=1';
                   }
                 }
-                _this33.saveHomeTab();
+                _this35.saveHomeTab();
                 uni.navigateTo({
                   url: finalUrl
                 });
               case 23:
               case "end":
-                return _context24.stop();
+                return _context25.stop();
             }
           }
-        }, _callee23, null, [[4, 16]]);
+        }, _callee24, null, [[4, 16]]);
       }))();
     },
     // 处理列表项点击
@@ -2914,69 +2999,27 @@ var _default = {
       });
     },
     handleEditWork: function handleEditWork() {
-      var _this34 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee24() {
-        var ok;
-        return _regenerator.default.wrap(function _callee24$(_context25) {
-          while (1) {
-            switch (_context25.prev = _context25.next) {
-              case 0:
-                if (_this34.currentWorkItem) {
-                  _context25.next = 2;
-                  break;
-                }
-                return _context25.abrupt("return");
-              case 2:
-                _this34.closeWorkPopup();
-                // 团队模式下检查权限
-                if (!_this34.isTeamMode) {
-                  _context25.next = 9;
-                  break;
-                }
-                _context25.next = 6;
-                return _this34.checkTeamPermissions(TEAM_OPERATE_ROLES.MANAGE_WORKS);
-              case 6:
-                ok = _context25.sent;
-                if (ok) {
-                  _context25.next = 9;
-                  break;
-                }
-                return _context25.abrupt("return");
-              case 9:
-                _this34.saveHomeTab();
-                uni.navigateTo({
-                  url: "/subpkg-library/pages/works/create?id=".concat(_this34.currentWorkItem.id, "&title=").concat(_this34.currentWorkItem.title).concat(_this34.isTeamMode ? '&workType=1' : '')
-                });
-              case 11:
-              case "end":
-                return _context25.stop();
-            }
-          }
-        }, _callee24);
-      }))();
-    },
-    handleVisableWork: function handleVisableWork() {
-      var _this35 = this;
+      var _this36 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee25() {
-        var ok, newIsHide, actionText, confirmText;
+        var ok;
         return _regenerator.default.wrap(function _callee25$(_context26) {
           while (1) {
             switch (_context26.prev = _context26.next) {
               case 0:
-                if (_this35.currentWorkItem) {
+                if (_this36.currentWorkItem) {
                   _context26.next = 2;
                   break;
                 }
                 return _context26.abrupt("return");
               case 2:
-                _this35.closeWorkPopup();
+                _this36.closeWorkPopup();
                 // 团队模式下检查权限
-                if (!_this35.isTeamMode) {
+                if (!_this36.isTeamMode) {
                   _context26.next = 9;
                   break;
                 }
                 _context26.next = 6;
-                return _this35.checkTeamPermissions(TEAM_OPERATE_ROLES.MANAGE_WORKS);
+                return _this36.checkTeamPermissions(TEAM_OPERATE_ROLES.MANAGE_WORKS);
               case 6:
                 ok = _context26.sent;
                 if (ok) {
@@ -2985,7 +3028,49 @@ var _default = {
                 }
                 return _context26.abrupt("return");
               case 9:
-                newIsHide = _this35.currentWorkItem.hide === '1' ? '0' : '1';
+                _this36.saveHomeTab();
+                uni.navigateTo({
+                  url: "/subpkg-library/pages/works/create?id=".concat(_this36.currentWorkItem.id, "&title=").concat(_this36.currentWorkItem.title).concat(_this36.isTeamMode ? '&workType=1' : '')
+                });
+              case 11:
+              case "end":
+                return _context26.stop();
+            }
+          }
+        }, _callee25);
+      }))();
+    },
+    handleVisableWork: function handleVisableWork() {
+      var _this37 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee26() {
+        var ok, newIsHide, actionText, confirmText;
+        return _regenerator.default.wrap(function _callee26$(_context27) {
+          while (1) {
+            switch (_context27.prev = _context27.next) {
+              case 0:
+                if (_this37.currentWorkItem) {
+                  _context27.next = 2;
+                  break;
+                }
+                return _context27.abrupt("return");
+              case 2:
+                _this37.closeWorkPopup();
+                // 团队模式下检查权限
+                if (!_this37.isTeamMode) {
+                  _context27.next = 9;
+                  break;
+                }
+                _context27.next = 6;
+                return _this37.checkTeamPermissions(TEAM_OPERATE_ROLES.MANAGE_WORKS);
+              case 6:
+                ok = _context27.sent;
+                if (ok) {
+                  _context27.next = 9;
+                  break;
+                }
+                return _context27.abrupt("return");
+              case 9:
+                newIsHide = _this37.currentWorkItem.hide === '1' ? '0' : '1';
                 actionText = newIsHide === '1' ? '设为仅自己可见' : '设为公开';
                 confirmText = newIsHide === '1' ? '设为仅自己可见' : '设为公开';
                 uni.showModal({
@@ -2994,19 +3079,19 @@ var _default = {
                   success: function success(modalRes) {
                     if (modalRes.confirm) {
                       var params = {
-                        worksId: _this35.currentWorkItem.id,
+                        worksId: _this37.currentWorkItem.id,
                         isHide: newIsHide //0:否 1:是
                       };
 
-                      _this35.$request.put("/wechat/works/setWorkHide", params).then(function (res) {
+                      _this37.$request.put("/wechat/works/setWorkHide", params).then(function (res) {
                         if (res.code == 200) {
                           // 直接更新本地对应项的 hide 字段
-                          var id = _this35.currentWorkItem.id;
-                          var item = _this35.allWorks.worksData.find(function (w) {
+                          var id = _this37.currentWorkItem.id;
+                          var item = _this37.allWorks.worksData.find(function (w) {
                             return w.id === id;
                           });
                           if (item) item.hide = newIsHide;
-                          _this35.getHomeCollections();
+                          _this37.getHomeCollections();
                           uni.showToast({
                             title: '设置成功',
                             icon: 'none'
@@ -3018,60 +3103,60 @@ var _default = {
                 });
               case 13:
               case "end":
-                return _context26.stop();
+                return _context27.stop();
             }
           }
-        }, _callee25);
+        }, _callee26);
       }))();
     },
     handleDeleteWork: function handleDeleteWork() {
-      var _this36 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee26() {
+      var _this38 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee27() {
         var ok;
-        return _regenerator.default.wrap(function _callee26$(_context27) {
+        return _regenerator.default.wrap(function _callee27$(_context28) {
           while (1) {
-            switch (_context27.prev = _context27.next) {
+            switch (_context28.prev = _context28.next) {
               case 0:
-                if (_this36.currentWorkItem) {
-                  _context27.next = 2;
+                if (_this38.currentWorkItem) {
+                  _context28.next = 2;
                   break;
                 }
-                return _context27.abrupt("return");
+                return _context28.abrupt("return");
               case 2:
-                _this36.closeWorkPopup();
+                _this38.closeWorkPopup();
                 // 团队模式下检查权限
-                if (!_this36.isTeamMode) {
-                  _context27.next = 9;
+                if (!_this38.isTeamMode) {
+                  _context28.next = 9;
                   break;
                 }
-                _context27.next = 6;
-                return _this36.checkTeamPermissions(TEAM_OPERATE_ROLES.MANAGE_WORKS);
+                _context28.next = 6;
+                return _this38.checkTeamPermissions(TEAM_OPERATE_ROLES.MANAGE_WORKS);
               case 6:
-                ok = _context27.sent;
+                ok = _context28.sent;
                 if (ok) {
-                  _context27.next = 9;
+                  _context28.next = 9;
                   break;
                 }
-                return _context27.abrupt("return");
+                return _context28.abrupt("return");
               case 9:
                 uni.showModal({
                   title: '提示',
                   content: '确定要删除该作品吗？',
                   success: function success(modalRes) {
                     if (modalRes.confirm) {
-                      _this36.$request.delete("/wechat/works/deleteWork/".concat(_this36.currentWorkItem.id)).then(function (res) {
+                      _this38.$request.delete("/wechat/works/deleteWork/".concat(_this38.currentWorkItem.id)).then(function (res) {
                         if (res.code == 200) {
                           // 直接从本地数组移除，不重新请求接口，不重置分页
-                          var id = _this36.currentWorkItem.id;
-                          _this36.allWorks.worksData = _this36.allWorks.worksData.filter(function (item) {
+                          var id = _this38.currentWorkItem.id;
+                          _this38.allWorks.worksData = _this38.allWorks.worksData.filter(function (item) {
                             return item.id !== id;
                           });
-                          _this36.allWorks.total = Math.max(0, _this36.allWorks.total - 1);
+                          _this38.allWorks.total = Math.max(0, _this38.allWorks.total - 1);
                           // 主页作品集数据仍需刷新（因为封面可能变化）
-                          _this36.getHomeCollections();
+                          _this38.getHomeCollections();
                           // 如果是在推荐列表，也刷新推荐列表
-                          if (_this36.currentTab === 0) {
-                            _this36.getHomeWorkList();
+                          if (_this38.currentTab === 0) {
+                            _this38.getHomeWorkList();
                           }
                           uni.showToast({
                             title: res.msg,
@@ -3084,93 +3169,34 @@ var _default = {
                 });
               case 10:
               case "end":
-                return _context27.stop();
-            }
-          }
-        }, _callee26);
-      }))();
-    },
-    handleToggleFrequent: function handleToggleFrequent() {
-      var _this37 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee27() {
-        var ok, newStatus, param;
-        return _regenerator.default.wrap(function _callee27$(_context28) {
-          while (1) {
-            switch (_context28.prev = _context28.next) {
-              case 0:
-                if (_this37.currentWorkItem) {
-                  _context28.next = 2;
-                  break;
-                }
-                return _context28.abrupt("return");
-              case 2:
-                _this37.closeWorkPopup();
-                // 团队模式下检查权限
-                if (!_this37.isTeamMode) {
-                  _context28.next = 9;
-                  break;
-                }
-                _context28.next = 6;
-                return _this37.checkTeamPermissions(TEAM_OPERATE_ROLES.MANAGE_WORKS);
-              case 6:
-                ok = _context28.sent;
-                if (ok) {
-                  _context28.next = 9;
-                  break;
-                }
-                return _context28.abrupt("return");
-              case 9:
-                // 切换状态：如果当前是置顶(1)，则取消置顶(0)；否则设置为置顶(1)
-                newStatus = _this37.currentWorkItem.status == '1' ? 0 : 1;
-                param = {
-                  status: newStatus,
-                  id: _this37.currentWorkItem.id
-                };
-                _this37.$request.put("/wechat/works/setWorkStatus", param).then(function (res) {
-                  if (res.code == 200) {
-                    // 直接更新本地对应项的 status 字段
-                    var id = _this37.currentWorkItem.id;
-                    var item = _this37.allWorks.worksData.find(function (w) {
-                      return w.id === id;
-                    });
-                    if (item) item.status = String(newStatus);
-                    _this37.getHomeWorkList();
-                    uni.showToast({
-                      title: newStatus == 1 ? '置顶成功' : '取消置顶成功',
-                      icon: 'success'
-                    });
-                  }
-                });
-              case 12:
-              case "end":
                 return _context28.stop();
             }
           }
         }, _callee27);
       }))();
     },
-    handleCollectionFrequent: function handleCollectionFrequent() {
-      var _this38 = this;
+    handleToggleFrequent: function handleToggleFrequent() {
+      var _this39 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee28() {
         var ok, newStatus, param;
         return _regenerator.default.wrap(function _callee28$(_context29) {
           while (1) {
             switch (_context29.prev = _context29.next) {
               case 0:
-                if (_this38.currentCollectionItem) {
+                if (_this39.currentWorkItem) {
                   _context29.next = 2;
                   break;
                 }
                 return _context29.abrupt("return");
               case 2:
-                _this38.closeCollectionPopup();
+                _this39.closeWorkPopup();
                 // 团队模式下检查权限
-                if (!_this38.isTeamMode) {
+                if (!_this39.isTeamMode) {
                   _context29.next = 9;
                   break;
                 }
                 _context29.next = 6;
-                return _this38.checkTeamPermissions(TEAM_OPERATE_ROLES.MANAGE_COLLECTIONS);
+                return _this39.checkTeamPermissions(TEAM_OPERATE_ROLES.MANAGE_WORKS);
               case 6:
                 ok = _context29.sent;
                 if (ok) {
@@ -3180,20 +3206,20 @@ var _default = {
                 return _context29.abrupt("return");
               case 9:
                 // 切换状态：如果当前是置顶(1)，则取消置顶(0)；否则设置为置顶(1)
-                newStatus = _this38.currentCollectionItem.isTop == 1 ? 0 : 1;
+                newStatus = _this39.currentWorkItem.status == '1' ? 0 : 1;
                 param = {
-                  isTop: newStatus,
-                  id: _this38.currentCollectionItem.id
+                  status: newStatus,
+                  id: _this39.currentWorkItem.id
                 };
-                _this38.$request.put("/wechat/works/editCollectionsIsTop", param).then(function (res) {
+                _this39.$request.put("/wechat/works/setWorkStatus", param).then(function (res) {
                   if (res.code == 200) {
-                    // 直接更新本地对应项的 isTop 字段
-                    var id = _this38.currentCollectionItem.id;
-                    var item = _this38.collectionData.data.find(function (c) {
-                      return c.id === id;
+                    // 直接更新本地对应项的 status 字段
+                    var id = _this39.currentWorkItem.id;
+                    var item = _this39.allWorks.worksData.find(function (w) {
+                      return w.id === id;
                     });
-                    if (item) item.isTop = newStatus;
-                    _this38.getHomeCollections();
+                    if (item) item.status = String(newStatus);
+                    _this39.getHomeWorkList();
                     uni.showToast({
                       title: newStatus == 1 ? '置顶成功' : '取消置顶成功',
                       icon: 'success'
@@ -3206,6 +3232,65 @@ var _default = {
             }
           }
         }, _callee28);
+      }))();
+    },
+    handleCollectionFrequent: function handleCollectionFrequent() {
+      var _this40 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee29() {
+        var ok, newStatus, param;
+        return _regenerator.default.wrap(function _callee29$(_context30) {
+          while (1) {
+            switch (_context30.prev = _context30.next) {
+              case 0:
+                if (_this40.currentCollectionItem) {
+                  _context30.next = 2;
+                  break;
+                }
+                return _context30.abrupt("return");
+              case 2:
+                _this40.closeCollectionPopup();
+                // 团队模式下检查权限
+                if (!_this40.isTeamMode) {
+                  _context30.next = 9;
+                  break;
+                }
+                _context30.next = 6;
+                return _this40.checkTeamPermissions(TEAM_OPERATE_ROLES.MANAGE_COLLECTIONS);
+              case 6:
+                ok = _context30.sent;
+                if (ok) {
+                  _context30.next = 9;
+                  break;
+                }
+                return _context30.abrupt("return");
+              case 9:
+                // 切换状态：如果当前是置顶(1)，则取消置顶(0)；否则设置为置顶(1)
+                newStatus = _this40.currentCollectionItem.isTop == 1 ? 0 : 1;
+                param = {
+                  isTop: newStatus,
+                  id: _this40.currentCollectionItem.id
+                };
+                _this40.$request.put("/wechat/works/editCollectionsIsTop", param).then(function (res) {
+                  if (res.code == 200) {
+                    // 直接更新本地对应项的 isTop 字段
+                    var id = _this40.currentCollectionItem.id;
+                    var item = _this40.collectionData.data.find(function (c) {
+                      return c.id === id;
+                    });
+                    if (item) item.isTop = newStatus;
+                    _this40.getHomeCollections();
+                    uni.showToast({
+                      title: newStatus == 1 ? '置顶成功' : '取消置顶成功',
+                      icon: 'success'
+                    });
+                  }
+                });
+              case 12:
+              case "end":
+                return _context30.stop();
+            }
+          }
+        }, _callee29);
       }))();
     },
     handleDownloadWork: function handleDownloadWork() {
@@ -3229,12 +3314,12 @@ var _default = {
     },
     // 处理压缩包下载
     downloadZip: function downloadZip(resourceType, id) {
-      var _this39 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee29() {
+      var _this41 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee30() {
         var userInfo, teamInfo, res;
-        return _regenerator.default.wrap(function _callee29$(_context30) {
+        return _regenerator.default.wrap(function _callee30$(_context31) {
           while (1) {
-            switch (_context30.prev = _context30.next) {
+            switch (_context31.prev = _context31.next) {
               case 0:
                 userInfo = uni.getStorageSync('userInfo') || {};
                 teamInfo = uni.getStorageSync('teamInfo') || null;
@@ -3242,14 +3327,14 @@ var _default = {
                   title: '生成压缩包...',
                   mask: true
                 });
-                _context30.next = 5;
-                return _this39.$request.post('/wechat/basic/downLoadWorksPc', {
+                _context31.next = 5;
+                return _this41.$request.post('/wechat/basic/downLoadWorksPc', {
                   id: id,
                   resourceType: resourceType,
-                  userName: _this39.isTeamMode && teamInfo ? teamInfo.nickName : userInfo.nickName || ''
+                  userName: _this41.isTeamMode && teamInfo ? teamInfo.nickName : userInfo.nickName || ''
                 });
               case 5:
-                res = _context30.sent;
+                res = _context31.sent;
                 if (res.code === 200 && res.data) {
                   uni.hideLoading();
                   // 打开下载链接
@@ -3290,30 +3375,30 @@ var _default = {
                 }
               case 7:
               case "end":
-                return _context30.stop();
+                return _context31.stop();
             }
           }
-        }, _callee29);
+        }, _callee30);
       }))();
     },
     downloadWorks: function downloadWorks(type, id) {
-      var _this40 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee30() {
+      var _this42 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee31() {
         var isPC, isLoggedIn, res;
-        return _regenerator.default.wrap(function _callee30$(_context31) {
+        return _regenerator.default.wrap(function _callee31$(_context32) {
           while (1) {
-            switch (_context31.prev = _context31.next) {
+            switch (_context32.prev = _context32.next) {
               case 0:
                 // 检查是否是电脑端且已登录
-                isPC = _this40.isPC();
-                isLoggedIn = _this40.isLoggedIn();
+                isPC = _this42.isPC();
+                isLoggedIn = _this42.isLoggedIn();
                 if (!(isPC && isLoggedIn)) {
-                  _context31.next = 6;
+                  _context32.next = 6;
                   break;
                 }
                 // 电脑端且已登录，使用压缩包下载
-                _this40.downloadZip(type, id);
-                _context31.next = 19;
+                _this42.downloadZip(type, id);
+                _context32.next = 19;
                 break;
               case 6:
                 // 移动端或未登录，使用原有的文件下载方式
@@ -3321,17 +3406,17 @@ var _default = {
                   title: '获取文件列表...',
                   mask: true
                 });
-                _context31.prev = 7;
-                _context31.next = 10;
-                return _this40.$request.post('/wechat/basic/downLoadWorks', {
+                _context32.prev = 7;
+                _context32.next = 10;
+                return _this42.$request.post('/wechat/basic/downLoadWorks', {
                   id: id,
                   resourceType: type
                 });
               case 10:
-                res = _context31.sent;
+                res = _context32.sent;
                 if (res.code === 200 && res.data && res.data.length > 0) {
                   uni.hideLoading();
-                  _this40.downloadFiles(res.data);
+                  _this42.downloadFiles(res.data);
                 } else {
                   uni.hideLoading();
                   uni.showToast({
@@ -3339,50 +3424,50 @@ var _default = {
                     icon: 'none'
                   });
                 }
-                _context31.next = 19;
+                _context32.next = 19;
                 break;
               case 14:
-                _context31.prev = 14;
-                _context31.t0 = _context31["catch"](7);
+                _context32.prev = 14;
+                _context32.t0 = _context32["catch"](7);
                 uni.hideLoading();
                 uni.showToast({
                   title: '用户案列暂不支持下载',
                   icon: 'none'
                 });
-                console.error('获取下载内容失败:', _context31.t0);
+                console.error('获取下载内容失败:', _context32.t0);
               case 19:
               case "end":
-                return _context31.stop();
+                return _context32.stop();
             }
           }
-        }, _callee30, null, [[7, 14]]);
+        }, _callee31, null, [[7, 14]]);
       }))();
     },
     downloadFiles: function downloadFiles(filePaths) {
-      var _this41 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee31() {
+      var _this43 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee32() {
         var totalFiles, downloadedFiles, savedFiles, _loop2, i, toastMessage;
-        return _regenerator.default.wrap(function _callee31$(_context33) {
+        return _regenerator.default.wrap(function _callee32$(_context34) {
           while (1) {
-            switch (_context33.prev = _context33.next) {
+            switch (_context34.prev = _context34.next) {
               case 0:
-                _this41.progress = 0;
-                _this41.stageText = '准备下载...';
+                _this43.progress = 0;
+                _this43.stageText = '准备下载...';
                 totalFiles = filePaths.length;
                 downloadedFiles = 0;
                 savedFiles = 0;
                 _loop2 = /*#__PURE__*/_regenerator.default.mark(function _loop2(i) {
                   var filePath, fullUrl, fileType, tempFilePath;
-                  return _regenerator.default.wrap(function _loop2$(_context32) {
+                  return _regenerator.default.wrap(function _loop2$(_context33) {
                     while (1) {
-                      switch (_context32.prev = _context32.next) {
+                      switch (_context33.prev = _context33.next) {
                         case 0:
                           filePath = filePaths[i];
-                          fullUrl = _this41.resolveUrl(filePath);
-                          fileType = _this41.getFileType(filePath);
-                          _context32.prev = 3;
-                          _this41.stageText = "\u4E0B\u8F7D\u4E2D (".concat(i + 1, "/").concat(totalFiles, ")");
-                          _context32.next = 7;
+                          fullUrl = _this43.resolveUrl(filePath);
+                          fileType = _this43.getFileType(filePath);
+                          _context33.prev = 3;
+                          _this43.stageText = "\u4E0B\u8F7D\u4E2D (".concat(i + 1, "/").concat(totalFiles, ")");
+                          _context33.next = 7;
                           return new Promise(function (resolve, reject) {
                             uni.downloadFile({
                               url: fullUrl,
@@ -3399,52 +3484,52 @@ var _default = {
                             });
                           });
                         case 7:
-                          tempFilePath = _context32.sent;
+                          tempFilePath = _context33.sent;
                           downloadedFiles++;
 
                           // 保存到相册（如果是图片或视频）
                           if (!(fileType === 'image' || fileType === 'video')) {
-                            _context32.next = 25;
+                            _context33.next = 25;
                             break;
                           }
-                          _context32.prev = 10;
+                          _context33.prev = 10;
                           if (!(fileType === 'image')) {
-                            _context32.next = 16;
+                            _context33.next = 16;
                             break;
                           }
-                          _context32.next = 14;
-                          return _this41.saveImageToAlbum(tempFilePath);
+                          _context33.next = 14;
+                          return _this43.saveImageToAlbum(tempFilePath);
                         case 14:
-                          _context32.next = 19;
+                          _context33.next = 19;
                           break;
                         case 16:
                           if (!(fileType === 'video')) {
-                            _context32.next = 19;
+                            _context33.next = 19;
                             break;
                           }
-                          _context32.next = 19;
-                          return _this41.saveVideoToAlbum(tempFilePath);
+                          _context33.next = 19;
+                          return _this43.saveVideoToAlbum(tempFilePath);
                         case 19:
                           savedFiles++;
-                          _context32.next = 25;
+                          _context33.next = 25;
                           break;
                         case 22:
-                          _context32.prev = 22;
-                          _context32.t0 = _context32["catch"](10);
-                          console.error("\u4FDD\u5B58\u6587\u4EF6\u5931\u8D25 ".concat(filePath, ":"), _context32.t0);
+                          _context33.prev = 22;
+                          _context33.t0 = _context33["catch"](10);
+                          console.error("\u4FDD\u5B58\u6587\u4EF6\u5931\u8D25 ".concat(filePath, ":"), _context33.t0);
                           // 继续处理其他文件
                         case 25:
-                          _this41.progress = Math.round(downloadedFiles / totalFiles * 100);
-                          _context32.next = 31;
+                          _this43.progress = Math.round(downloadedFiles / totalFiles * 100);
+                          _context33.next = 31;
                           break;
                         case 28:
-                          _context32.prev = 28;
-                          _context32.t1 = _context32["catch"](3);
-                          console.error("\u4E0B\u8F7D\u6587\u4EF6\u5931\u8D25 ".concat(filePath, ":"), _context32.t1);
+                          _context33.prev = 28;
+                          _context33.t1 = _context33["catch"](3);
+                          console.error("\u4E0B\u8F7D\u6587\u4EF6\u5931\u8D25 ".concat(filePath, ":"), _context33.t1);
                           // 继续下载其他文件
                         case 31:
                         case "end":
-                          return _context32.stop();
+                          return _context33.stop();
                       }
                     }
                   }, _loop2, null, [[3, 28], [10, 22]]);
@@ -3452,17 +3537,17 @@ var _default = {
                 i = 0;
               case 7:
                 if (!(i < filePaths.length)) {
-                  _context33.next = 12;
+                  _context34.next = 12;
                   break;
                 }
-                return _context33.delegateYield(_loop2(i), "t0", 9);
+                return _context34.delegateYield(_loop2(i), "t0", 9);
               case 9:
                 i++;
-                _context33.next = 7;
+                _context34.next = 7;
                 break;
               case 12:
-                _this41.stageText = '下载完成';
-                _this41.progress = 100;
+                _this43.stageText = '下载完成';
+                _this43.progress = 100;
                 toastMessage = "\u6210\u529F\u4E0B\u8F7D ".concat(downloadedFiles, " \u4E2A\u6587\u4EF6");
                 if (savedFiles > 0) {
                   toastMessage += "\uFF0C\u5176\u4E2D ".concat(savedFiles, " \u4E2A\u5DF2\u4FDD\u5B58\u5230\u76F8\u518C");
@@ -3474,14 +3559,14 @@ var _default = {
 
                 // 3秒后重置进度条
                 setTimeout(function () {
-                  _this41.progress = 0;
+                  _this43.progress = 0;
                 }, 3000);
               case 18:
               case "end":
-                return _context33.stop();
+                return _context34.stop();
             }
           }
-        }, _callee31);
+        }, _callee32);
       }))();
     },
     getFileType: function getFileType(filePath) {
@@ -3585,216 +3670,164 @@ var _default = {
     },
     // PC端点击刷新作品（不重置滚动位置，避免抖动）
     onWorksRefreshPC: function onWorksRefreshPC() {
-      var _this42 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee32() {
-        var savedScrollTop;
-        return _regenerator.default.wrap(function _callee32$(_context34) {
-          while (1) {
-            switch (_context34.prev = _context34.next) {
-              case 0:
-                if (!_this42.worksRefreshing) {
-                  _context34.next = 2;
-                  break;
-                }
-                return _context34.abrupt("return");
-              case 2:
-                _this42.worksRefreshing = true;
-                // 刷新前先断开 scroll-top 绑定，避免数据更新时触发跳位抖动
-                savedScrollTop = _this42.worksScrollTop;
-                _this42.worksScrollTopValue = null;
-                _context34.prev = 5;
-                if (!_this42.isTeamMode) {
-                  _context34.next = 11;
-                  break;
-                }
-                _context34.next = 9;
-                return _this42.getTeamWorksData();
-              case 9:
-                _context34.next = 13;
-                break;
-              case 11:
-                _context34.next = 13;
-                return _this42.getUserWorksData();
-              case 13:
-                _context34.next = 18;
-                break;
-              case 15:
-                _context34.prev = 15;
-                _context34.t0 = _context34["catch"](5);
-                console.error('刷新作品失败', _context34.t0);
-              case 18:
-                _context34.prev = 18;
-                _this42.worksRefreshing = false;
-                // 数据加载完成后恢复到顶部
-                _this42.$nextTick(function () {
-                  _this42.worksScrollTop = 0;
-                  _this42.worksScrollTopValue = 0;
-                  // 再次断开绑定，防止后续滚动时重复跳位
-                  setTimeout(function () {
-                    _this42.worksScrollTopValue = null;
-                  }, 100);
-                });
-                return _context34.finish(18);
-              case 22:
-              case "end":
-                return _context34.stop();
-            }
-          }
-        }, _callee32, null, [[5, 15, 18, 22]]);
-      }))();
-    },
-    // PC端点击刷新作品集（不重置滚动位置，避免抖动）
-    onCollectionsRefreshPC: function onCollectionsRefreshPC() {
-      var _this43 = this;
+      var _this44 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee33() {
+        var savedScrollTop;
         return _regenerator.default.wrap(function _callee33$(_context35) {
           while (1) {
             switch (_context35.prev = _context35.next) {
               case 0:
-                if (!_this43.collectionsRefreshing) {
+                if (!_this44.worksRefreshing) {
                   _context35.next = 2;
                   break;
                 }
                 return _context35.abrupt("return");
               case 2:
-                _this43.collectionsRefreshing = true;
+                _this44.worksRefreshing = true;
                 // 刷新前先断开 scroll-top 绑定，避免数据更新时触发跳位抖动
-                _this43.collectionsScrollTopValue = null;
-                _context35.prev = 4;
-                if (!_this43.isTeamMode) {
-                  _context35.next = 10;
+                savedScrollTop = _this44.worksScrollTop;
+                _this44.worksScrollTopValue = null;
+                _context35.prev = 5;
+                if (!_this44.isTeamMode) {
+                  _context35.next = 11;
                   break;
                 }
-                _context35.next = 8;
-                return _this43.getTeamCollections();
-              case 8:
-                _context35.next = 12;
+                _context35.next = 9;
+                return _this44.getTeamWorksData();
+              case 9:
+                _context35.next = 13;
                 break;
-              case 10:
-                _context35.next = 12;
-                return _this43.getUserCollections();
-              case 12:
-                _context35.next = 17;
+              case 11:
+                _context35.next = 13;
+                return _this44.getUserWorksData();
+              case 13:
+                _context35.next = 18;
                 break;
-              case 14:
-                _context35.prev = 14;
-                _context35.t0 = _context35["catch"](4);
-                console.error('刷新作品集失败', _context35.t0);
-              case 17:
-                _context35.prev = 17;
-                _this43.collectionsRefreshing = false;
-                // 数据加载完成后回到顶部
-                _this43.$nextTick(function () {
-                  _this43.collectionsScrollTop = 0;
-                  _this43.collectionsScrollTopValue = 0;
+              case 15:
+                _context35.prev = 15;
+                _context35.t0 = _context35["catch"](5);
+                console.error('刷新作品失败', _context35.t0);
+              case 18:
+                _context35.prev = 18;
+                _this44.worksRefreshing = false;
+                // 数据加载完成后恢复到顶部
+                _this44.$nextTick(function () {
+                  _this44.worksScrollTop = 0;
+                  _this44.worksScrollTopValue = 0;
+                  // 再次断开绑定，防止后续滚动时重复跳位
                   setTimeout(function () {
-                    _this43.collectionsScrollTopValue = null;
+                    _this44.worksScrollTopValue = null;
                   }, 100);
                 });
-                return _context35.finish(17);
-              case 21:
+                return _context35.finish(18);
+              case 22:
               case "end":
                 return _context35.stop();
             }
           }
-        }, _callee33, null, [[4, 14, 17, 21]]);
+        }, _callee33, null, [[5, 15, 18, 22]]);
       }))();
     },
-    // Tab1 作品列表下拉刷新
-    onWorksRefresh: function onWorksRefresh() {
-      var _this44 = this;
+    // PC端点击刷新作品集（不重置滚动位置，避免抖动）
+    onCollectionsRefreshPC: function onCollectionsRefreshPC() {
+      var _this45 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee34() {
         return _regenerator.default.wrap(function _callee34$(_context36) {
           while (1) {
             switch (_context36.prev = _context36.next) {
               case 0:
-                if (!_this44.worksRefreshing) {
+                if (!_this45.collectionsRefreshing) {
                   _context36.next = 2;
                   break;
                 }
                 return _context36.abrupt("return");
               case 2:
-                // 防重复
-                _this44.worksRefreshing = true;
-
-                // 重置滚动位置
-                _this44.worksScrollTop = 0;
-                _this44.worksScrollTopValue = null;
-                _context36.prev = 5;
-                if (!_this44.isTeamMode) {
-                  _context36.next = 11;
+                _this45.collectionsRefreshing = true;
+                // 刷新前先断开 scroll-top 绑定，避免数据更新时触发跳位抖动
+                _this45.collectionsScrollTopValue = null;
+                _context36.prev = 4;
+                if (!_this45.isTeamMode) {
+                  _context36.next = 10;
                   break;
                 }
-                _context36.next = 9;
-                return _this44.getTeamWorksData();
-              case 9:
-                _context36.next = 13;
+                _context36.next = 8;
+                return _this45.getTeamCollections();
+              case 8:
+                _context36.next = 12;
                 break;
-              case 11:
-                _context36.next = 13;
-                return _this44.getUserWorksData();
-              case 13:
-                _context36.next = 18;
+              case 10:
+                _context36.next = 12;
+                return _this45.getUserCollections();
+              case 12:
+                _context36.next = 17;
                 break;
-              case 15:
-                _context36.prev = 15;
-                _context36.t0 = _context36["catch"](5);
-                console.error('刷新作品失败', _context36.t0);
-              case 18:
-                _context36.prev = 18;
-                _this44.worksRefreshing = false;
-                return _context36.finish(18);
+              case 14:
+                _context36.prev = 14;
+                _context36.t0 = _context36["catch"](4);
+                console.error('刷新作品集失败', _context36.t0);
+              case 17:
+                _context36.prev = 17;
+                _this45.collectionsRefreshing = false;
+                // 数据加载完成后回到顶部
+                _this45.$nextTick(function () {
+                  _this45.collectionsScrollTop = 0;
+                  _this45.collectionsScrollTopValue = 0;
+                  setTimeout(function () {
+                    _this45.collectionsScrollTopValue = null;
+                  }, 100);
+                });
+                return _context36.finish(17);
               case 21:
               case "end":
                 return _context36.stop();
             }
           }
-        }, _callee34, null, [[5, 15, 18, 21]]);
+        }, _callee34, null, [[4, 14, 17, 21]]);
       }))();
     },
-    // Tab2 作品集列表下拉刷新
-    onCollectionsRefresh: function onCollectionsRefresh() {
-      var _this45 = this;
+    // Tab1 作品列表下拉刷新
+    onWorksRefresh: function onWorksRefresh() {
+      var _this46 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee35() {
         return _regenerator.default.wrap(function _callee35$(_context37) {
           while (1) {
             switch (_context37.prev = _context37.next) {
               case 0:
-                if (!_this45.collectionsRefreshing) {
+                if (!_this46.worksRefreshing) {
                   _context37.next = 2;
                   break;
                 }
                 return _context37.abrupt("return");
               case 2:
                 // 防重复
-                _this45.collectionsRefreshing = true;
+                _this46.worksRefreshing = true;
 
                 // 重置滚动位置
-                _this45.collectionsScrollTop = 0;
-                _this45.collectionsScrollTopValue = null;
+                _this46.worksScrollTop = 0;
+                _this46.worksScrollTopValue = null;
                 _context37.prev = 5;
-                if (!_this45.isTeamMode) {
+                if (!_this46.isTeamMode) {
                   _context37.next = 11;
                   break;
                 }
                 _context37.next = 9;
-                return _this45.getTeamCollections();
+                return _this46.getTeamWorksData();
               case 9:
                 _context37.next = 13;
                 break;
               case 11:
                 _context37.next = 13;
-                return _this45.getUserCollections();
+                return _this46.getUserWorksData();
               case 13:
                 _context37.next = 18;
                 break;
               case 15:
                 _context37.prev = 15;
                 _context37.t0 = _context37["catch"](5);
-                console.error('刷新作品集失败', _context37.t0);
+                console.error('刷新作品失败', _context37.t0);
               case 18:
                 _context37.prev = 18;
-                _this45.collectionsRefreshing = false;
+                _this46.worksRefreshing = false;
                 return _context37.finish(18);
               case 21:
               case "end":
@@ -3802,6 +3835,58 @@ var _default = {
             }
           }
         }, _callee35, null, [[5, 15, 18, 21]]);
+      }))();
+    },
+    // Tab2 作品集列表下拉刷新
+    onCollectionsRefresh: function onCollectionsRefresh() {
+      var _this47 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee36() {
+        return _regenerator.default.wrap(function _callee36$(_context38) {
+          while (1) {
+            switch (_context38.prev = _context38.next) {
+              case 0:
+                if (!_this47.collectionsRefreshing) {
+                  _context38.next = 2;
+                  break;
+                }
+                return _context38.abrupt("return");
+              case 2:
+                // 防重复
+                _this47.collectionsRefreshing = true;
+
+                // 重置滚动位置
+                _this47.collectionsScrollTop = 0;
+                _this47.collectionsScrollTopValue = null;
+                _context38.prev = 5;
+                if (!_this47.isTeamMode) {
+                  _context38.next = 11;
+                  break;
+                }
+                _context38.next = 9;
+                return _this47.getTeamCollections();
+              case 9:
+                _context38.next = 13;
+                break;
+              case 11:
+                _context38.next = 13;
+                return _this47.getUserCollections();
+              case 13:
+                _context38.next = 18;
+                break;
+              case 15:
+                _context38.prev = 15;
+                _context38.t0 = _context38["catch"](5);
+                console.error('刷新作品集失败', _context38.t0);
+              case 18:
+                _context38.prev = 18;
+                _this47.collectionsRefreshing = false;
+                return _context38.finish(18);
+              case 21:
+              case "end":
+                return _context38.stop();
+            }
+          }
+        }, _callee36, null, [[5, 15, 18, 21]]);
       }))();
     },
     // 作品列表滚动事件 - 保存滚动位置
@@ -3981,57 +4066,21 @@ var _default = {
       this.showCollectionPopup = false;
     },
     handleEditCollection: function handleEditCollection() {
-      var _this46 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee36() {
-        var ok;
-        return _regenerator.default.wrap(function _callee36$(_context38) {
-          while (1) {
-            switch (_context38.prev = _context38.next) {
-              case 0:
-                _this46.closeCollectionPopup();
-                // 团队模式下检查权限
-                if (!_this46.isTeamMode) {
-                  _context38.next = 7;
-                  break;
-                }
-                _context38.next = 4;
-                return _this46.checkTeamPermissions(TEAM_OPERATE_ROLES.MANAGE_COLLECTIONS);
-              case 4:
-                ok = _context38.sent;
-                if (ok) {
-                  _context38.next = 7;
-                  break;
-                }
-                return _context38.abrupt("return");
-              case 7:
-                _this46.saveHomeTab();
-                uni.navigateTo({
-                  url: "/subpkg-library/pages/collection/create?id=".concat(_this46.currentCollectionItem.id, "&title=").concat(_this46.currentCollectionItem.name, "&workType=").concat(_this46.isTeamMode ? 1 : 0)
-                });
-              case 9:
-              case "end":
-                return _context38.stop();
-            }
-          }
-        }, _callee36);
-      }))();
-    },
-    handleDeleteCollection: function handleDeleteCollection() {
-      var _this47 = this;
+      var _this48 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee37() {
         var ok;
         return _regenerator.default.wrap(function _callee37$(_context39) {
           while (1) {
             switch (_context39.prev = _context39.next) {
               case 0:
-                _this47.closeCollectionPopup();
+                _this48.closeCollectionPopup();
                 // 团队模式下检查权限
-                if (!_this47.isTeamMode) {
+                if (!_this48.isTeamMode) {
                   _context39.next = 7;
                   break;
                 }
                 _context39.next = 4;
-                return _this47.checkTeamPermissions(TEAM_OPERATE_ROLES.MANAGE_COLLECTIONS);
+                return _this48.checkTeamPermissions(TEAM_OPERATE_ROLES.MANAGE_COLLECTIONS);
               case 4:
                 ok = _context39.sent;
                 if (ok) {
@@ -4040,20 +4089,56 @@ var _default = {
                 }
                 return _context39.abrupt("return");
               case 7:
+                _this48.saveHomeTab();
+                uni.navigateTo({
+                  url: "/subpkg-library/pages/collection/create?id=".concat(_this48.currentCollectionItem.id, "&title=").concat(_this48.currentCollectionItem.name, "&workType=").concat(_this48.isTeamMode ? 1 : 0)
+                });
+              case 9:
+              case "end":
+                return _context39.stop();
+            }
+          }
+        }, _callee37);
+      }))();
+    },
+    handleDeleteCollection: function handleDeleteCollection() {
+      var _this49 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee38() {
+        var ok;
+        return _regenerator.default.wrap(function _callee38$(_context40) {
+          while (1) {
+            switch (_context40.prev = _context40.next) {
+              case 0:
+                _this49.closeCollectionPopup();
+                // 团队模式下检查权限
+                if (!_this49.isTeamMode) {
+                  _context40.next = 7;
+                  break;
+                }
+                _context40.next = 4;
+                return _this49.checkTeamPermissions(TEAM_OPERATE_ROLES.MANAGE_COLLECTIONS);
+              case 4:
+                ok = _context40.sent;
+                if (ok) {
+                  _context40.next = 7;
+                  break;
+                }
+                return _context40.abrupt("return");
+              case 7:
                 uni.showModal({
                   title: '提示',
                   content: '确定要删除该作品集吗？',
                   success: function success(modalRes) {
                     if (modalRes.confirm) {
-                      _this47.$request.delete("/wechat/works/deleteWorkCollections/".concat(_this47.currentCollectionItem.id)).then(function (res) {
+                      _this49.$request.delete("/wechat/works/deleteWorkCollections/".concat(_this49.currentCollectionItem.id)).then(function (res) {
                         if (res.code == 200) {
                           // 直接从本地数组移除
-                          var id = _this47.currentCollectionItem.id;
-                          _this47.collectionData.data = _this47.collectionData.data.filter(function (item) {
+                          var id = _this49.currentCollectionItem.id;
+                          _this49.collectionData.data = _this49.collectionData.data.filter(function (item) {
                             return item.id !== id;
                           });
-                          _this47.collectionData.total = Math.max(0, _this47.collectionData.total - 1);
-                          _this47.getHomeCollections();
+                          _this49.collectionData.total = Math.max(0, _this49.collectionData.total - 1);
+                          _this49.getHomeCollections();
                           uni.showToast({
                             title: '删除作品集成功',
                             icon: 'none'
@@ -4065,10 +4150,10 @@ var _default = {
                 });
               case 8:
               case "end":
-                return _context39.stop();
+                return _context40.stop();
             }
           }
-        }, _callee37);
+        }, _callee38);
       }))();
     },
     // 按时间排序 (注意要保持 Create 卡片始终在第一个)

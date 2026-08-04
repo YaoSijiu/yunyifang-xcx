@@ -4,7 +4,11 @@
 		<TitleBar :fixed="true" />
 
 		<view class="location-row enter-down">
-			<view class="location-icon"></view>
+			<image 
+			  class="location-icon" 
+			  src="/static/icon/位置.png" 
+			  mode="aspectFit"
+			></image>
 			<picker
 				class="location-picker"
 				mode="multiSelector"
@@ -27,18 +31,18 @@
 				:class="{ active: selectedRole === 'service' }"
 				@click="selectRole('service')"
 			>
-				<view class="choice-ring"></view>
+				<!-- <view class="choice-ring"></view> -->
 				<text>找服务</text>
-				<view class="choice-check"></view>
+				<!-- <view class="choice-check"></view> -->
 			</view>
 			<view
 				class="choice-circle project enter-pop delay"
 				:class="{ active: selectedRole === 'project' }"
 				@click="selectRole('project')"
 			>
-				<view class="choice-ring"></view>
+				<!-- <view class="choice-ring"></view> -->
 				<text>找项目</text>
-				<view class="choice-check"></view>
+				<!-- <view class="choice-check"></view> -->
 			</view>
 			<button class="solid-btn enter-up" @click="goNext">下一步</button>
 		</view>
@@ -325,23 +329,8 @@ export default {
 }
 
 .location-icon {
-	width: 26rpx;
-	height: 32rpx;
-	border: 4rpx solid #000000;
-	border-radius: 18rpx 18rpx 18rpx 4rpx;
-	transform: rotate(-45deg);
-	box-sizing: border-box;
-}
-
-.location-icon::after {
-	content: '';
-	position: absolute;
-	left: 5rpx;
-	top: 5rpx;
-	width: 8rpx;
-	height: 8rpx;
-	border-radius: 50%;
-	background: #000000;
+	width: 20rpx;
+	height: 25rpx; 
 }
 
 .location-pill {
@@ -375,7 +364,7 @@ export default {
 .arrow-down {
 	position: absolute;
 	right: 20rpx;
-	top: 18rpx;
+	top: 10rpx;
 	width: 16rpx;
 	height: 16rpx;
 	border-right: 3rpx solid #000000;
@@ -413,17 +402,17 @@ export default {
 
 .choice-circle.service {
 	left: 0;
-	background: #ffe7dc;
+	background: #F7F7F7;
 }
 
 .choice-circle.project {
 	right: 0;
-	background: #f7f7f7;
+	background: #F7F7F7;
 }
 
 .choice-circle.active {
-	border-color: #f37738;
-	background: linear-gradient(135deg, #ff8a45 0%, #f37738 100%);
+	border-color: #FFE7DC;
+	background: linear-gradient(135deg, #ffeee6 0%, #FFE7DC 100%);
 	box-shadow: 0 24rpx 52rpx rgba(243, 119, 56, 0.28);
 	transform: translateY(-10rpx) scale(1.04);
 }
@@ -456,7 +445,7 @@ export default {
 }
 
 .choice-circle.active text {
-	color: #ffffff;
+	color: #F37738;
 	transform: scale(1.04);
 }
 

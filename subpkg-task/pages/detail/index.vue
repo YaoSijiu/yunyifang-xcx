@@ -559,7 +559,12 @@ export default {
 			}
 			return (Array.isArray(list) ? list : []).some(item => {
 				const quoteUserId = item && item.quoteUserId ? String(item.quoteUserId) : '';
-				return !!quoteUserId && quoteUserId === String(currentUserId);
+				if (!quoteUserId || quoteUserId !== String(currentUserId)) {
+					return false;
+				}
+				// quote_status=pending（待选择）或有活跃订单（进行中）视为已报价，不允许重复
+				// 订单已取消/完成时（非 pending 且无活跃订单）允许重新报价
+				return item.quoteStatus === 'pending' || !!item.hasActiveOrder;
 			});
 		},
 		checkHasAccepted(data) {
@@ -572,7 +577,12 @@ export default {
 				const quoteList = Array.isArray(data && data.quoteUserList) ? data.quoteUserList : [];
 				const foundInQuote = quoteList.some(item => {
 					const quoteUserId = item && item.quoteUserId ? String(item.quoteUserId) : '';
-					return !!quoteUserId && quoteUserId === String(currentUserId);
+					if (!quoteUserId || quoteUserId !== String(currentUserId)) {
+						return false;
+					}
+					// quote_status=pending（待选择）或有活跃订单（进行中）视为已接单，不允许重复
+					// 订单已取消/完成时（非 pending 且无活跃订单）允许重新接单
+					return item.quoteStatus === 'pending' || !!item.hasActiveOrder;
 				});
 				if (foundInQuote) {
 					return true;
