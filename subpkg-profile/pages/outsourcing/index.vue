@@ -190,9 +190,10 @@
 							>
 								<image class="worker-avatar" :src="participant.avatar" mode="aspectFill" style="display:block;width:72rpx;height:72rpx;min-width:72rpx;max-width:72rpx;min-height:72rpx;max-height:72rpx;border-radius:50%;overflow:hidden;"></image>
 								<view class="worker-info">
-									<text class="worker-name">{{ participant.name }}</text>
-									<text v-if="participant.statusText" class="worker-state">{{ participant.statusText }}</text>
-								</view>
+								<text class="worker-name">{{ participant.name }}</text>
+								<text v-if="participant.quoteTime" class="worker-time">{{ participant.quoteTime }}</text>
+								<text v-if="participant.statusText" class="worker-state">{{ participant.statusText }}</text>
+							</view>
 								<text
 									v-if="item.expanded && participant.recordType === 'quote'"
 									class="participant-amount"
@@ -418,6 +419,15 @@ const INVITE_STATUS_MAP = {
 	rejected: '已拒绝',
 	confirmed: '已确认成单'
 };
+// 报价记录已分配后，按关联订单状态映射按钮文字与样式变体
+const QUOTE_ORDER_ACTION_MAP = {
+	pending_pay: { text: '待支付', variant: 'assigned' },
+	pending_accept: { text: '待接单', variant: 'assigned' },
+	in_service: { text: '服务中', variant: 'assigned' },
+	refunding: { text: '退款中', variant: 'assigned' },
+	completed: { text: '已完成', variant: 'assigned' },
+	cancelled: { text: '已取消', variant: 'assigned' }
+};
 const DISPLAY_STATUS_CLASS_MAP = {
 	channel_open: 'status-green',
 	channel_assigned: 'status-blue',
@@ -554,6 +564,9 @@ export default {
 	},
 	onShow() {
 		this.refreshCurrentUserId()
+		if (this.orderList.length > 0) {
+			this.resetList()
+		}
 	},
 	beforeDestroy() {
 		if (this.searchTimer) {
@@ -671,10 +684,9 @@ export default {
 				const rows = Array.isArray(res.rows) ? res.rows : []
 				const nextList = rows.map(item => this.normalizeOrder(item))
 				this.pageNum = pageNum
-			this.total = Number(res.total) || 0
-			const combinedList = isRefresh ? nextList : this.orderList.concat(nextList)
-			this.orderList = this.sortOrderList(combinedList)
-			this.finished = rows.length < this.pageSize || this.orderList.length >= this.total
+				this.total = Number(res.total) || 0
+				this.orderList = isRefresh ? nextList : this.orderList.concat(nextList)
+				this.finished = rows.length < this.pageSize || this.orderList.length >= this.total
 			} catch (e) {
 				if (currentRequestSeq === this.requestSeq) {
 					this.finished = isRefresh
@@ -700,14 +712,6 @@ export default {
 			}
 			return params
 	},
-		sortOrderList(list) {
-			const isBottomStatus = (item) => item && item.displayStatus === 'cancelled'
-			return list.slice().sort((a, b) => {
-				const aBottom = isBottomStatus(a) ? 1 : 0
-				const bBottom = isBottomStatus(b) ? 1 : 0
-				return aBottom - bBottom
-			})
-		},
 		normalizeOrder(item) {
 			const bizType = item.bizType === 'order' ? 'order' : 'channel'
 			const displayStatus = item.displayStatus || item.status || ''
@@ -997,11 +1001,11 @@ export default {
 			const classNames = panelType === 'order'
 				? ['accepted-contact-btn']
 				: ['participant-action']
-			if (panelType !== 'order' && participant.actionText && participant.actionText.length > 2) {
-				classNames.push('contact-action')
-			}
+			// 报价记录：已分配（含各订单状态）用灰色样式；仅可分配的"分配"按钮保留主色
 			if (panelType !== 'order' && isQuote && participant.status === 'ordered') {
 				classNames.push('assigned-action')
+			} else if (panelType !== 'order' && participant.actionText && participant.actionText.length > 2) {
+				classNames.push('contact-action')
 			}
 			return {
 				key: isQuote ? 'assign' : 'contact',
@@ -1228,8 +1232,10 @@ export default {
 			const canAssign = parentItem.bizType !== 'order' && parentActionList.includes('assign')
 			const canContact = parentItem.bizType === 'order' ? parentActionList.includes('contact') : !isQuote
 			const isAssigned = item.status === 'ordered'
+			// 报价记录按关联订单状态映射按钮文字：未分配显示"分配"，已分配按订单状态显示
+			const quoteActionInfo = isQuote ? this.resolveQuoteActionText(item, isAssigned) : null
 			const actionVisible = isQuote ? (canAssign || isAssigned) : canContact
-			const actionDisabled = isQuote ? !canAssign || isAssigned : !canContact
+			const actionDisabled = isQuote ? (isAssigned || !canAssign) : !canContact
 			return {
 				id: item.id ? String(item.id) : `${item.channelId || 'participant'}-${item.userId || Date.now()}`,
 				userId: item.userId || item.wxUserId || item.receiverUserId || item.receiverWxUserId || '',
@@ -1240,12 +1246,23 @@ export default {
 				rawAmount: item.amount,
 				recordType,
 				status: item.status || '',
+				orderStatus: item.orderStatus || '',
 				actionVisible,
 				actionDisabled,
-				actionText: isQuote ? (isAssigned ? '已分配' : '分配') : '点击获取联系',
-				contactLoading: false,
-				createTime: item.createTime || ''
+				actionText: isQuote ? (quoteActionInfo ? quoteActionInfo.text : '分配') : '点击获取联系',
+				actionVariant: isQuote ? (quoteActionInfo ? quoteActionInfo.variant : 'assign') : '',
+			contactLoading: false,
+			createTime: item.createTime || '',
+			quoteTime: this.formatQuoteTime(item.createTime)
+		}
+		},
+		resolveQuoteActionText(item, isAssigned) {
+			if (!isAssigned) {
+				return { text: '分配', variant: 'assign' }
 			}
+			const map = QUOTE_ORDER_ACTION_MAP
+			const orderStatus = item.orderStatus || ''
+			return map[orderStatus] || { text: '已分配', variant: 'assigned' }
 		},
 		normalizeTimelineParticipant(item, parentItem = {}) {
 			if (!item) {
@@ -1330,6 +1347,13 @@ export default {
 				return ''
 			}
 			return String(value).replace(/-/g, '/')
+		},
+		formatQuoteTime(value) {
+			if (!value) {
+				return ''
+			}
+			const text = String(value).replace(/-/g, '/')
+			return text.length >= 16 ? text.slice(0, 16) : text
 		},
 		formatShortDate(value) {
 			if (!value) {
@@ -2997,7 +3021,8 @@ page {
 }
 
 .order-card.expanded.card-done {
-	background: #FF8F1E;
+	background: linear-gradient(135deg, #ff8f1e 5%, #f37738 79%);
+	border-block: 4rpx solid #FF8F1E;
 }
 
 /* 已完成展开态：橙底需白字 */
@@ -3652,10 +3677,14 @@ page {
 
 .worker-name {
 	display: block;
+	max-width: 180rpx;
 	height: 40rpx;
 	line-height: 40rpx;
 	font-size: 28rpx;
 	color: #000000;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .worker-state {
@@ -3667,10 +3696,22 @@ page {
 	color: rgba(0, 0, 0, 0.4);
 }
 
+.worker-time {
+	display: block;
+	margin-top: 6rpx;
+	height: 30rpx;
+	line-height: 30rpx;
+	font-size: 22rpx;
+	color: rgba(0, 0, 0, 0.35);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 .participant-action {
 	position: absolute;
-	right: 37rpx;
-	top: 12rpx;
+	right: 17rpx;
+	top: 37rpx;
 	width: 144rpx;
 	height: 48rpx;
 	line-height: 46rpx;
@@ -3698,9 +3739,8 @@ page {
 }
 
 .participant-action.contact-action {
-	right: 22rpx;
-	width: 198rpx;
-	border: 1rpx solid #f37738;
+	right: 17rpx;
+	width: 144rpx;
 	background: #ffffff;
 	color: #f37738;
 }
@@ -3735,7 +3775,7 @@ page {
 	display: inline-flex;
 	align-items: flex-start;
 	justify-content: center;
-	min-width: 112rpx;
+	min-width: 114rpx;
 	height: 48rpx;
 	line-height: 46rpx;
 	padding: 0 24rpx;

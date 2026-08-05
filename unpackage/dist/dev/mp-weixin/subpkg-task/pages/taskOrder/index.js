@@ -883,7 +883,7 @@ var _default = {
     fetchOrderList: function fetchOrderList(pageNum, isRefresh) {
       var _this6 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee3() {
-        var currentRequestSeq, res, pageData, rows, nextList, combinedList;
+        var currentRequestSeq, res, pageData, rows, nextList;
         return _regenerator.default.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
@@ -910,13 +910,12 @@ var _default = {
                 });
                 _this6.pageNum = pageNum;
                 _this6.total = Number(pageData.total) || rows.length;
-                combinedList = isRefresh ? nextList : _this6.orderList.concat(nextList);
-                _this6.orderList = _this6.sortOrderList(combinedList);
+                _this6.orderList = isRefresh ? nextList : _this6.orderList.concat(nextList);
                 _this6.finished = rows.length < _this6.pageSize || _this6.orderList.length >= _this6.total;
-                _context3.next = 21;
+                _context3.next = 20;
                 break;
-              case 18:
-                _context3.prev = 18;
+              case 17:
+                _context3.prev = 17;
                 _context3.t0 = _context3["catch"](2);
                 if (currentRequestSeq === _this6.requestSeq) {
                   _this6.finished = isRefresh;
@@ -926,18 +925,18 @@ var _default = {
                     icon: 'none'
                   });
                 }
-              case 21:
-                _context3.prev = 21;
+              case 20:
+                _context3.prev = 20;
                 if (currentRequestSeq === _this6.requestSeq) {
                   _this6.loading = false;
                 }
-                return _context3.finish(21);
-              case 24:
+                return _context3.finish(20);
+              case 23:
               case "end":
                 return _context3.stop();
             }
           }
-        }, _callee3, null, [[2, 18, 21, 24]]);
+        }, _callee3, null, [[2, 17, 20, 23]]);
       }))();
     },
     extractPageData: function extractPageData(res) {
@@ -958,16 +957,6 @@ var _default = {
         rows: list || [],
         total: list ? list.length : 0
       };
-    },
-    sortOrderList: function sortOrderList(list) {
-      var isBottomStatus = function isBottomStatus(item) {
-        return item && item.orderStatus === 'cancelled';
-      };
-      return list.slice().sort(function (a, b) {
-        var aBottom = isBottomStatus(a) ? 1 : 0;
-        var bBottom = isBottomStatus(b) ? 1 : 0;
-        return aBottom - bBottom;
-      });
     },
     buildQueryParams: function buildQueryParams(pageNum) {
       var _this7 = this;

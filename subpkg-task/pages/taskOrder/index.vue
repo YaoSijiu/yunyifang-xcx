@@ -798,9 +798,8 @@ export default {
 					.filter(item => item && typeof item === 'object')
 					.map((item, index) => this.normalizeOrder(item, index, pageNum))
 				this.pageNum = pageNum
-			this.total = Number(pageData.total) || rows.length
-			const combinedList = isRefresh ? nextList : this.orderList.concat(nextList)
-			this.orderList = this.sortOrderList(combinedList)
+				this.total = Number(pageData.total) || rows.length
+				this.orderList = isRefresh ? nextList : this.orderList.concat(nextList)
 				this.finished = rows.length < this.pageSize || this.orderList.length >= this.total
 			} catch (e) {
 				if (currentRequestSeq === this.requestSeq) {
@@ -831,14 +830,6 @@ export default {
 				rows: list || [],
 				total: list ? list.length : 0
 			}
-		},
-		sortOrderList(list) {
-			const isBottomStatus = (item) => item && item.orderStatus === 'cancelled'
-			return list.slice().sort((a, b) => {
-				const aBottom = isBottomStatus(a) ? 1 : 0
-				const bBottom = isBottomStatus(b) ? 1 : 0
-				return aBottom - bBottom
-			})
 		},
 		buildQueryParams(pageNum) {
 			const params = {
@@ -2318,22 +2309,27 @@ page {
 .timeline-row-other {
 	justify-content: flex-start;
 	flex-direction: row;
+	border-top: 1rpx solid #eeeeee;
+	padding-top: 23rpx;
 }
 
 .timeline-row-self {
 	justify-content: flex-end;
+	padding-top: 23rpx;
+	border-top: 1rpx solid #eeeeee;
 }
 
 .timeline-row-system {
 	align-items: stretch;
 	flex-direction: column;
 	justify-content: flex-start;
+	border-top: 1rpx solid #eeeeee;
 }
 
 .timeline-row-contact {
 	justify-content: space-between;
-	padding-bottom: 22rpx;
-	border-bottom: 1rpx solid #eeeeee;
+	/* padding-bottom: 22rpx; */
+	/* border-bottom: 1rpx solid #eeeeee; */
 }
 
 .timeline-contact-row {
@@ -2413,7 +2409,7 @@ page {
 
 .timeline-row + .timeline-row-system {
 	padding-top: 20rpx;
-	border-top: 1rpx solid #eeeeee;
+	/* border-top: 1rpx solid #eeeeee; */
 }
 
 .service-action-bar {

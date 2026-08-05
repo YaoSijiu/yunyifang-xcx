@@ -50,13 +50,17 @@
 			refresher-enabled
 			:refresher-triggered="refreshing"
 			refresher-background="#ffffff"
+			:scroll-top="scrollTopValue"
+			:scroll-with-animation="needScrollAnimation"
 			@refresherrefresh="handleRefresh"
 			@scrolltolower="loadMore"
+			@scroll="handleScroll"
 		>
 			<view class="task-list">
 				<view
 					v-for="item in visibleList"
 					:key="item.channelId"
+					:id="'task-card-' + item.channelId"
 					class="task-card"
 					:class="{ 'task-card-cover': item.hasCover, 'task-card-simple': !item.hasCover }"
 					@click="goDetail(item)"
@@ -166,7 +170,12 @@ export default {
 			categoryOptions: [DEFAULT_CATEGORY_OPTION],
 			selectedCategoryIndex: 0,
 			priceOptions: PRICE_OPTIONS,
-			selectedPriceIndex: 0
+			selectedPriceIndex: 0,
+			scrollTopValue: 0,
+			currentScrollTop: 0,
+			needScrollAnimation: false,
+			pendingRestoreChannelId: '',
+			SCROLL_RESTORE_KEY: 'square_scroll_restore'
 		};
 	},
 	computed: {
@@ -189,6 +198,14 @@ export default {
 		uni.hideTabBar({
 			animation: false
 		});
+		const restoreInfo = uni.getStorageSync(this.SCROLL_RESTORE_KEY);
+		if (restoreInfo && restoreInfo.channelId) {
+			this.pendingRestoreChannelId = String(restoreInfo.channelId);
+			uni.removeStorageSync(this.SCROLL_RESTORE_KEY);
+		}
+		if (this.visibleList.length > 0) {
+			this.resetList();
+		}
 	},
 	beforeDestroy() {
 		if (this.searchTimer) {
@@ -290,6 +307,21 @@ export default {
 				this.total = hasTotal ? total : mergedList.length;
 				this.visibleList = mergedList;
 				this.finished = hasTotal ? mergedList.length >= total : rows.length < this.pageSize;
+
+				if (currentRequestSeq === this.requestSeq && this.pendingRestoreChannelId) {
+					const found = mergedList.some(item => String(item.channelId) === this.pendingRestoreChannelId);
+					if (found) {
+						this.$nextTick(() => {
+							this.restoreScrollByChannelId(this.pendingRestoreChannelId);
+						});
+					} else if (!this.finished) {
+						this.$nextTick(() => {
+							this.loadMoreAndRestore();
+						});
+					} else {
+						this.pendingRestoreChannelId = '';
+					}
+				}
 			} catch (e) {
 				if (currentRequestSeq === this.requestSeq) {
 					this.finished = isRefresh;
@@ -548,6 +580,10 @@ export default {
 				});
 				return;
 			}
+			uni.setStorageSync(this.SCROLL_RESTORE_KEY, {
+				channelId: String(item.channelId),
+				scrollTop: this.currentScrollTop
+			});
 			uni.navigateTo({
 			url: `/subpkg-task/pages/detail/index?id=${item.channelId}&channelId=${item.channelId}&taskId=${item.taskId}&publishTime=${encodeURIComponent(item.publishTime || '')}`
 		});
@@ -585,10 +621,94 @@ export default {
 				});
 				return;
 			}
+			uni.setStorageSync(this.SCROLL_RESTORE_KEY, {
+				channelId: String(item.channelId),
+				scrollTop: this.currentScrollTop
+			});
 			const actionType = item.participantType === 'quote' ? 'quote' : 'accept';
 		uni.navigateTo({
 			url: `/subpkg-task/pages/detail/index?id=${item.channelId}&channelId=${item.channelId}&taskId=${item.taskId}&autoAction=${actionType}&publishTime=${encodeURIComponent(item.publishTime || '')}`
 		});
+		},
+		handleScroll(event) {
+			const detail = event && event.detail ? event.detail : {};
+			this.currentScrollTop = Number(detail.scrollTop) || 0;
+		},
+		restoreScrollByChannelId(channelId) {
+			if (!channelId) {
+				this.pendingRestoreChannelId = '';
+				return;
+			}
+			const targetSelector = `#task-card-${channelId}`;
+			const query = uni.createSelectorQuery().in(this);
+			query.select(targetSelector).boundingClientRect();
+			query.select('.task-scroll').scrollOffset();
+			query.exec((res) => {
+				const cardRect = res && res[0] ? res[0] : null;
+				const scrollInfo = res && res[1] ? res[1] : null;
+				if (cardRect && scrollInfo) {
+					const currentScrollTop = Number(scrollInfo.scrollTop) || 0;
+					const cardTop = Number(cardRect.top) || 0;
+					const targetScrollTop = currentScrollTop + cardTop - 100;
+					this.needScrollAnimation = true;
+					this.scrollTopValue = -1;
+					this.$nextTick(() => {
+						this.scrollTopValue = Math.max(0, targetScrollTop);
+						this.pendingRestoreChannelId = '';
+						setTimeout(() => {
+							this.needScrollAnimation = false;
+						}, 400);
+					});
+				} else {
+					this.pendingRestoreChannelId = '';
+				}
+			});
+		},
+		async loadMoreAndRestore() {
+			if (!this.pendingRestoreChannelId || this.loading || this.finished) {
+				this.pendingRestoreChannelId = '';
+				return;
+			}
+			const nextPage = this.pageNum + 1;
+			const currentRequestSeq = ++this.requestSeq;
+			this.loading = true;
+			try {
+				const res = await request.get('/wechat/square/page', this.buildQueryParams(nextPage));
+				if (currentRequestSeq !== this.requestSeq) {
+					return;
+				}
+				const pageData = this.extractPageData(res);
+				const rows = pageData.rows;
+				const nextList = rows.map(item => this.normalizeTaskCard(item));
+				const total = Number(pageData.total);
+				const hasTotal = Number.isFinite(total) && total >= 0;
+				const mergedList = this.visibleList.concat(nextList);
+				this.pageNum = nextPage;
+				this.total = hasTotal ? total : mergedList.length;
+				this.visibleList = mergedList;
+				this.finished = hasTotal ? mergedList.length >= total : rows.length < this.pageSize;
+
+				if (currentRequestSeq === this.requestSeq && this.pendingRestoreChannelId) {
+					const found = mergedList.some(item => String(item.channelId) === this.pendingRestoreChannelId);
+					if (found) {
+						this.$nextTick(() => {
+							this.restoreScrollByChannelId(this.pendingRestoreChannelId);
+						});
+					} else if (!this.finished) {
+						this.$nextTick(() => {
+							this.loadMoreAndRestore();
+						});
+					} else {
+						this.pendingRestoreChannelId = '';
+					}
+				}
+			} catch (e) {
+				this.pendingRestoreChannelId = '';
+			} finally {
+				if (currentRequestSeq === this.requestSeq) {
+					this.loading = false;
+				}
+			}
 		},
 		handleShareTask() {
 			// open-type="share" 触发原生分享；这里仅阻止卡片点击冒泡。

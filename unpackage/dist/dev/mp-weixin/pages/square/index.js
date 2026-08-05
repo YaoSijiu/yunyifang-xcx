@@ -325,6 +325,10 @@ var _env = _interopRequireDefault(__webpack_require__(/*! @/config/env.js */ 39)
 //
 //
 //
+//
+//
+//
+//
 
 var DEFAULT_AVATAR = '/static/yunyiku/avatar.png';
 var DEFAULT_CATEGORY_OPTION = {
@@ -369,7 +373,12 @@ var _default = {
       categoryOptions: [DEFAULT_CATEGORY_OPTION],
       selectedCategoryIndex: 0,
       priceOptions: PRICE_OPTIONS,
-      selectedPriceIndex: 0
+      selectedPriceIndex: 0,
+      scrollTopValue: 0,
+      currentScrollTop: 0,
+      needScrollAnimation: false,
+      pendingRestoreChannelId: '',
+      SCROLL_RESTORE_KEY: 'square_scroll_restore'
     };
   },
   computed: {
@@ -408,6 +417,14 @@ var _default = {
     uni.hideTabBar({
       animation: false
     });
+    var restoreInfo = uni.getStorageSync(this.SCROLL_RESTORE_KEY);
+    if (restoreInfo && restoreInfo.channelId) {
+      this.pendingRestoreChannelId = String(restoreInfo.channelId);
+      uni.removeStorageSync(this.SCROLL_RESTORE_KEY);
+    }
+    if (this.visibleList.length > 0) {
+      this.resetList();
+    }
   },
   beforeDestroy: function beforeDestroy() {
     if (this.searchTimer) {
@@ -532,7 +549,7 @@ var _default = {
     fetchTaskList: function fetchTaskList(pageNum, isRefresh) {
       var _this5 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee4() {
-        var currentRequestSeq, res, pageData, rows, nextList, total, hasTotal, mergedList;
+        var currentRequestSeq, res, pageData, rows, nextList, total, hasTotal, mergedList, found;
         return _regenerator.default.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
@@ -562,26 +579,42 @@ var _default = {
                 _this5.total = hasTotal ? total : mergedList.length;
                 _this5.visibleList = mergedList;
                 _this5.finished = hasTotal ? mergedList.length >= total : rows.length < _this5.pageSize;
-                _context4.next = 23;
+                if (currentRequestSeq === _this5.requestSeq && _this5.pendingRestoreChannelId) {
+                  found = mergedList.some(function (item) {
+                    return String(item.channelId) === _this5.pendingRestoreChannelId;
+                  });
+                  if (found) {
+                    _this5.$nextTick(function () {
+                      _this5.restoreScrollByChannelId(_this5.pendingRestoreChannelId);
+                    });
+                  } else if (!_this5.finished) {
+                    _this5.$nextTick(function () {
+                      _this5.loadMoreAndRestore();
+                    });
+                  } else {
+                    _this5.pendingRestoreChannelId = '';
+                  }
+                }
+                _context4.next = 24;
                 break;
-              case 20:
-                _context4.prev = 20;
+              case 21:
+                _context4.prev = 21;
                 _context4.t0 = _context4["catch"](2);
                 if (currentRequestSeq === _this5.requestSeq) {
                   _this5.finished = isRefresh;
                 }
-              case 23:
-                _context4.prev = 23;
+              case 24:
+                _context4.prev = 24;
                 if (currentRequestSeq === _this5.requestSeq) {
                   _this5.loading = false;
                 }
-                return _context4.finish(23);
-              case 26:
+                return _context4.finish(24);
+              case 27:
               case "end":
                 return _context4.stop();
             }
           }
-        }, _callee4, null, [[2, 20, 23, 26]]);
+        }, _callee4, null, [[2, 21, 24, 27]]);
       }))();
     },
     extractPageData: function extractPageData(res) {
@@ -806,6 +839,10 @@ var _default = {
         });
         return;
       }
+      uni.setStorageSync(this.SCROLL_RESTORE_KEY, {
+        channelId: String(item.channelId),
+        scrollTop: this.currentScrollTop
+      });
       uni.navigateTo({
         url: "/subpkg-task/pages/detail/index?id=".concat(item.channelId, "&channelId=").concat(item.channelId, "&taskId=").concat(item.taskId, "&publishTime=").concat(encodeURIComponent(item.publishTime || ''))
       });
@@ -843,10 +880,126 @@ var _default = {
         });
         return;
       }
+      uni.setStorageSync(this.SCROLL_RESTORE_KEY, {
+        channelId: String(item.channelId),
+        scrollTop: this.currentScrollTop
+      });
       var actionType = item.participantType === 'quote' ? 'quote' : 'accept';
       uni.navigateTo({
         url: "/subpkg-task/pages/detail/index?id=".concat(item.channelId, "&channelId=").concat(item.channelId, "&taskId=").concat(item.taskId, "&autoAction=").concat(actionType, "&publishTime=").concat(encodeURIComponent(item.publishTime || ''))
       });
+    },
+    handleScroll: function handleScroll(event) {
+      var detail = event && event.detail ? event.detail : {};
+      this.currentScrollTop = Number(detail.scrollTop) || 0;
+    },
+    restoreScrollByChannelId: function restoreScrollByChannelId(channelId) {
+      var _this8 = this;
+      if (!channelId) {
+        this.pendingRestoreChannelId = '';
+        return;
+      }
+      var targetSelector = "#task-card-".concat(channelId);
+      var query = uni.createSelectorQuery().in(this);
+      query.select(targetSelector).boundingClientRect();
+      query.select('.task-scroll').scrollOffset();
+      query.exec(function (res) {
+        var cardRect = res && res[0] ? res[0] : null;
+        var scrollInfo = res && res[1] ? res[1] : null;
+        if (cardRect && scrollInfo) {
+          var currentScrollTop = Number(scrollInfo.scrollTop) || 0;
+          var cardTop = Number(cardRect.top) || 0;
+          var targetScrollTop = currentScrollTop + cardTop - 100;
+          _this8.needScrollAnimation = true;
+          _this8.scrollTopValue = -1;
+          _this8.$nextTick(function () {
+            _this8.scrollTopValue = Math.max(0, targetScrollTop);
+            _this8.pendingRestoreChannelId = '';
+            setTimeout(function () {
+              _this8.needScrollAnimation = false;
+            }, 400);
+          });
+        } else {
+          _this8.pendingRestoreChannelId = '';
+        }
+      });
+    },
+    loadMoreAndRestore: function loadMoreAndRestore() {
+      var _this9 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee5() {
+        var nextPage, currentRequestSeq, res, pageData, rows, nextList, total, hasTotal, mergedList, found;
+        return _regenerator.default.wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                if (!(!_this9.pendingRestoreChannelId || _this9.loading || _this9.finished)) {
+                  _context5.next = 3;
+                  break;
+                }
+                _this9.pendingRestoreChannelId = '';
+                return _context5.abrupt("return");
+              case 3:
+                nextPage = _this9.pageNum + 1;
+                currentRequestSeq = ++_this9.requestSeq;
+                _this9.loading = true;
+                _context5.prev = 6;
+                _context5.next = 9;
+                return _request.default.get('/wechat/square/page', _this9.buildQueryParams(nextPage));
+              case 9:
+                res = _context5.sent;
+                if (!(currentRequestSeq !== _this9.requestSeq)) {
+                  _context5.next = 12;
+                  break;
+                }
+                return _context5.abrupt("return");
+              case 12:
+                pageData = _this9.extractPageData(res);
+                rows = pageData.rows;
+                nextList = rows.map(function (item) {
+                  return _this9.normalizeTaskCard(item);
+                });
+                total = Number(pageData.total);
+                hasTotal = Number.isFinite(total) && total >= 0;
+                mergedList = _this9.visibleList.concat(nextList);
+                _this9.pageNum = nextPage;
+                _this9.total = hasTotal ? total : mergedList.length;
+                _this9.visibleList = mergedList;
+                _this9.finished = hasTotal ? mergedList.length >= total : rows.length < _this9.pageSize;
+                if (currentRequestSeq === _this9.requestSeq && _this9.pendingRestoreChannelId) {
+                  found = mergedList.some(function (item) {
+                    return String(item.channelId) === _this9.pendingRestoreChannelId;
+                  });
+                  if (found) {
+                    _this9.$nextTick(function () {
+                      _this9.restoreScrollByChannelId(_this9.pendingRestoreChannelId);
+                    });
+                  } else if (!_this9.finished) {
+                    _this9.$nextTick(function () {
+                      _this9.loadMoreAndRestore();
+                    });
+                  } else {
+                    _this9.pendingRestoreChannelId = '';
+                  }
+                }
+                _context5.next = 28;
+                break;
+              case 25:
+                _context5.prev = 25;
+                _context5.t0 = _context5["catch"](6);
+                _this9.pendingRestoreChannelId = '';
+              case 28:
+                _context5.prev = 28;
+                if (currentRequestSeq === _this9.requestSeq) {
+                  _this9.loading = false;
+                }
+                return _context5.finish(28);
+              case 31:
+              case "end":
+                return _context5.stop();
+            }
+          }
+        }, _callee5, null, [[6, 25, 28, 31]]);
+      }))();
     },
     handleShareTask: function handleShareTask() {
       // open-type="share" 触发原生分享；这里仅阻止卡片点击冒泡。

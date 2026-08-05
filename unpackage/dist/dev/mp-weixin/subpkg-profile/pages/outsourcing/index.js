@@ -395,6 +395,33 @@ var INVITE_STATUS_MAP = {
   rejected: '已拒绝',
   confirmed: '已确认成单'
 };
+// 报价记录已分配后，按关联订单状态映射按钮文字与样式变体
+var QUOTE_ORDER_ACTION_MAP = {
+  pending_pay: {
+    text: '待支付',
+    variant: 'assigned'
+  },
+  pending_accept: {
+    text: '待接单',
+    variant: 'assigned'
+  },
+  in_service: {
+    text: '服务中',
+    variant: 'assigned'
+  },
+  refunding: {
+    text: '退款中',
+    variant: 'assigned'
+  },
+  completed: {
+    text: '已完成',
+    variant: 'assigned'
+  },
+  cancelled: {
+    text: '已取消',
+    variant: 'assigned'
+  }
+};
 var DISPLAY_STATUS_CLASS_MAP = {
   channel_open: 'status-green',
   channel_assigned: 'status-blue',
@@ -547,6 +574,9 @@ var _default = {
   },
   onShow: function onShow() {
     this.refreshCurrentUserId();
+    if (this.orderList.length > 0) {
+      this.resetList();
+    }
   },
   beforeDestroy: function beforeDestroy() {
     if (this.searchTimer) {
@@ -648,7 +678,7 @@ var _default = {
     fetchOrderList: function fetchOrderList(pageNum, isRefresh) {
       var _this2 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
-        var currentRequestSeq, res, rows, nextList, combinedList;
+        var currentRequestSeq, res, rows, nextList;
         return _regenerator.default.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -672,29 +702,28 @@ var _default = {
                 });
                 _this2.pageNum = pageNum;
                 _this2.total = Number(res.total) || 0;
-                combinedList = isRefresh ? nextList : _this2.orderList.concat(nextList);
-                _this2.orderList = _this2.sortOrderList(combinedList);
+                _this2.orderList = isRefresh ? nextList : _this2.orderList.concat(nextList);
                 _this2.finished = rows.length < _this2.pageSize || _this2.orderList.length >= _this2.total;
-                _context.next = 20;
+                _context.next = 19;
                 break;
-              case 17:
-                _context.prev = 17;
+              case 16:
+                _context.prev = 16;
                 _context.t0 = _context["catch"](2);
                 if (currentRequestSeq === _this2.requestSeq) {
                   _this2.finished = isRefresh;
                 }
-              case 20:
-                _context.prev = 20;
+              case 19:
+                _context.prev = 19;
                 if (currentRequestSeq === _this2.requestSeq) {
                   _this2.loading = false;
                 }
-                return _context.finish(20);
-              case 23:
+                return _context.finish(19);
+              case 22:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, null, [[2, 17, 20, 23]]);
+        }, _callee, null, [[2, 16, 19, 22]]);
       }))();
     },
     buildQueryParams: function buildQueryParams(pageNum) {
@@ -714,16 +743,6 @@ var _default = {
         params.search = search;
       }
       return params;
-    },
-    sortOrderList: function sortOrderList(list) {
-      var isBottomStatus = function isBottomStatus(item) {
-        return item && item.displayStatus === 'cancelled';
-      };
-      return list.slice().sort(function (a, b) {
-        var aBottom = isBottomStatus(a) ? 1 : 0;
-        var bBottom = isBottomStatus(b) ? 1 : 0;
-        return aBottom - bBottom;
-      });
     },
     normalizeOrder: function normalizeOrder(item) {
       var _this4 = this;
@@ -1063,11 +1082,11 @@ var _default = {
       var isAssigning = isQuote && this.assigningQuoteId === participant.id;
       var isContactLoading = !isQuote && !!participant.contactLoading;
       var classNames = panelType === 'order' ? ['accepted-contact-btn'] : ['participant-action'];
-      if (panelType !== 'order' && participant.actionText && participant.actionText.length > 2) {
-        classNames.push('contact-action');
-      }
+      // 报价记录：已分配（含各订单状态）用灰色样式；仅可分配的"分配"按钮保留主色
       if (panelType !== 'order' && isQuote && participant.status === 'ordered') {
         classNames.push('assigned-action');
+      } else if (panelType !== 'order' && participant.actionText && participant.actionText.length > 2) {
+        classNames.push('contact-action');
       }
       return {
         key: isQuote ? 'assign' : 'contact',
@@ -1290,8 +1309,10 @@ var _default = {
       var canAssign = parentItem.bizType !== 'order' && parentActionList.includes('assign');
       var canContact = parentItem.bizType === 'order' ? parentActionList.includes('contact') : !isQuote;
       var isAssigned = item.status === 'ordered';
+      // 报价记录按关联订单状态映射按钮文字：未分配显示"分配"，已分配按订单状态显示
+      var quoteActionInfo = isQuote ? this.resolveQuoteActionText(item, isAssigned) : null;
       var actionVisible = isQuote ? canAssign || isAssigned : canContact;
-      var actionDisabled = isQuote ? !canAssign || isAssigned : !canContact;
+      var actionDisabled = isQuote ? isAssigned || !canAssign : !canContact;
       return {
         id: item.id ? String(item.id) : "".concat(item.channelId || 'participant', "-").concat(item.userId || Date.now()),
         userId: item.userId || item.wxUserId || item.receiverUserId || item.receiverWxUserId || '',
@@ -1302,11 +1323,28 @@ var _default = {
         rawAmount: item.amount,
         recordType: recordType,
         status: item.status || '',
+        orderStatus: item.orderStatus || '',
         actionVisible: actionVisible,
         actionDisabled: actionDisabled,
-        actionText: isQuote ? isAssigned ? '已分配' : '分配' : '点击获取联系',
+        actionText: isQuote ? quoteActionInfo ? quoteActionInfo.text : '分配' : '点击获取联系',
+        actionVariant: isQuote ? quoteActionInfo ? quoteActionInfo.variant : 'assign' : '',
         contactLoading: false,
-        createTime: item.createTime || ''
+        createTime: item.createTime || '',
+        quoteTime: this.formatQuoteTime(item.createTime)
+      };
+    },
+    resolveQuoteActionText: function resolveQuoteActionText(item, isAssigned) {
+      if (!isAssigned) {
+        return {
+          text: '分配',
+          variant: 'assign'
+        };
+      }
+      var map = QUOTE_ORDER_ACTION_MAP;
+      var orderStatus = item.orderStatus || '';
+      return map[orderStatus] || {
+        text: '已分配',
+        variant: 'assigned'
       };
     },
     normalizeTimelineParticipant: function normalizeTimelineParticipant(item) {
@@ -1389,6 +1427,13 @@ var _default = {
         return '';
       }
       return String(value).replace(/-/g, '/');
+    },
+    formatQuoteTime: function formatQuoteTime(value) {
+      if (!value) {
+        return '';
+      }
+      var text = String(value).replace(/-/g, '/');
+      return text.length >= 16 ? text.slice(0, 16) : text;
     },
     formatShortDate: function formatShortDate(value) {
       if (!value) {
