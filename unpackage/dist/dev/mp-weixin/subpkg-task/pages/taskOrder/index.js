@@ -590,6 +590,9 @@ var _default = {
     },
     handleAction: function handleAction(type, item) {
       var _this3 = this;
+      if (type === 'quoted') {
+        return;
+      }
       if (type === 'reject') {
         this.openRejectPopup(item);
         return;
@@ -1002,6 +1005,7 @@ var _default = {
         payStatus: payStatus,
         sourceType: item.sourceType || item.source_type || '',
         channelType: item.channelType || item.channel_type || item.sourceType || item.source_type || '',
+        hasInviteQuote: !!(item.hasInviteQuote || item.has_invite_quote),
         tab: statusConfig.tab,
         customerName: publisherName,
         orderDate: this.formatDate(item.createTime),
@@ -1159,6 +1163,16 @@ var _default = {
         return [];
       }
       if (this.shouldShowInviteEmptyActions(item)) {
+        if (item.hasInviteQuote) {
+          return [{
+            key: 'quoted',
+            text: '已报价',
+            loadingText: '已报价',
+            loading: false,
+            className: 'invite-primary-btn',
+            disabled: true
+          }];
+        }
         var primaryKey = this.getInvitePrimaryAction(item);
         return [{
           key: 'reject',
@@ -1177,6 +1191,16 @@ var _default = {
         }];
       }
       if (item.detailType === 'quote') {
+        if (item.hasInviteQuote) {
+          return [{
+            key: 'quoted',
+            text: '已报价',
+            loadingText: '已报价',
+            loading: false,
+            className: 'primary-btn',
+            disabled: true
+          }];
+        }
         var _primaryKey = this.getInvitePrimaryAction(item);
         return [{
           key: 'reject',
@@ -1249,6 +1273,9 @@ var _default = {
       return !!item && String(item.channelType || '').toLowerCase() === 'invite' && String(item.sourceType || '').toLowerCase() === 'invite' && String(item.payStatus || '').toLowerCase() === 'unpaid';
     },
     getInvitePrimaryAction: function getInvitePrimaryAction(item) {
+      if (item.hasInviteQuote) {
+        return 'quoted';
+      }
       if (this.shouldShowInviteQuoteAction(item)) {
         return 'quote';
       }
@@ -1258,6 +1285,9 @@ var _default = {
       return this.isZeroOrderAmount(item) ? 'quote' : 'accept';
     },
     getInvitePrimaryText: function getInvitePrimaryText(item) {
+      if (item.hasInviteQuote) {
+        return '已报价';
+      }
       if (this.shouldShowInviteQuoteAction(item)) {
         return '报价';
       }

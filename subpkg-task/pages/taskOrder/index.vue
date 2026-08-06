@@ -530,6 +530,9 @@ export default {
 			})
 		},
 		handleAction(type, item) {
+			if (type === 'quoted') {
+				return
+			}
 			if (type === 'reject') {
 				this.openRejectPopup(item)
 				return
@@ -872,6 +875,7 @@ export default {
 				payStatus,
 				sourceType: item.sourceType || item.source_type || '',
 				channelType: item.channelType || item.channel_type || item.sourceType || item.source_type || '',
+				hasInviteQuote: !!(item.hasInviteQuote || item.has_invite_quote),
 				tab: statusConfig.tab,
 				customerName: publisherName,
 				orderDate: this.formatDate(item.createTime),
@@ -1006,6 +1010,16 @@ export default {
 				return []
 			}
 			if (this.shouldShowInviteEmptyActions(item)) {
+				if (item.hasInviteQuote) {
+					return [{
+						key: 'quoted',
+						text: '已报价',
+						loadingText: '已报价',
+						loading: false,
+						className: 'invite-primary-btn',
+						disabled: true
+					}]
+				}
 				const primaryKey = this.getInvitePrimaryAction(item)
 				return [
 					{
@@ -1027,6 +1041,16 @@ export default {
 				]
 			}
 			if (item.detailType === 'quote') {
+				if (item.hasInviteQuote) {
+					return [{
+						key: 'quoted',
+						text: '已报价',
+						loadingText: '已报价',
+						loading: false,
+						className: 'primary-btn',
+						disabled: true
+					}]
+				}
 				const primaryKey = this.getInvitePrimaryAction(item)
 				return [
 					{
@@ -1113,6 +1137,9 @@ export default {
 				&& String(item.payStatus || '').toLowerCase() === 'unpaid'
 		},
 		getInvitePrimaryAction(item) {
+			if (item.hasInviteQuote) {
+				return 'quoted'
+			}
 			if (this.shouldShowInviteQuoteAction(item)) {
 				return 'quote'
 			}
@@ -1122,6 +1149,9 @@ export default {
 			return this.isZeroOrderAmount(item) ? 'quote' : 'accept'
 		},
 		getInvitePrimaryText(item) {
+			if (item.hasInviteQuote) {
+				return '已报价'
+			}
 			if (this.shouldShowInviteQuoteAction(item)) {
 				return '报价'
 			}
@@ -2205,6 +2235,11 @@ page {
 	color: #ffffff;
 }
 
+.invite-primary-btn.disabled {
+	background: #cccccc;
+	color: #999999;
+}
+
 .invite-user-info {
 	display: flex;
 	align-items: center;
@@ -2586,7 +2621,9 @@ page {
 	justify-content: flex-end;
 	width: 100%;
 	margin-top: 24rpx;
+	padding-top: 20rpx;
 	box-sizing: border-box;
+	border-top: 1rpx solid #eeeeee;
 }
 
 .delivery-waiting-status {
@@ -2761,6 +2798,11 @@ page {
 	margin-left: 22rpx;
 	background: #f37738;
 	color: #ffffff;
+}
+
+.primary-btn.disabled {
+	background: #cccccc;
+	color: #999999;
 }
 
 .outline-btn {

@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 	<view class="outsourcing-page">
 		<view class="header-panel">
 			<scroll-view class="tab-scroll" scroll-x enable-flex :show-scrollbar="false">
