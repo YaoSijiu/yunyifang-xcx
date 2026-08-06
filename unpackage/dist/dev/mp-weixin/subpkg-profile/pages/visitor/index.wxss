@@ -45,7 +45,7 @@
 }
 .custom-nav .nav-title.data-v-44ee474d {
   font-size: 34rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #333;
 }
 .custom-nav .nav-right.data-v-44ee474d {
@@ -54,7 +54,7 @@
   gap: 20rpx;
 }
 .custom-nav .nav-right .dots.data-v-44ee474d {
-  font-weight: bold;
+  font-weight: 500;
   font-size: 32rpx;
   margin-bottom: 10rpx;
 }
@@ -243,7 +243,7 @@
 }
 .content-list .visitor-card .card-header .more-icon.data-v-44ee474d {
   color: #999;
-  font-weight: bold;
+  font-weight: 500;
   letter-spacing: 2rpx;
 }
 .content-list .visitor-card .visit-time.data-v-44ee474d {
@@ -385,7 +385,7 @@
 }
 .popup-title.data-v-44ee474d {
   font-size: 32rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #333;
 }
 .close-btn.data-v-44ee474d {
@@ -448,7 +448,7 @@
 }
 .popup-title.data-v-44ee474d {
   font-size: 36rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #333;
   text-align: center;
   font-weight: 700;

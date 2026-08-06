@@ -3179,18 +3179,17 @@ page {
 }
 
 .task-row {
-	position: relative;
-	height: 73rpx;
+	height: 74rpx;
+    padding: 0 32rpx;
+    display: flex;
+    align-items: center;
 }
 
 .task-title-wrap {
-	position: absolute;
-	left: 28rpx;
-	right: 28rpx;
-	top: 23rpx;
 	display: flex;
-	align-items: center;
-	min-width: 0;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
 }
 
 .task-title-wrap.with-header-actions {

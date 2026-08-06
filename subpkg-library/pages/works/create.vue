@@ -181,7 +181,7 @@
 				<view class="popup-header">
 					<view class="ph-close" @click="closeTagPopup"
 						style="font-size: 40rpx; padding: 10rpx; line-height: 1;">✕</view>
-					<text class="ph-title" style="color: #333; font-size: 32rpx; font-weight: bold;">作品标签</text>
+					<text class="ph-title" style="color: #333; font-size: 32rpx; font-weight: 500;">作品标签</text>
 					<view class="tag-confirm-btn" @click="confirmTags">完成</view>
 				</view>
 
@@ -1414,7 +1414,7 @@
 
 	.title-input {
 		font-size: 36rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 		height: 60rpx;
 	}
@@ -1612,7 +1612,7 @@
 	.ph-link {
 		font-size: 24rpx;
 		color: #333;
-		font-weight: bold;
+		font-weight: 500;
 	}
 
 	.popup-item {
@@ -1635,7 +1635,7 @@
 
 	.p-main {
 		font-size: 30rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 	}
 
@@ -1934,7 +1934,7 @@
 		text-align: center;
 		line-height: 40rpx;
 		font-size: 28rpx;
-		font-weight: bold;
+		font-weight: 500;
 		z-index: 2;
 		transition: all 0.2s ease;
 		cursor: pointer;
@@ -2010,7 +2010,7 @@
 		/* 橙色主题 */
 		color: #fff;
 		font-size: 32rpx;
-		font-weight: bold;
+		font-weight: 500;
 		border-radius: 44rpx;
 		transition: all 0.3s ease;
 	}
@@ -2076,7 +2076,7 @@
 	.ph-confirm {
 		font-size: 28rpx;
 		color: #ff7a22;
-		font-weight: bold;
+		font-weight: 500;
 	}
 
 	.desc-edit-area {
@@ -2141,7 +2141,7 @@
 
 	.my-tags-title {
 		font-size: 30rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 	}
 
@@ -2213,7 +2213,7 @@
 		height: 24px;
 		color: white;
 		font-size: 28rpx;
-		font-weight: bold;
+		font-weight: 500;
 		line-height: 1;
 	}
 	

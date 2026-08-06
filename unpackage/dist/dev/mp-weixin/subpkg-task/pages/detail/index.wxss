@@ -129,7 +129,7 @@
 .publisher-name.data-v-53280496 {
   font-size: 30rpx;
   line-height: 42rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #000000;
 }
 .publish-time.data-v-53280496 {
@@ -220,7 +220,7 @@
   font-size: 32rpx;
   line-height: 42rpx;
   color: #000000;
-  font-weight: bold;
+  font-weight: 500;
 }
 .task-desc.data-v-53280496 {
   display: block;
@@ -236,7 +236,7 @@
 .section-title.data-v-53280496 {
   font-size: 30rpx;
   line-height: 42rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #000000;
 }
 .tag-list.data-v-53280496,
@@ -337,7 +337,7 @@
 .bidder-name.data-v-53280496 {
   font-size: 32rpx;
   line-height: 45rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #000000;
 }
 .bidder-time.data-v-53280496 {

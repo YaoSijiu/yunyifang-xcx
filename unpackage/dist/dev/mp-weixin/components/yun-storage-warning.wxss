@@ -87,7 +87,7 @@ to {
 }
 .modal-title.data-v-2b41f8e4 {
   font-size: 36rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #333;
   margin-bottom: 20rpx;
   text-align: center;
@@ -172,7 +172,7 @@ to {
 }
 .option-item.flow .option-size.data-v-2b41f8e4 {
   font-size: 32rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #333;
 }
 .option-unit-price.data-v-2b41f8e4 {
@@ -181,7 +181,7 @@ to {
 }
 .option-item.flow .option-price.data-v-2b41f8e4 {
   font-size: 32rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #f37738;
 }
 .option-item.flow .option-desc.data-v-2b41f8e4 {

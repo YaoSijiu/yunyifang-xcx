@@ -674,7 +674,7 @@ export default {
 }
 
 .primary-tab.active {
-	font-weight: bold;
+	font-weight: 500;
 	color: #000000;
 	
 }
@@ -1048,20 +1048,20 @@ export default {
 
 .card-menu {
 	position: absolute;
-	top: 14rpx;
-	right: 14rpx;
+	top: 18rpx;
+	right: 27rpx;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: space-between;
 	width: 10rpx;
-	height: 30rpx;
+	height: 36rpx;
 }
 
 .card-menu text {
 	display: block;
-	width: 5rpx;
-	height: 5rpx;
+	width: 8rpx;
+	height: 8rpx;
 	border-radius: 50%;
 	background: rgba(255, 255, 255, 0.95);
 }
@@ -1069,7 +1069,7 @@ export default {
 .card-meta {
 	display: flex;
 	align-items: center;
-	padding: 14rpx 20rpx 6rpx;
+	padding: 14rpx 20rpx 12rpx;
 }
 
 .designer-avatar {
@@ -1089,7 +1089,7 @@ export default {
 	padding: 0 20rpx;
 	font-size: 28rpx;
 	line-height: 40rpx;
-	font-weight: bold;
+	font-weight: 500;
 	color: #000000;
 }
 
@@ -1097,11 +1097,11 @@ export default {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 10rpx 19rpx 16rpx;
+	padding: 10rpx 19rpx 10rpx;
 }
 
 .price {
-	font-size: 28rpx;
+	font-size: 30rpx;
 	line-height: 42rpx;
 	font-weight: 400;
 	color: #f37738;

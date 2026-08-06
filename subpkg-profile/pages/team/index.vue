@@ -1416,7 +1416,7 @@
 	}
 	.stat-num {
 		font-size: 48rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 		margin-bottom: 10rpx;
 	}
@@ -1518,7 +1518,7 @@
 	}
 	.section-title {
 		font-size: 30rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 	}
 	.section-count {
@@ -1587,7 +1587,7 @@
 	}
 	.member-name {
 		font-size: 32rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 		margin-right: 20rpx;
 	}
@@ -1672,7 +1672,7 @@
 	.sheet-title {
 		display: block;
 		font-size: 36rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 		text-align: center;
 		margin-bottom: 12rpx;
@@ -1710,7 +1710,7 @@
 	.billing-title {
 		display: block;
 		font-size: 26rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 		margin-bottom: 10rpx;
 	}
@@ -1729,7 +1729,7 @@
 	}
 	.highlight {
 		color: #FF6B00;
-		font-weight: bold;
+		font-weight: 500;
 	}
 
 	/* 席位选择器 */
@@ -1737,7 +1737,7 @@
 	.seat-title {
 		display: block;
 		font-size: 28rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 		margin-bottom: 20rpx;
 	}
@@ -1758,7 +1758,7 @@
 		justify-content: center;
 		font-size: 40rpx;
 		color: #333;
-		font-weight: bold;
+		font-weight: 500;
 		background-color: #F5F5F5;
 		flex-shrink: 0;
 	}
@@ -1768,7 +1768,7 @@
 		height: 80rpx;
 		text-align: center;
 		font-size: 32rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 		background-color: #fff;
 	}
@@ -1802,12 +1802,12 @@
 	}
 	.price-label-bold {
 		font-size: 28rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 	}
 	.total-price {
 		font-size: 36rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #FF6B00;
 	}
 
@@ -1862,7 +1862,7 @@
 	}
 	.inviter-name {
 		font-size: 32rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 	}
 	.qr-container {
@@ -2003,7 +2003,7 @@
 		.cc-title {
 			color: rgba(255,255,255,0.95);
 			font-size: 26rpx;
-			font-weight: bold;
+			font-weight: 500;
 		}
 	}
 	.cc-body {
@@ -2046,7 +2046,7 @@
 	}
 	.work-title {
 		font-size: 28rpx;
-		font-weight: bold;
+		font-weight: 500;
 		padding: 12rpx 16rpx 0;
 		display: block;
 	}
@@ -2076,7 +2076,7 @@
 	}
 	.wp-title {
 		font-size: 32rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 		margin-bottom: 30rpx;
 	}

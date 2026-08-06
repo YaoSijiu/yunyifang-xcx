@@ -1003,7 +1003,7 @@
 	.item-index {
 		font-size: 28rpx;
 		color: #409eff;
-		font-weight: bold;
+		font-weight: 500;
 		background: #f0f8ff;
 		padding: 4rpx 16rpx;
 		border-radius: 20rpx;

@@ -760,14 +760,14 @@
 
 	.title-input {
 		font-size: 36rpx;
-		font-weight: bold;
+		font-weight: 500;
 		height: 60rpx;
 	}
 
 	.section-label {
 		margin-top: 40rpx;
 		font-size: 30rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 		margin-bottom: 20rpx;
 	}
@@ -785,7 +785,7 @@
 	.label {
 		font-size: 30rpx;
 		color: #333;
-		font-weight: bold;
+		font-weight: 500;
 	}
 
 	.value {
@@ -803,7 +803,7 @@
 	.selected-count {
 		color: #333;
 		font-size: 28rpx;
-		font-weight: bold;
+		font-weight: 500;
 	}
 
 	.arrow {
@@ -832,7 +832,7 @@
 		background: #ff7a22;
 		color: #fff;
 		font-size: 32rpx;
-		font-weight: bold;
+		font-weight: 500;
 		border-radius: 44rpx;
 	}
 
@@ -880,13 +880,13 @@
 
 	.ph-title {
 		font-size: 32rpx;
-		font-weight: bold;
+		font-weight: 500;
 	}
 
 	.ph-confirm {
 		color: #ff7a22;
 		font-size: 28rpx;
-		font-weight: bold;
+		font-weight: 500;
 	}
 
 	.work-list {
@@ -1019,7 +1019,7 @@
 
 	.rule-main-title {
 		font-size: 40rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 		line-height: 1.4;
 	}
@@ -1084,7 +1084,7 @@
 
 	.rule-name {
 		font-size: 32rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 		margin-bottom: 8rpx;
 	}
@@ -1202,12 +1202,12 @@
 
 	.my-tags-title {
 		font-size: 32rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #000000;
 	}
 	.my-tags-title1 {
 		font-size: 30rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #8f8f8f;
 	}
 	.manage-tags {

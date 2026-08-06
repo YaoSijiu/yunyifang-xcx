@@ -1319,7 +1319,7 @@
 
 	.top-tag-text {
 		font-size: 20rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #fff;
 		line-height: 1;
 	}
@@ -1379,7 +1379,7 @@
 
 	.work-title {
 		font-size: 28rpx;
-		font-weight: bold;
+		font-weight: 500;
 		padding: 12rpx 16rpx;
 		display: block;
 	}
@@ -1462,7 +1462,7 @@
 
 	.action-user-name {
 		font-size: 34rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #000;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -1533,7 +1533,7 @@
 
 	.name {
 		font-size: 28rpx;
-		font-weight: bold;
+		font-weight: 500;
 	}
 
 	.desc {
@@ -1806,7 +1806,7 @@
 	.progress-percent {
 		font-size: 28rpx;
 		color: #ff7a22;
-		font-weight: bold;
+		font-weight: 500;
 	}
 
 	.progress-bar {

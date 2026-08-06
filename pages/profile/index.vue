@@ -590,7 +590,7 @@
 
 	.stat-number {
 		font-size: 40rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #fff;
 		margin-bottom: 12rpx;
 		font-family: PingFang SC;
@@ -639,7 +639,7 @@
 
 	.storage-percentage {
 		font-size: 24rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #999999;
 		margin-left: auto;
 	}

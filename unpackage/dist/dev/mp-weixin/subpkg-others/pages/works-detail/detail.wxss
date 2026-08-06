@@ -59,7 +59,7 @@
 /* 标题样式（可点击编辑） */
 .title.data-v-35730b60 {
   font-size: 36rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #333;
   margin-bottom: 10rpx;
   cursor: pointer;
@@ -156,7 +156,7 @@
 .toggle-text.data-v-35730b60 {
   font-size: 24rpx;
   color: #ff7a22;
-  font-weight: bold;
+  font-weight: 500;
   margin-right: 12rpx;
 }
 /* 布局图标容器 */
@@ -670,7 +670,7 @@ to {
 }
 .user-name.data-v-35730b60 {
   font-size: 30rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #333;
 }
 .edit-link.data-v-35730b60 {
@@ -902,7 +902,7 @@ to {
 .ph-link.data-v-35730b60 {
   font-size: 24rpx;
   color: #333;
-  font-weight: bold;
+  font-weight: 500;
 }
 .popup-list.data-v-35730b60 {
   margin-top: 20rpx;
@@ -923,7 +923,7 @@ to {
 }
 .p-main.data-v-35730b60 {
   font-size: 30rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #333;
 }
 .p-sub.data-v-35730b60 {
@@ -966,7 +966,7 @@ to {
 }
 .my-tags-title.data-v-35730b60 {
   font-size: 30rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #333;
 }
 .manage-tags.data-v-35730b60 {
@@ -999,7 +999,7 @@ to {
 .ph-confirm.data-v-35730b60 {
   font-size: 28rpx;
   color: #ff7a22;
-  font-weight: bold;
+  font-weight: 500;
 }
 .desc-edit-area.data-v-35730b60 {
   position: relative;

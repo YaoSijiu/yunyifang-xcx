@@ -325,10 +325,6 @@ var _env = _interopRequireDefault(__webpack_require__(/*! @/config/env.js */ 39)
 //
 //
 //
-//
-//
-//
-//
 
 var DEFAULT_AVATAR = '/static/yunyiku/avatar.png';
 var DEFAULT_CATEGORY_OPTION = {
@@ -374,11 +370,7 @@ var _default = {
       selectedCategoryIndex: 0,
       priceOptions: PRICE_OPTIONS,
       selectedPriceIndex: 0,
-      scrollTopValue: 0,
-      currentScrollTop: 0,
-      needScrollAnimation: false,
-      pendingRestoreChannelId: '',
-      SCROLL_RESTORE_KEY: 'square_scroll_restore'
+      CARD_UPDATE_KEY: 'square_card_update'
     };
   },
   computed: {
@@ -417,14 +409,7 @@ var _default = {
     uni.hideTabBar({
       animation: false
     });
-    var restoreInfo = uni.getStorageSync(this.SCROLL_RESTORE_KEY);
-    if (restoreInfo && restoreInfo.channelId) {
-      this.pendingRestoreChannelId = String(restoreInfo.channelId);
-      uni.removeStorageSync(this.SCROLL_RESTORE_KEY);
-    }
-    if (this.visibleList.length > 0) {
-      this.resetList();
-    }
+    this.updateCardOperatedStatus();
   },
   beforeDestroy: function beforeDestroy() {
     if (this.searchTimer) {
@@ -549,7 +534,7 @@ var _default = {
     fetchTaskList: function fetchTaskList(pageNum, isRefresh) {
       var _this5 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee4() {
-        var currentRequestSeq, res, pageData, rows, nextList, total, hasTotal, mergedList, found;
+        var currentRequestSeq, res, pageData, rows, nextList, total, hasTotal, mergedList;
         return _regenerator.default.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
@@ -579,42 +564,26 @@ var _default = {
                 _this5.total = hasTotal ? total : mergedList.length;
                 _this5.visibleList = mergedList;
                 _this5.finished = hasTotal ? mergedList.length >= total : rows.length < _this5.pageSize;
-                if (currentRequestSeq === _this5.requestSeq && _this5.pendingRestoreChannelId) {
-                  found = mergedList.some(function (item) {
-                    return String(item.channelId) === _this5.pendingRestoreChannelId;
-                  });
-                  if (found) {
-                    _this5.$nextTick(function () {
-                      _this5.restoreScrollByChannelId(_this5.pendingRestoreChannelId);
-                    });
-                  } else if (!_this5.finished) {
-                    _this5.$nextTick(function () {
-                      _this5.loadMoreAndRestore();
-                    });
-                  } else {
-                    _this5.pendingRestoreChannelId = '';
-                  }
-                }
-                _context4.next = 24;
+                _context4.next = 23;
                 break;
-              case 21:
-                _context4.prev = 21;
+              case 20:
+                _context4.prev = 20;
                 _context4.t0 = _context4["catch"](2);
                 if (currentRequestSeq === _this5.requestSeq) {
                   _this5.finished = isRefresh;
                 }
-              case 24:
-                _context4.prev = 24;
+              case 23:
+                _context4.prev = 23;
                 if (currentRequestSeq === _this5.requestSeq) {
                   _this5.loading = false;
                 }
-                return _context4.finish(24);
-              case 27:
+                return _context4.finish(23);
+              case 26:
               case "end":
                 return _context4.stop();
             }
           }
-        }, _callee4, null, [[2, 21, 24, 27]]);
+        }, _callee4, null, [[2, 20, 23, 26]]);
       }))();
     },
     extractPageData: function extractPageData(res) {
@@ -722,7 +691,26 @@ var _default = {
         return avatarList;
       }
       var sourceList = this.extractParticipantSourceList(item, participantType);
-      var list = sourceList.map(function (participant, index) {
+      // 按 userId 去重（同一用户多次报价/接单只保留一条）；无 userId 的按 avatar 去重
+      var seenUserId = new Set();
+      var seenAvatar = new Set();
+      var dedupedSource = sourceList.filter(function (participant) {
+        if (!participant) return false;
+        var userId = participant.userId || participant.wxUserId || participant.quoteUserId || participant.receiverUserId || participant.acceptUserId || participant.id || '';
+        if (userId) {
+          var key = String(userId);
+          if (seenUserId.has(key)) return false;
+          seenUserId.add(key);
+          return true;
+        }
+        var avatar = participant.avatar || participant.avatarUrl || participant.quoteUserAvatar || participant.receiverAvatarUrl || participant.acceptAvatarUrl || '';
+        var avatarKey = avatar ? String(avatar).trim() : '';
+        if (!avatarKey) return false;
+        if (seenAvatar.has(avatarKey)) return false;
+        seenAvatar.add(avatarKey);
+        return true;
+      });
+      var list = dedupedSource.map(function (participant, index) {
         var userId = participant.userId || participant.wxUserId || participant.quoteUserId || participant.receiverUserId || participant.acceptUserId || participant.id || '';
         var name = participant.nickname || participant.nickName || participant.userName || participant.name || participant.quoteUserName || participant.receiverUserName || participant.acceptUserName || '';
         var avatar = participant.avatar || participant.avatarUrl || participant.quoteUserAvatar || participant.receiverAvatarUrl || participant.acceptAvatarUrl || '';
@@ -732,8 +720,6 @@ var _default = {
           name: name,
           avatar: _this6.buildImageUrl(avatar) || DEFAULT_AVATAR
         };
-      }).filter(function (participant) {
-        return participant.userId || participant.avatar;
       });
       if (list.length > 0) {
         return list;
@@ -744,18 +730,22 @@ var _default = {
     normalizeParticipantAvatarList: function normalizeParticipantAvatarList(value) {
       var _this7 = this;
       var source = Array.isArray(value) ? value : typeof value === 'string' ? value.split(',') : [];
-      return source.map(function (avatar, index) {
+      // 按头像 URL 去重，避免同一头像被重复展示
+      var seen = new Set();
+      var result = [];
+      source.forEach(function (avatar) {
         var avatarUrl = typeof avatar === 'string' ? avatar.trim() : '';
-        if (!avatarUrl) {
-          return null;
-        }
-        return {
-          key: "participant-avatar-".concat(index),
+        if (!avatarUrl) return;
+        if (seen.has(avatarUrl)) return;
+        seen.add(avatarUrl);
+        result.push({
+          key: "participant-avatar-".concat(result.length),
           userId: '',
           name: '',
           avatar: _this7.buildImageUrl(avatarUrl) || DEFAULT_AVATAR
-        };
-      }).filter(Boolean);
+        });
+      });
+      return result;
     },
     extractParticipantSourceList: function extractParticipantSourceList(item, participantType) {
       var candidates = participantType === 'quote' ? [item.participants, item.participantList, item.quoteUserList, item.quotePreviewList, item.quoteList] : [item.participants, item.participantList, item.receiverList, item.acceptUserList, item.orderUserList];
@@ -779,6 +769,10 @@ var _default = {
       };
     },
     resolveParticipantCount: function resolveParticipantCount(item, participantType, fallbackCount) {
+      // 优先使用去重后的头像列表长度，避免后端计数字段记录同一用户多次
+      if (fallbackCount > 0) {
+        return fallbackCount;
+      }
       var countFields = participantType === 'quote' ? ['participantCount', 'quoteCount', 'quoteUserCount', 'quoteNum', 'quoteTotal'] : ['participantCount', 'acceptCount', 'receiverCount', 'orderCount', 'orderUserCount', 'acceptedCount'];
       for (var _i = 0, _countFields = countFields; _i < _countFields.length; _i++) {
         var field = _countFields[_i];
@@ -787,7 +781,7 @@ var _default = {
           return count;
         }
       }
-      return fallbackCount;
+      return 0;
     },
     buildParticipantLabel: function buildParticipantLabel(participantType, count) {
       var prefix = participantType === 'quote' ? '报价' : '接单';
@@ -839,10 +833,6 @@ var _default = {
         });
         return;
       }
-      uni.setStorageSync(this.SCROLL_RESTORE_KEY, {
-        channelId: String(item.channelId),
-        scrollTop: this.currentScrollTop
-      });
       uni.navigateTo({
         url: "/subpkg-task/pages/detail/index?id=".concat(item.channelId, "&channelId=").concat(item.channelId, "&taskId=").concat(item.taskId, "&publishTime=").concat(encodeURIComponent(item.publishTime || ''))
       });
@@ -880,126 +870,24 @@ var _default = {
         });
         return;
       }
-      uni.setStorageSync(this.SCROLL_RESTORE_KEY, {
-        channelId: String(item.channelId),
-        scrollTop: this.currentScrollTop
-      });
       var actionType = item.participantType === 'quote' ? 'quote' : 'accept';
       uni.navigateTo({
         url: "/subpkg-task/pages/detail/index?id=".concat(item.channelId, "&channelId=").concat(item.channelId, "&taskId=").concat(item.taskId, "&autoAction=").concat(actionType, "&publishTime=").concat(encodeURIComponent(item.publishTime || ''))
       });
     },
-    handleScroll: function handleScroll(event) {
-      var detail = event && event.detail ? event.detail : {};
-      this.currentScrollTop = Number(detail.scrollTop) || 0;
-    },
-    restoreScrollByChannelId: function restoreScrollByChannelId(channelId) {
-      var _this8 = this;
-      if (!channelId) {
-        this.pendingRestoreChannelId = '';
+    updateCardOperatedStatus: function updateCardOperatedStatus() {
+      var updateInfo = uni.getStorageSync(this.CARD_UPDATE_KEY);
+      if (!updateInfo || !updateInfo.channelId) {
         return;
       }
-      var targetSelector = "#task-card-".concat(channelId);
-      var query = uni.createSelectorQuery().in(this);
-      query.select(targetSelector).boundingClientRect();
-      query.select('.task-scroll').scrollOffset();
-      query.exec(function (res) {
-        var cardRect = res && res[0] ? res[0] : null;
-        var scrollInfo = res && res[1] ? res[1] : null;
-        if (cardRect && scrollInfo) {
-          var currentScrollTop = Number(scrollInfo.scrollTop) || 0;
-          var cardTop = Number(cardRect.top) || 0;
-          var targetScrollTop = currentScrollTop + cardTop - 100;
-          _this8.needScrollAnimation = true;
-          _this8.scrollTopValue = -1;
-          _this8.$nextTick(function () {
-            _this8.scrollTopValue = Math.max(0, targetScrollTop);
-            _this8.pendingRestoreChannelId = '';
-            setTimeout(function () {
-              _this8.needScrollAnimation = false;
-            }, 400);
-          });
-        } else {
-          _this8.pendingRestoreChannelId = '';
-        }
+      uni.removeStorageSync(this.CARD_UPDATE_KEY);
+      var targetId = String(updateInfo.channelId);
+      var index = this.visibleList.findIndex(function (item) {
+        return String(item.channelId) === targetId;
       });
-    },
-    loadMoreAndRestore: function loadMoreAndRestore() {
-      var _this9 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee5() {
-        var nextPage, currentRequestSeq, res, pageData, rows, nextList, total, hasTotal, mergedList, found;
-        return _regenerator.default.wrap(function _callee5$(_context5) {
-          while (1) {
-            switch (_context5.prev = _context5.next) {
-              case 0:
-                if (!(!_this9.pendingRestoreChannelId || _this9.loading || _this9.finished)) {
-                  _context5.next = 3;
-                  break;
-                }
-                _this9.pendingRestoreChannelId = '';
-                return _context5.abrupt("return");
-              case 3:
-                nextPage = _this9.pageNum + 1;
-                currentRequestSeq = ++_this9.requestSeq;
-                _this9.loading = true;
-                _context5.prev = 6;
-                _context5.next = 9;
-                return _request.default.get('/wechat/square/page', _this9.buildQueryParams(nextPage));
-              case 9:
-                res = _context5.sent;
-                if (!(currentRequestSeq !== _this9.requestSeq)) {
-                  _context5.next = 12;
-                  break;
-                }
-                return _context5.abrupt("return");
-              case 12:
-                pageData = _this9.extractPageData(res);
-                rows = pageData.rows;
-                nextList = rows.map(function (item) {
-                  return _this9.normalizeTaskCard(item);
-                });
-                total = Number(pageData.total);
-                hasTotal = Number.isFinite(total) && total >= 0;
-                mergedList = _this9.visibleList.concat(nextList);
-                _this9.pageNum = nextPage;
-                _this9.total = hasTotal ? total : mergedList.length;
-                _this9.visibleList = mergedList;
-                _this9.finished = hasTotal ? mergedList.length >= total : rows.length < _this9.pageSize;
-                if (currentRequestSeq === _this9.requestSeq && _this9.pendingRestoreChannelId) {
-                  found = mergedList.some(function (item) {
-                    return String(item.channelId) === _this9.pendingRestoreChannelId;
-                  });
-                  if (found) {
-                    _this9.$nextTick(function () {
-                      _this9.restoreScrollByChannelId(_this9.pendingRestoreChannelId);
-                    });
-                  } else if (!_this9.finished) {
-                    _this9.$nextTick(function () {
-                      _this9.loadMoreAndRestore();
-                    });
-                  } else {
-                    _this9.pendingRestoreChannelId = '';
-                  }
-                }
-                _context5.next = 28;
-                break;
-              case 25:
-                _context5.prev = 25;
-                _context5.t0 = _context5["catch"](6);
-                _this9.pendingRestoreChannelId = '';
-              case 28:
-                _context5.prev = 28;
-                if (currentRequestSeq === _this9.requestSeq) {
-                  _this9.loading = false;
-                }
-                return _context5.finish(28);
-              case 31:
-              case "end":
-                return _context5.stop();
-            }
-          }
-        }, _callee5, null, [[6, 25, 28, 31]]);
-      }))();
+      if (index !== -1) {
+        this.$set(this.visibleList[index], 'hasOperated', true);
+      }
     },
     handleShareTask: function handleShareTask() {
       // open-type="share" 触发原生分享；这里仅阻止卡片点击冒泡。

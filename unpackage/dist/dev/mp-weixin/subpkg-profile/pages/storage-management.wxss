@@ -39,7 +39,7 @@
 }
 .header-title.data-v-7def37ae {
 	font-size: 32rpx;
-	font-weight: bold;
+	font-weight: 500;
 	color: #333;
 }
 .header-usage.data-v-7def37ae {
@@ -79,7 +79,7 @@
 }
 .warning-text.data-v-7def37ae {
 	color: #ff0000;
-	font-weight: bold;
+	font-weight: 500;
 }
 
 /* 存储详情 */
@@ -101,7 +101,7 @@
 }
 .detail-value.data-v-7def37ae {
 	font-size: 28rpx;
-	font-weight: bold;
+	font-weight: 500;
 	color: #333;
 }
 .detail-value.negative.data-v-7def37ae {
@@ -170,7 +170,7 @@
 }
 .modal-title.data-v-7def37ae {
 	font-size: 34rpx;
-	font-weight: bold;
+	font-weight: 500;
 	color: #333;
 }
 .modal-close.data-v-7def37ae {
@@ -224,7 +224,7 @@
 }
 .flow-info-value.data-v-7def37ae {
 	font-size: 40rpx;
-	font-weight: bold;
+	font-weight: 500;
 	color: rgba(243, 119, 56,0.7);
 	margin-bottom: 8rpx;
 }
@@ -266,7 +266,7 @@
 }
 .flow-history-value.data-v-7def37ae {
 	font-size: 28rpx;
-	font-weight: bold;
+	font-weight: 500;
 	color: #333;
 }
 .flow-history-detail.data-v-7def37ae {

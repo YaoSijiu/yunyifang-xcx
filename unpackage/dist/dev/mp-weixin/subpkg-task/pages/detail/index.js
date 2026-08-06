@@ -169,6 +169,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ 46));
+var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ 18));
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ 11));
 var _typeof2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/typeof */ 13));
 var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ 48));
@@ -474,43 +475,87 @@ var _default = {
     },
     normalizeBidders: function normalizeBidders(data) {
       var _this5 = this;
-      var result = [];
       var isQuoteType = Number(data.isOtherPartyQuote) === 1;
       var quoteList = Array.isArray(data.quoteUserList) ? data.quoteUserList : [];
+      var acceptListCandidates = [data.receiverList, data.acceptUserList, data.orderUserList, data.participantList];
+      // 将时间字符串转为时间戳用于比较新旧（iOS 不支持 - 分隔，统一替换为 /）
+      var toTimestamp = function toTimestamp(value) {
+        if (!value) return 0;
+        var ts = Date.parse(String(value).replace(/-/g, '/'));
+        return Number.isFinite(ts) ? ts : 0;
+      };
+      // 统一收集所有候选记录，标记来源，便于按"最新"覆盖
+      var candidates = [];
       quoteList.forEach(function (item) {
-        var id = item && item.quoteId ? String(item.quoteId) : "".concat(Date.now(), "-").concat(Math.random());
-        result.push({
-          id: id,
-          type: isQuoteType ? 'quote' : 'accepted',
-          userId: item && item.quoteUserId ? String(item.quoteUserId) : '',
-          avatar: _this5.buildImageUrl(item && item.quoteUserAvatar ? item.quoteUserAvatar : '') || DEFAULT_AVATAR,
-          name: item && item.quoteUserName ? item.quoteUserName : '匿名用户',
-          time: _this5.formatBidderTime(item && item.quoteTime),
-          priceText: _this5.formatCurrency(item && item.quotePrice),
-          hasPrice: !!(item && item.quotePrice !== null && item.quotePrice !== undefined && item.quotePrice !== '')
+        if (!item) return;
+        candidates.push({
+          source: 'quote',
+          item: item,
+          userId: item.quoteUserId ? String(item.quoteUserId) : '',
+          rawTime: item.quoteTime || ''
         });
       });
-      var acceptListCandidates = [data.receiverList, data.acceptUserList, data.orderUserList, data.participantList];
       acceptListCandidates.forEach(function (list) {
         if (!Array.isArray(list)) return;
         list.forEach(function (item) {
           if (!item) return;
-          var id = item.quoteId || item.receiverId || item.acceptId || item.orderId || "".concat(Date.now(), "-").concat(Math.random());
-          var price = item.quotePrice || item.receiverPrice || item.acceptPrice || item.orderPrice || item.price;
-          var time = item.quoteTime || item.receiverTime || item.acceptTime || item.orderTime || item.createTime;
-          var avatar = item.quoteUserAvatar || item.receiverAvatarUrl || item.acceptAvatarUrl || item.orderUserAvatar || '';
-          var name = item.quoteUserName || item.receiverUserName || item.acceptUserName || item.orderUserName || '匿名用户';
           var userId = item.quoteUserId || item.receiverUserId || item.acceptUserId || item.orderUserId || '';
-          result.push({
-            id: String(id),
-            type: 'accepted',
-            userId: String(userId || ''),
-            avatar: _this5.buildImageUrl(avatar) || DEFAULT_AVATAR,
-            name: name,
-            time: _this5.formatBidderTime(time),
-            priceText: _this5.formatCurrency(price)
+          var rawTime = item.quoteTime || item.receiverTime || item.acceptTime || item.orderTime || item.createTime || '';
+          candidates.push({
+            source: 'accept',
+            item: item,
+            userId: userId ? String(userId) : '',
+            rawTime: rawTime
           });
         });
+      });
+      // 按 userId 去重，保留时间最新的；无 userId 的直接保留
+      var userMap = new Map();
+      var noUserIdList = [];
+      candidates.forEach(function (candidate) {
+        if (!candidate.userId) {
+          noUserIdList.push(candidate);
+          return;
+        }
+        var existing = userMap.get(candidate.userId);
+        if (!existing) {
+          userMap.set(candidate.userId, candidate);
+          return;
+        }
+        if (toTimestamp(candidate.rawTime) >= toTimestamp(existing.rawTime)) {
+          userMap.set(candidate.userId, candidate);
+        }
+      });
+      var finalCandidates = [].concat((0, _toConsumableArray2.default)(userMap.values()), noUserIdList);
+      var result = finalCandidates.map(function (candidate) {
+        var item = candidate.item;
+        if (candidate.source === 'quote') {
+          return {
+            id: item.quoteId ? String(item.quoteId) : "".concat(Date.now(), "-").concat(Math.random()),
+            type: isQuoteType ? 'quote' : 'accepted',
+            userId: item.quoteUserId ? String(item.quoteUserId) : '',
+            avatar: _this5.buildImageUrl(item.quoteUserAvatar || '') || DEFAULT_AVATAR,
+            name: item.quoteUserName || '匿名用户',
+            time: _this5.formatBidderTime(item.quoteTime),
+            priceText: _this5.formatCurrency(item.quotePrice),
+            hasPrice: !!(item.quotePrice !== null && item.quotePrice !== undefined && item.quotePrice !== '')
+          };
+        }
+        var id = item.quoteId || item.receiverId || item.acceptId || item.orderId || "".concat(Date.now(), "-").concat(Math.random());
+        var price = item.quotePrice || item.receiverPrice || item.acceptPrice || item.orderPrice || item.price;
+        var time = item.quoteTime || item.receiverTime || item.acceptTime || item.orderTime || item.createTime;
+        var avatar = item.quoteUserAvatar || item.receiverAvatarUrl || item.acceptAvatarUrl || item.orderUserAvatar || '';
+        var name = item.quoteUserName || item.receiverUserName || item.acceptUserName || item.orderUserName || '匿名用户';
+        var userId = item.quoteUserId || item.receiverUserId || item.acceptUserId || item.orderUserId || '';
+        return {
+          id: String(id),
+          type: 'accepted',
+          userId: String(userId || ''),
+          avatar: _this5.buildImageUrl(avatar) || DEFAULT_AVATAR,
+          name: name,
+          time: _this5.formatBidderTime(time),
+          priceText: _this5.formatCurrency(price)
+        };
       });
       return result;
     },
@@ -749,32 +794,35 @@ var _default = {
               case 15:
                 res = _context3.sent;
                 _this6.hasAccepted = true;
-                _context3.next = 19;
+                uni.setStorageSync('square_card_update', {
+                  channelId: String(_this6.channelId)
+                });
+                _context3.next = 20;
                 return _this6.fetchDetail();
-              case 19:
+              case 20:
                 uni.showToast({
                   title: res && res.msg || '申请成功',
                   icon: 'success'
                 });
-                _context3.next = 25;
+                _context3.next = 26;
                 break;
-              case 22:
-                _context3.prev = 22;
+              case 23:
+                _context3.prev = 23;
                 _context3.t0 = _context3["catch"](11);
                 uni.showToast({
                   title: _context3.t0 && _context3.t0.msg || '申请失败',
                   icon: 'none'
                 });
-              case 25:
-                _context3.prev = 25;
+              case 26:
+                _context3.prev = 26;
                 _this6.applySubmitting = false;
-                return _context3.finish(25);
-              case 28:
+                return _context3.finish(26);
+              case 29:
               case "end":
                 return _context3.stop();
             }
           }
-        }, _callee3, null, [[11, 22, 25, 28]]);
+        }, _callee3, null, [[11, 23, 26, 29]]);
       }))();
     },
     closeQuotePopup: function closeQuotePopup() {
@@ -840,32 +888,35 @@ var _default = {
                 res = _context4.sent;
                 _this7.hasQuoted = true;
                 _this7.showQuotePopup = false;
-                _context4.next = 21;
+                uni.setStorageSync('square_card_update', {
+                  channelId: String(_this7.channelId)
+                });
+                _context4.next = 22;
                 return _this7.fetchDetail();
-              case 21:
+              case 22:
                 uni.showToast({
                   title: res && res.msg || '报价成功',
                   icon: 'success'
                 });
-                _context4.next = 27;
+                _context4.next = 28;
                 break;
-              case 24:
-                _context4.prev = 24;
+              case 25:
+                _context4.prev = 25;
                 _context4.t0 = _context4["catch"](12);
                 uni.showToast({
                   title: _context4.t0 && _context4.t0.msg || '报价失败',
                   icon: 'none'
                 });
-              case 27:
-                _context4.prev = 27;
+              case 28:
+                _context4.prev = 28;
                 _this7.quoteSubmitting = false;
-                return _context4.finish(27);
-              case 30:
+                return _context4.finish(28);
+              case 31:
               case "end":
                 return _context4.stop();
             }
           }
-        }, _callee4, null, [[12, 24, 27, 30]]);
+        }, _callee4, null, [[12, 25, 28, 31]]);
       }))();
     },
     handleShareClick: function handleShareClick() {

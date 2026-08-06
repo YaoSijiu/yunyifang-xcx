@@ -3764,7 +3764,7 @@
 	.username {
 		margin-top: 15rpx;
 		font-size: 38rpx;
-		font-weight: bold;
+		font-weight: 500;
 	}
 
 	.seller-location {
@@ -4214,7 +4214,7 @@
 		.cc-title {
 			color: rgba(255, 255, 255, 0.95);
 			font-size: 26rpx;
-			font-weight: bold;
+			font-weight: 500;
 			margin-bottom: 6rpx;
 		}
 
@@ -4225,7 +4225,7 @@
 
 		.cc-more {
 			color: rgba(255, 255, 255, 0.8);
-			font-weight: bold;
+			font-weight: 500;
 		}
 	}
 
@@ -4270,7 +4270,7 @@
 
 	.top-tag-text {
 		font-size: 20rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: white;
 	}
 
@@ -4304,7 +4304,7 @@
 
 	.work-title {
 		font-size: 28rpx;
-		font-weight: bold;
+		font-weight: 500;
 		text-align: left;
 		padding: 12rpx 16rpx;
 		display: block;
@@ -4322,7 +4322,7 @@
 		top: 10rpx;
 		right: 10rpx;
 		color: #fff;
-		font-weight: bold;
+		font-weight: 500;
 		text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
 		font-size: 36rpx;
 	}
@@ -4337,7 +4337,7 @@
 
 	.more-small {
 		color: #999;
-		font-weight: bold;
+		font-weight: 500;
 		letter-spacing: 2rpx;
 	}
 

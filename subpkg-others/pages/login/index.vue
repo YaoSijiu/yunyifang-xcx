@@ -450,7 +450,7 @@
 
 	.app-name {
 		font-size: 40rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 	}
 
@@ -481,7 +481,7 @@
 		text {
 			color: #fff;
 			font-size: 32rpx;
-			font-weight: bold;
+			font-weight: 500;
 			margin-left: 16rpx;
 		}
 	}
@@ -587,7 +587,7 @@
 
 	.auth-title {
 		font-size: 34rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 		margin-bottom: 12rpx;
 	}
@@ -652,7 +652,7 @@
 		font-size: 30rpx;
 		color: #333;
 		margin-right: 30rpx;
-		font-weight: bold;
+		font-weight: 500;
 	}
 
 	.auth-input {
@@ -677,7 +677,7 @@
 		border-radius: 44rpx;
 		font-size: 30rpx;
 		text-align: center;
-		font-weight: bold;
+		font-weight: 500;
 	}
 
 	.popup-btn::after {

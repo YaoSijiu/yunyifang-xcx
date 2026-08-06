@@ -237,7 +237,7 @@
 	.save-btn {
 		background: #FF6B00;
 		color: #fff;
-		font-weight: bold;
+		font-weight: 500;
 		border-radius: 50rpx;
 		transition: all 0.3s ease;
 	}

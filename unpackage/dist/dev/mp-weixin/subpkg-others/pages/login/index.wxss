@@ -46,7 +46,7 @@
 }
 .app-name.data-v-f837df90 {
   font-size: 40rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #333;
 }
 .btn-box.data-v-f837df90 {
@@ -74,7 +74,7 @@
 .wx-btn text.data-v-f837df90 {
   color: #fff;
   font-size: 32rpx;
-  font-weight: bold;
+  font-weight: 500;
   margin-left: 16rpx;
 }
 /* 纯CSS绘制简单的微信图标 (圆圈+两个点) */
@@ -167,7 +167,7 @@
 }
 .auth-title.data-v-f837df90 {
   font-size: 34rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #333;
   margin-bottom: 12rpx;
 }
@@ -224,7 +224,7 @@
   font-size: 30rpx;
   color: #333;
   margin-right: 30rpx;
-  font-weight: bold;
+  font-weight: 500;
 }
 .auth-input.data-v-f837df90 {
   flex: 1;
@@ -246,7 +246,7 @@
   border-radius: 44rpx;
   font-size: 30rpx;
   text-align: center;
-  font-weight: bold;
+  font-weight: 500;
 }
 .popup-btn.data-v-f837df90::after {
   border: none;

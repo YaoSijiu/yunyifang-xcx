@@ -726,7 +726,7 @@
 
 	.header-title {
 		font-size: 32rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 	}
 
@@ -773,7 +773,7 @@
 
 	.warning-text {
 		color: #ff0000;
-		font-weight: bold;
+		font-weight: 500;
 	}
 
 	/* 存储详情 */
@@ -798,7 +798,7 @@
 
 	.detail-value {
 		font-size: 28rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 	}
 
@@ -874,7 +874,7 @@
 
 	.modal-title {
 		font-size: 34rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 	}
 
@@ -938,7 +938,7 @@
 
 	.flow-info-value {
 		font-size: 40rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: rgba(243, 119, 56,0.7);
 		margin-bottom: 8rpx;
 	}
@@ -987,7 +987,7 @@
 
 	.flow-history-value {
 		font-size: 28rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 	}
 

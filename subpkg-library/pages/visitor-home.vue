@@ -1732,7 +1732,7 @@
 		align-items: center;
 		justify-content: center;
 		font-size: 32rpx;
-		font-weight: bold;
+		font-weight: 500;
 		border: 4rpx solid white;
 		z-index: 21;
 	}
@@ -1749,7 +1749,7 @@
 
 	.username {
 		font-size: 38rpx;
-		font-weight: bold;
+		font-weight: 500;
 	}
 
 	.sub {
@@ -2038,7 +2038,7 @@
 
 	.top-tag-text {
 		font-size: 20rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: white;
 	}
 
@@ -2131,7 +2131,7 @@
 
 	.work-title {
 		font-size: 28rpx;
-		font-weight: bold;
+		font-weight: 500;
 		padding: 12rpx 16rpx;
 		text-align: left;
 		display: block;
@@ -2254,7 +2254,7 @@
 
 	.more-small {
 		color: #999;
-		font-weight: bold;
+		font-weight: 500;
 		letter-spacing: 2rpx;
 	}
 

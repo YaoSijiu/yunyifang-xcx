@@ -492,7 +492,7 @@ button::after {
 }
 
 .tab-item.active {
-	font-weight: bold;;
+	font-weight: 500;;
 	color: #1a1a1a;
 }
 
@@ -571,7 +571,7 @@ button::after {
 .card-title {
 	display: block;
 	font-size: 36rpx;
-	font-weight: bold;
+	font-weight: 500;
 	line-height: 51rpx;
 	color: #000000;
 	white-space: nowrap;

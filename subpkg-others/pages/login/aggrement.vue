@@ -188,7 +188,7 @@
 	
 	.header-title {
 		font-size: 34rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 	}
 	
@@ -207,7 +207,7 @@
 	
 	.agreement-title {
 		font-size: 40rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 		text-align: center;
 		margin-bottom: 20rpx;
@@ -232,7 +232,7 @@
 	
 	.section-title {
 		font-size: 30rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 		margin-bottom: 15rpx;
 		line-height: 1.5;

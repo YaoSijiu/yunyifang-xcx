@@ -41,7 +41,7 @@
 }
 .title-input.data-v-881f7daa {
   font-size: 36rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #333;
   height: 60rpx;
 }
@@ -214,7 +214,7 @@
 .ph-link.data-v-881f7daa {
   font-size: 24rpx;
   color: #333;
-  font-weight: bold;
+  font-weight: 500;
 }
 .popup-item.data-v-881f7daa {
   display: flex;
@@ -233,7 +233,7 @@
 }
 .p-main.data-v-881f7daa {
   font-size: 30rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #333;
 }
 .p-sub.data-v-881f7daa {
@@ -552,7 +552,7 @@ video.image-preview.data-v-881f7daa {
   text-align: center;
   line-height: 40rpx;
   font-size: 28rpx;
-  font-weight: bold;
+  font-weight: 500;
   z-index: 2;
   transition: all 0.2s ease;
   cursor: pointer;
@@ -623,7 +623,7 @@ video.image-preview.data-v-881f7daa {
   /* 橙色主题 */
   color: #fff;
   font-size: 32rpx;
-  font-weight: bold;
+  font-weight: 500;
   border-radius: 44rpx;
   transition: all 0.3s ease;
 }
@@ -691,7 +691,7 @@ video.image-preview.data-v-881f7daa {
 .ph-confirm.data-v-881f7daa {
   font-size: 28rpx;
   color: #ff7a22;
-  font-weight: bold;
+  font-weight: 500;
 }
 .desc-edit-area.data-v-881f7daa {
   position: relative;
@@ -747,7 +747,7 @@ video.image-preview.data-v-881f7daa {
 }
 .my-tags-title.data-v-881f7daa {
   font-size: 30rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #333;
 }
 .manage-tags.data-v-881f7daa {
@@ -810,6 +810,6 @@ video.image-preview.data-v-881f7daa {
   height: 24px;
   color: white;
   font-size: 28rpx;
-  font-weight: bold;
+  font-weight: 500;
   line-height: 1;
 }

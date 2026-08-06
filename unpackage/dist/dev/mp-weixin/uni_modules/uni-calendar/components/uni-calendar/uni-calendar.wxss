@@ -168,7 +168,7 @@
 }
 .uni-calendar__box-bg-text.data-v-0682a296 {
   font-size: 200px;
-  font-weight: bold;
+  font-weight: 500;
   color: #999;
   opacity: 0.1;
   text-align: center;

@@ -512,7 +512,7 @@
 
 		.nav-title {
 			font-size: 34rpx;
-			font-weight: bold;
+			font-weight: 500;
 			color: #333;
 		}
 
@@ -522,7 +522,7 @@
 			gap: 20rpx;
 
 			.dots {
-				font-weight: bold;
+				font-weight: 500;
 				font-size: 32rpx;
 				margin-bottom: 10rpx;
 			}
@@ -740,7 +740,7 @@
 
 				.more-icon {
 					color: #999;
-					font-weight: bold;
+					font-weight: 500;
 					letter-spacing: 2rpx;
 				}
 			}
@@ -906,7 +906,7 @@
 
 	.popup-title {
 		font-size: 32rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 	}
 
@@ -977,7 +977,7 @@
 
 	.popup-title {
 		font-size: 36rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 		text-align: center;
 		font-weight: 700;

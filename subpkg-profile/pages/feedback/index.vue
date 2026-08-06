@@ -421,7 +421,7 @@ export default {
 		.label {
 			display: block;
 			font-size: 30rpx;
-			font-weight: bold;
+			font-weight: 500;
 			margin-bottom: 20rpx;
 			color: #333;
 		}
@@ -501,7 +501,7 @@ export default {
 .submit-btn {
 	background: #F37738;
 	color: #fff;
-	font-weight: bold;
+	font-weight: 500;
 	border-radius: 50rpx;
 }
 
@@ -524,7 +524,7 @@ export default {
 		margin-bottom: 10rpx;
 
 		.item-title {
-			font-weight: bold;
+			font-weight: 500;
 			font-size: 30rpx;
 			color: #333;
 		}

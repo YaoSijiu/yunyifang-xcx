@@ -106,7 +106,7 @@
 }
 .stat-number.data-v-14bc1b43 {
 	font-size: 40rpx;
-	font-weight: bold;
+	font-weight: 500;
 	color: #fff;
 	margin-bottom: 12rpx;
 	font-family: PingFang SC;
@@ -149,7 +149,7 @@
 }
 .storage-percentage.data-v-14bc1b43 {
 	font-size: 24rpx;
-	font-weight: bold;
+	font-weight: 500;
 	color: #999999;
 	margin-left: auto;
 }

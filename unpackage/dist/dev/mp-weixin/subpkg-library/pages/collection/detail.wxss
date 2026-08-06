@@ -148,7 +148,7 @@
 }
 .top-tag-text.data-v-6934f5d0 {
   font-size: 20rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #fff;
   line-height: 1;
 }
@@ -200,7 +200,7 @@
 }
 .work-title.data-v-6934f5d0 {
   font-size: 28rpx;
-  font-weight: bold;
+  font-weight: 500;
   padding: 12rpx 16rpx;
   display: block;
 }
@@ -274,7 +274,7 @@
 }
 .action-user-name.data-v-6934f5d0 {
   font-size: 34rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #000;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -334,7 +334,7 @@
 }
 .name.data-v-6934f5d0 {
   font-size: 28rpx;
-  font-weight: bold;
+  font-weight: 500;
 }
 .desc.data-v-6934f5d0 {
   font-size: 22rpx;
@@ -596,7 +596,7 @@
 .progress-percent.data-v-6934f5d0 {
   font-size: 28rpx;
   color: #ff7a22;
-  font-weight: bold;
+  font-weight: 500;
 }
 .progress-bar.data-v-6934f5d0 {
   width: 100%;

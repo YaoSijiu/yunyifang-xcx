@@ -673,7 +673,7 @@
 		width: 40rpx;
 		height: 40rpx;
 		color: #fff;
-		font-weight: bold;
+		font-weight: 500;
 	}
 
 	.page-indicator {
@@ -684,7 +684,7 @@
 	.page-text {
 		font-size: 40rpx;
 		color: #fff;
-		font-weight: bold;
+		font-weight: 500;
 	}
 
 	/* 横屏模式下的样式调整 */

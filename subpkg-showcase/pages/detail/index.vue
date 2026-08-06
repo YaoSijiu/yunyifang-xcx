@@ -164,9 +164,9 @@
 						<view class="count-row">
 							<text class="count-label">份数</text>
 							<view class="stepper">
-								<text class="step-btn minus" @click="decreaseCount">-</text>
+								<view class="step-btn minus" @click="decreaseCount"><text class="step-btn-reduce">-</text></view>
 								<text class="step-count">{{ buyCount }}</text>
-								<text class="step-btn plus" @click="increaseCount">+</text>
+								<view class="step-btn plus" @click="increaseCount"><text>+</text></view>
 							</view>
 						</view>
 					</view>
@@ -1224,7 +1224,7 @@ button::after {
 	margin: 24rpx 32rpx 0;
 	max-width: 650rpx;
 	font-size: 34rpx;
-	font-weight: bold;
+	font-weight: 500;
 	line-height: 48rpx;
 	color: #000000;
 	white-space: nowrap;
@@ -1250,6 +1250,9 @@ button::after {
 	line-height: 28rpx;
 	color: #000000;
 	box-sizing: border-box;
+	display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .hero-empty {
@@ -1303,6 +1306,9 @@ button::after {
 	font-size: 26rpx;
 	line-height: 48rpx;
 	background: #ffffff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .favorite-btn.favorited {
@@ -1333,7 +1339,7 @@ button::after {
 
 .seller-name {
 	font-size: 32rpx;
-	font-weight: bold;
+	font-weight: 500;
 	color: #000000;
 	display: inline-block;
 	vertical-align: middle;
@@ -1385,6 +1391,9 @@ button::after {
 	font-size: 26rpx;
 	line-height: 48rpx;
 	background: #ffffff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .follow-btn.followed {
@@ -1448,7 +1457,7 @@ button::after {
 
 .section-title {
 	font-size: 32rpx;
-	font-weight: bold;
+	font-weight: 500;
 	line-height: 45rpx;
 	color: #000000;
 }
@@ -1542,7 +1551,7 @@ button::after {
 
 .comment-name {
 	font-size: 30rpx;
-	font-weight: bold;
+	font-weight: 500;
 	line-height: 42rpx;
 	color: #000000;
 }
@@ -1635,6 +1644,9 @@ button::after {
 	border-radius: 36rpx;
 	font-size: 28rpx;
 	line-height: 64rpx;
+	display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .buy-btn {
@@ -1789,7 +1801,7 @@ button.hire-btn.hire-btn--inviting[disabled] {
 .pay-title {
 	display: block;
 	font-size: 36rpx;
-	font-weight: bold;
+	font-weight: 500;
 	line-height: 50rpx;
 	color: #000000;
 	white-space: nowrap;
@@ -1835,10 +1847,17 @@ button.hire-btn.hire-btn--inviting[disabled] {
 	font-size: 36rpx;
 	line-height: 58rpx;
 	color: #000000;
+	display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .step-btn.minus {
-	color: #979797;
+	font-size: 46rpx;
+}
+.step-btn-reduce {
+	position: relative; 
+	top: -2rpx;
 }
 
 .step-count {
@@ -1865,6 +1884,7 @@ button.hire-btn.hire-btn--inviting[disabled] {
 	color: #000000;
 	display: flex;
 	align-items: center;
+	justify-content: center;
 }
 
 .pay-empty {

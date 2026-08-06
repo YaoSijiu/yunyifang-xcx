@@ -80,24 +80,24 @@
 
 				<view class="detail-list">
 					<view class="detail-item">
-						<text class="label">📦 作品空间：</text>
+						<text class="label"> 作品空间：</text>
 						<text class="value">10G</text>
 					</view>
 					<view class="detail-item">
-						<text class="label">🈚 会员免费流量：</text>
+						<text class="label"> 会员免费流量：</text>
 						<text class="value">10G</text>
 					</view>
 					<view class="detail-item">
-						<text class="label">👤 团队视位：</text>
+						<text class="label"> 团队视位：</text>
 						<text class="value">2个</text>
 					</view>
 					<view class="detail-divider"></view>
 					<view class="detail-item">
-						<text class="label">📅 起始日期：</text>
+						<text class="label"> 起始日期：</text>
 						<text class="value">2025/12/04</text>
 					</view>
 					<view class="detail-item">
-						<text class="label">📅 结束日期：</text>
+						<text class="label"> 结束日期：</text>
 						<text class="value">2026/12/04</text>
 					</view>
 				</view>
@@ -627,7 +627,7 @@ export default {
 
 				.username {
 					font-size: 32rpx;
-					font-weight: bold;
+					font-weight: 500;
 					color: #333;
 					margin-bottom: 8rpx;
 				}
@@ -735,7 +735,7 @@ export default {
 	}
 
 	.plan-title {
-		font-weight: bold;
+		font-weight: 500;
 		font-size: 30rpx;
 		margin-bottom: 12rpx;
 		color: #333;
@@ -749,13 +749,13 @@ export default {
 
 		.symbol {
 			font-size: 28rpx;
-			font-weight: bold;
+			font-weight: 500;
 			margin-right: 4rpx;
 		}
 
 		.num {
 			font-size: 60rpx;
-			font-weight: bold;
+			font-weight: 500;
 			line-height: 1;
 		}
 
@@ -763,7 +763,7 @@ export default {
 			font-size: 28rpx;
 			color: #e00000;
 			margin-left: 4rpx;
-			font-weight: bold;
+			font-weight: 500;
 		}
 
 		/* 差价提示 */
@@ -858,7 +858,7 @@ export default {
 
 	.section-title {
 		font-size: 32rpx;
-		font-weight: bold;
+		font-weight: 500;
 		margin-bottom: 20rpx;
 	}
 
@@ -876,7 +876,7 @@ export default {
 		.q {
 			font-size: 30rpx;
 			color: #333;
-			font-weight: bold;
+			font-weight: 500;
 			line-height: 1.4;
 		}
 
@@ -913,7 +913,7 @@ export default {
 
 		.card-title {
 			font-size: 36rpx;
-			font-weight: bold;
+			font-weight: 500;
 		}
 
 		.expired-badge {

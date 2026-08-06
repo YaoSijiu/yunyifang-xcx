@@ -207,7 +207,7 @@ export default {
 
 .title {
 	font-size: 36rpx;
-	font-weight: bold;
+	font-weight: 500;
 	color: #333;
 	margin-bottom: 20rpx;
 }

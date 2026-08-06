@@ -2,17 +2,15 @@
 	<view class="page">
 
 		<!-- 访问设置 -->
+		<view class="card-title">访客登陆设置</view>
 		<view class="card">
 			<!-- <view class="card-title">访问设置</view> -->
 
 			<view class="item">
-				<view class="left">
-					<view class="label">访问限制</view>
-					<view class="desc">开启后，将记录访客信息，且访客需填写手机号才能访问您的主页</view>
-				</view>
+				<view class="label">访问登陆</view>
 				<switch class="small-switch" :checked="visit.login" @change="handleLoginSwitchChange" color="#F37738"/>
 			</view>
-
+			<view class="desc">开启后，将记录访客浏览足迹，且访客需填写姓名和手机号才能浏览你的作品，查看履历，保存图片等敏感操作。</view>
 			<view class="item" style="display: block;">
 				<view class="label" style="margin-bottom: 20rpx;">关注服务号获取访客通知</view>
 				<official-account @load="onOfficialAccountLoad" @error="onOfficialAccountError"></official-account>
@@ -488,7 +486,7 @@
 
 	.card-title {
 		font-size: 26rpx;
-		padding: 20rpx;
+		padding: 0rpx 20rpx 20rpx;
 		background: #f6f6f6;
 	}
 
@@ -498,7 +496,7 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: 20rpx 0;
-		border-bottom: 1px solid #f0f0f0;
+		/* border-bottom: 1px solid #f0f0f0; */
 	}
 
 	.item:last-child {

@@ -283,7 +283,7 @@ export default {
 
 .modal-title {
   font-size: 36rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #333;
   margin-bottom: 20rpx;
   text-align: center;
@@ -381,7 +381,7 @@ export default {
 
 .option-item.flow .option-size {
   font-size: 32rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #333;
 }
 
@@ -392,7 +392,7 @@ export default {
 
 .option-item.flow .option-price {
   font-size: 32rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: rgba(243, 119, 56);
 }
 

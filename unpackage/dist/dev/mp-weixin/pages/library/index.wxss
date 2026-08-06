@@ -269,7 +269,7 @@ to {
 .username.data-v-462487d5 {
   margin-top: 15rpx;
   font-size: 38rpx;
-  font-weight: bold;
+  font-weight: 500;
 }
 .seller-location.data-v-462487d5 {
   display: inline-flex;
@@ -668,7 +668,7 @@ to {
 .cc-header .cc-title.data-v-462487d5 {
   color: rgba(255, 255, 255, 0.95);
   font-size: 26rpx;
-  font-weight: bold;
+  font-weight: 500;
   margin-bottom: 6rpx;
 }
 .cc-header .cc-sub.data-v-462487d5 {
@@ -677,7 +677,7 @@ to {
 }
 .cc-header .cc-more.data-v-462487d5 {
   color: rgba(255, 255, 255, 0.8);
-  font-weight: bold;
+  font-weight: 500;
 }
 .cc-body.data-v-462487d5 {
   flex: 1;
@@ -715,7 +715,7 @@ to {
 }
 .top-tag-text.data-v-462487d5 {
   font-size: 20rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: white;
 }
 /* 仅自己可见锁定图标样式 */
@@ -743,7 +743,7 @@ to {
 /* 单列时图片更高一点 */
 .work-title.data-v-462487d5 {
   font-size: 28rpx;
-  font-weight: bold;
+  font-weight: 500;
   text-align: left;
   padding: 12rpx 16rpx;
   display: block;
@@ -759,7 +759,7 @@ to {
   top: 10rpx;
   right: 10rpx;
   color: #fff;
-  font-weight: bold;
+  font-weight: 500;
   text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
   font-size: 36rpx;
 }
@@ -772,7 +772,7 @@ to {
 }
 .more-small.data-v-462487d5 {
   color: #999;
-  font-weight: bold;
+  font-weight: 500;
   letter-spacing: 2rpx;
 }
 /* 多张图片组合展示样式 */

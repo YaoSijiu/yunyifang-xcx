@@ -102,13 +102,13 @@
 }
 .avatar-text.data-v-285d9510 {
   font-size: 36rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #fff;
 }
 .account-name.data-v-285d9510 {
   flex: 1;
   font-size: 30rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #000;
 }
 .account-info.data-v-285d9510 {
@@ -143,7 +143,7 @@
   width: 40rpx;
   height: 40rpx;
   font-size: 24rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #fff;
   line-height: 1;
 }

@@ -234,14 +234,14 @@
 
 	.avatar-text {
 		font-size: 36rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #fff;
 	}
 
 	.account-name {
 		flex: 1;
 		font-size: 30rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #000;
 	}
 
@@ -289,7 +289,7 @@
 		width: 40rpx;
 		height: 40rpx;
 		font-size: 24rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #fff;
 		line-height: 1;
 	}

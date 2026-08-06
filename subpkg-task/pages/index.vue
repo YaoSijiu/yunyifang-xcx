@@ -1490,6 +1490,7 @@ export default {
 	font-size: 30rpx;
 	line-height: 64rpx;
 	text-align: center;
+	
 }
 
 .submit-btn::after {
@@ -1506,6 +1507,9 @@ export default {
 	line-height: 64rpx;
 	text-align: center;
 	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .invite-submit-btn + .invite-submit-btn {

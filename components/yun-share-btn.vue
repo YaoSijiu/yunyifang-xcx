@@ -1,4 +1,4 @@
-<template>
+﻿<template>
 	<view class="user-action-bar-wrapper">
 
 		<!-- 1. 占位块：防止内容被底部固定栏遮挡 (在文档流中占据空间) -->
@@ -1452,7 +1452,7 @@
 
 			.name {
 				font-size: 34rpx;
-				font-weight: bold;
+				font-weight: 500;
 				color: #000;
 				margin-bottom: 6rpx;
 			}
@@ -1531,7 +1531,7 @@
 
 			&.more-icon {
 				font-size: 44rpx;
-				font-weight: bold;
+				font-weight: 500;
 				letter-spacing: 2rpx;
 				line-height: 1;
 				margin-top: -6rpx;
@@ -1565,7 +1565,7 @@
 
 	.popup-title2 {
 		font-size: 32rpx;
-		font-weight: bold;
+		font-weight: 500;
 		text-align: center;
 		margin-bottom: 30rpx;
 		color: #333;
@@ -1681,7 +1681,7 @@
 
 	.menu-title {
 		font-size: 32rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 		margin-bottom: 8rpx;
 	}
@@ -1814,7 +1814,7 @@
 		font-size: 32rpx;
 		color: #333;
 		margin-bottom: 40rpx;
-		font-weight: bold;
+		font-weight: 500;
 	}
 
 	.progress-bar {
@@ -1836,7 +1836,7 @@
 	.progress-text {
 		font-size: 28rpx;
 		color: #666;
-		font-weight: bold;
+		font-weight: 500;
 	}
 
 	/* 4. 底部弹窗样式 */
@@ -1884,7 +1884,7 @@
 	.ph-link {
 		font-size: 24rpx;
 		color: #333;
-		font-weight: bold;
+		font-weight: 500;
 	}
 
 	.popup-item {
@@ -1907,7 +1907,7 @@
 
 	.p-main {
 		font-size: 30rpx;
-		font-weight: bold;
+		font-weight: 500;
 		color: #333;
 	}
 
@@ -2034,7 +2034,7 @@
 		background-color: #ff7a22;
 		color: #fff;
 		font-size: 32rpx;
-		font-weight: bold;
+		font-weight: 500;
 		border-radius: 40rpx;
 		margin-top: 40rpx;
 		border: none;

@@ -60,7 +60,7 @@
 }
 .header-card .user-info-row .left-info .info-text .username.data-v-6f0f391e {
   font-size: 32rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #333;
   margin-bottom: 8rpx;
 }
@@ -155,7 +155,7 @@
   box-shadow: 0 2rpx 8rpx rgba(255, 107, 0, 0.3);
 }
 .plan-item .plan-title.data-v-6f0f391e {
-  font-weight: bold;
+  font-weight: 500;
   font-size: 30rpx;
   margin-bottom: 12rpx;
   color: #333;
@@ -170,19 +170,19 @@
 }
 .plan-item .plan-price .symbol.data-v-6f0f391e {
   font-size: 28rpx;
-  font-weight: bold;
+  font-weight: 500;
   margin-right: 4rpx;
 }
 .plan-item .plan-price .num.data-v-6f0f391e {
   font-size: 60rpx;
-  font-weight: bold;
+  font-weight: 500;
   line-height: 1;
 }
 .plan-item .plan-price .unit.data-v-6f0f391e {
   font-size: 28rpx;
   color: #e00000;
   margin-left: 4rpx;
-  font-weight: bold;
+  font-weight: 500;
 }
 .plan-item .plan-price .price-hint.data-v-6f0f391e {
   font-size: 20rpx;
@@ -263,7 +263,7 @@
 }
 .section-block .section-title.data-v-6f0f391e {
   font-size: 32rpx;
-  font-weight: bold;
+  font-weight: 500;
   margin-bottom: 20rpx;
 }
 .section-block .faq-item.data-v-6f0f391e {
@@ -278,7 +278,7 @@
 .section-block .faq-item .q.data-v-6f0f391e {
   font-size: 30rpx;
   color: #333;
-  font-weight: bold;
+  font-weight: 500;
   line-height: 1.4;
 }
 .section-block .faq-item .a.data-v-6f0f391e {
@@ -310,7 +310,7 @@
 }
 .expired-detail-card .card-header .card-title.data-v-6f0f391e {
   font-size: 36rpx;
-  font-weight: bold;
+  font-weight: 500;
 }
 .expired-detail-card .card-header .expired-badge.data-v-6f0f391e {
   background: #eee;

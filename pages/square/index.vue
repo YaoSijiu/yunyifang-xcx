@@ -50,17 +50,13 @@
 			refresher-enabled
 			:refresher-triggered="refreshing"
 			refresher-background="#ffffff"
-			:scroll-top="scrollTopValue"
-			:scroll-with-animation="needScrollAnimation"
 			@refresherrefresh="handleRefresh"
 			@scrolltolower="loadMore"
-			@scroll="handleScroll"
 		>
 			<view class="task-list">
 				<view
 					v-for="item in visibleList"
 					:key="item.channelId"
-					:id="'task-card-' + item.channelId"
 					class="task-card"
 					:class="{ 'task-card-cover': item.hasCover, 'task-card-simple': !item.hasCover }"
 					@click="goDetail(item)"
@@ -171,11 +167,7 @@ export default {
 			selectedCategoryIndex: 0,
 			priceOptions: PRICE_OPTIONS,
 			selectedPriceIndex: 0,
-			scrollTopValue: 0,
-			currentScrollTop: 0,
-			needScrollAnimation: false,
-			pendingRestoreChannelId: '',
-			SCROLL_RESTORE_KEY: 'square_scroll_restore'
+			CARD_UPDATE_KEY: 'square_card_update'
 		};
 	},
 	computed: {
@@ -198,14 +190,7 @@ export default {
 		uni.hideTabBar({
 			animation: false
 		});
-		const restoreInfo = uni.getStorageSync(this.SCROLL_RESTORE_KEY);
-		if (restoreInfo && restoreInfo.channelId) {
-			this.pendingRestoreChannelId = String(restoreInfo.channelId);
-			uni.removeStorageSync(this.SCROLL_RESTORE_KEY);
-		}
-		if (this.visibleList.length > 0) {
-			this.resetList();
-		}
+		this.updateCardOperatedStatus();
 	},
 	beforeDestroy() {
 		if (this.searchTimer) {
@@ -307,21 +292,6 @@ export default {
 				this.total = hasTotal ? total : mergedList.length;
 				this.visibleList = mergedList;
 				this.finished = hasTotal ? mergedList.length >= total : rows.length < this.pageSize;
-
-				if (currentRequestSeq === this.requestSeq && this.pendingRestoreChannelId) {
-					const found = mergedList.some(item => String(item.channelId) === this.pendingRestoreChannelId);
-					if (found) {
-						this.$nextTick(() => {
-							this.restoreScrollByChannelId(this.pendingRestoreChannelId);
-						});
-					} else if (!this.finished) {
-						this.$nextTick(() => {
-							this.loadMoreAndRestore();
-						});
-					} else {
-						this.pendingRestoreChannelId = '';
-					}
-				}
 			} catch (e) {
 				if (currentRequestSeq === this.requestSeq) {
 					this.finished = isRefresh;
@@ -435,7 +405,37 @@ export default {
 				return avatarList;
 			}
 			const sourceList = this.extractParticipantSourceList(item, participantType);
-			const list = sourceList.map((participant, index) => {
+			// 按 userId 去重（同一用户多次报价/接单只保留一条）；无 userId 的按 avatar 去重
+			const seenUserId = new Set();
+			const seenAvatar = new Set();
+			const dedupedSource = sourceList.filter(participant => {
+				if (!participant) return false;
+				const userId = participant.userId ||
+					participant.wxUserId ||
+					participant.quoteUserId ||
+					participant.receiverUserId ||
+					participant.acceptUserId ||
+					participant.id ||
+					'';
+				if (userId) {
+					const key = String(userId);
+					if (seenUserId.has(key)) return false;
+					seenUserId.add(key);
+					return true;
+				}
+				const avatar = participant.avatar ||
+					participant.avatarUrl ||
+					participant.quoteUserAvatar ||
+					participant.receiverAvatarUrl ||
+					participant.acceptAvatarUrl ||
+					'';
+				const avatarKey = avatar ? String(avatar).trim() : '';
+				if (!avatarKey) return false;
+				if (seenAvatar.has(avatarKey)) return false;
+				seenAvatar.add(avatarKey);
+				return true;
+			});
+			const list = dedupedSource.map((participant, index) => {
 				const userId = participant.userId ||
 					participant.wxUserId ||
 					participant.quoteUserId ||
@@ -463,7 +463,7 @@ export default {
 					name,
 					avatar: this.buildImageUrl(avatar) || DEFAULT_AVATAR
 				};
-			}).filter(participant => participant.userId || participant.avatar);
+			});
 			if (list.length > 0) {
 				return list;
 			}
@@ -474,20 +474,22 @@ export default {
 			const source = Array.isArray(value)
 				? value
 				: (typeof value === 'string' ? value.split(',') : []);
-			return source
-				.map((avatar, index) => {
-					const avatarUrl = typeof avatar === 'string' ? avatar.trim() : '';
-					if (!avatarUrl) {
-						return null;
-					}
-					return {
-						key: `participant-avatar-${index}`,
-						userId: '',
-						name: '',
-						avatar: this.buildImageUrl(avatarUrl) || DEFAULT_AVATAR
-					};
-				})
-				.filter(Boolean);
+			// 按头像 URL 去重，避免同一头像被重复展示
+			const seen = new Set();
+			const result = [];
+			source.forEach(avatar => {
+				const avatarUrl = typeof avatar === 'string' ? avatar.trim() : '';
+				if (!avatarUrl) return;
+				if (seen.has(avatarUrl)) return;
+				seen.add(avatarUrl);
+				result.push({
+					key: `participant-avatar-${result.length}`,
+					userId: '',
+					name: '',
+					avatar: this.buildImageUrl(avatarUrl) || DEFAULT_AVATAR
+				});
+			});
+			return result;
 		},
 		extractParticipantSourceList(item, participantType) {
 			const candidates = participantType === 'quote'
@@ -517,6 +519,10 @@ export default {
 			};
 		},
 		resolveParticipantCount(item, participantType, fallbackCount) {
+			// 优先使用去重后的头像列表长度，避免后端计数字段记录同一用户多次
+			if (fallbackCount > 0) {
+				return fallbackCount;
+			}
 			const countFields = participantType === 'quote'
 				? ['participantCount', 'quoteCount', 'quoteUserCount', 'quoteNum', 'quoteTotal']
 				: ['participantCount', 'acceptCount', 'receiverCount', 'orderCount', 'orderUserCount', 'acceptedCount'];
@@ -526,7 +532,7 @@ export default {
 					return count;
 				}
 			}
-			return fallbackCount;
+			return 0;
 		},
 		buildParticipantLabel(participantType, count) {
 			const prefix = participantType === 'quote' ? '报价' : '接单';
@@ -580,10 +586,6 @@ export default {
 				});
 				return;
 			}
-			uni.setStorageSync(this.SCROLL_RESTORE_KEY, {
-				channelId: String(item.channelId),
-				scrollTop: this.currentScrollTop
-			});
 			uni.navigateTo({
 			url: `/subpkg-task/pages/detail/index?id=${item.channelId}&channelId=${item.channelId}&taskId=${item.taskId}&publishTime=${encodeURIComponent(item.publishTime || '')}`
 		});
@@ -621,93 +623,21 @@ export default {
 				});
 				return;
 			}
-			uni.setStorageSync(this.SCROLL_RESTORE_KEY, {
-				channelId: String(item.channelId),
-				scrollTop: this.currentScrollTop
-			});
 			const actionType = item.participantType === 'quote' ? 'quote' : 'accept';
 		uni.navigateTo({
 			url: `/subpkg-task/pages/detail/index?id=${item.channelId}&channelId=${item.channelId}&taskId=${item.taskId}&autoAction=${actionType}&publishTime=${encodeURIComponent(item.publishTime || '')}`
 		});
 		},
-		handleScroll(event) {
-			const detail = event && event.detail ? event.detail : {};
-			this.currentScrollTop = Number(detail.scrollTop) || 0;
-		},
-		restoreScrollByChannelId(channelId) {
-			if (!channelId) {
-				this.pendingRestoreChannelId = '';
+		updateCardOperatedStatus() {
+			const updateInfo = uni.getStorageSync(this.CARD_UPDATE_KEY);
+			if (!updateInfo || !updateInfo.channelId) {
 				return;
 			}
-			const targetSelector = `#task-card-${channelId}`;
-			const query = uni.createSelectorQuery().in(this);
-			query.select(targetSelector).boundingClientRect();
-			query.select('.task-scroll').scrollOffset();
-			query.exec((res) => {
-				const cardRect = res && res[0] ? res[0] : null;
-				const scrollInfo = res && res[1] ? res[1] : null;
-				if (cardRect && scrollInfo) {
-					const currentScrollTop = Number(scrollInfo.scrollTop) || 0;
-					const cardTop = Number(cardRect.top) || 0;
-					const targetScrollTop = currentScrollTop + cardTop - 100;
-					this.needScrollAnimation = true;
-					this.scrollTopValue = -1;
-					this.$nextTick(() => {
-						this.scrollTopValue = Math.max(0, targetScrollTop);
-						this.pendingRestoreChannelId = '';
-						setTimeout(() => {
-							this.needScrollAnimation = false;
-						}, 400);
-					});
-				} else {
-					this.pendingRestoreChannelId = '';
-				}
-			});
-		},
-		async loadMoreAndRestore() {
-			if (!this.pendingRestoreChannelId || this.loading || this.finished) {
-				this.pendingRestoreChannelId = '';
-				return;
-			}
-			const nextPage = this.pageNum + 1;
-			const currentRequestSeq = ++this.requestSeq;
-			this.loading = true;
-			try {
-				const res = await request.get('/wechat/square/page', this.buildQueryParams(nextPage));
-				if (currentRequestSeq !== this.requestSeq) {
-					return;
-				}
-				const pageData = this.extractPageData(res);
-				const rows = pageData.rows;
-				const nextList = rows.map(item => this.normalizeTaskCard(item));
-				const total = Number(pageData.total);
-				const hasTotal = Number.isFinite(total) && total >= 0;
-				const mergedList = this.visibleList.concat(nextList);
-				this.pageNum = nextPage;
-				this.total = hasTotal ? total : mergedList.length;
-				this.visibleList = mergedList;
-				this.finished = hasTotal ? mergedList.length >= total : rows.length < this.pageSize;
-
-				if (currentRequestSeq === this.requestSeq && this.pendingRestoreChannelId) {
-					const found = mergedList.some(item => String(item.channelId) === this.pendingRestoreChannelId);
-					if (found) {
-						this.$nextTick(() => {
-							this.restoreScrollByChannelId(this.pendingRestoreChannelId);
-						});
-					} else if (!this.finished) {
-						this.$nextTick(() => {
-							this.loadMoreAndRestore();
-						});
-					} else {
-						this.pendingRestoreChannelId = '';
-					}
-				}
-			} catch (e) {
-				this.pendingRestoreChannelId = '';
-			} finally {
-				if (currentRequestSeq === this.requestSeq) {
-					this.loading = false;
-				}
+			uni.removeStorageSync(this.CARD_UPDATE_KEY);
+			const targetId = String(updateInfo.channelId);
+			const index = this.visibleList.findIndex(item => String(item.channelId) === targetId);
+			if (index !== -1) {
+				this.$set(this.visibleList[index], 'hasOperated', true);
 			}
 		},
 		handleShareTask() {

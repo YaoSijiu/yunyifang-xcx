@@ -422,48 +422,92 @@ export default {
 			return nextDetail;
 		},
 		normalizeBidders(data) {
-			const result = [];
 			const isQuoteType = Number(data.isOtherPartyQuote) === 1;
 			const quoteList = Array.isArray(data.quoteUserList) ? data.quoteUserList : [];
-			quoteList.forEach(item => {
-			const id = item && item.quoteId ? String(item.quoteId) : `${Date.now()}-${Math.random()}`;
-			result.push({
-				id,
-				type: isQuoteType ? 'quote' : 'accepted',
-				userId: item && item.quoteUserId ? String(item.quoteUserId) : '',
-				avatar: this.buildImageUrl(item && item.quoteUserAvatar ? item.quoteUserAvatar : '') || DEFAULT_AVATAR,
-				name: item && item.quoteUserName ? item.quoteUserName : '匿名用户',
-				time: this.formatBidderTime(item && item.quoteTime),
-				priceText: this.formatCurrency(item && item.quotePrice),
-				hasPrice: !!(item && item.quotePrice !== null && item.quotePrice !== undefined && item.quotePrice !== '')
-			});
-		});
 			const acceptListCandidates = [
 				data.receiverList,
 				data.acceptUserList,
 				data.orderUserList,
 				data.participantList
 			];
+			// 将时间字符串转为时间戳用于比较新旧（iOS 不支持 - 分隔，统一替换为 /）
+			const toTimestamp = (value) => {
+				if (!value) return 0;
+				const ts = Date.parse(String(value).replace(/-/g, '/'));
+				return Number.isFinite(ts) ? ts : 0;
+			};
+			// 统一收集所有候选记录，标记来源，便于按"最新"覆盖
+			const candidates = [];
+			quoteList.forEach(item => {
+				if (!item) return;
+				candidates.push({
+					source: 'quote',
+					item,
+					userId: item.quoteUserId ? String(item.quoteUserId) : '',
+					rawTime: item.quoteTime || ''
+				});
+			});
 			acceptListCandidates.forEach(list => {
 				if (!Array.isArray(list)) return;
 				list.forEach(item => {
 					if (!item) return;
-					const id = item.quoteId || item.receiverId || item.acceptId || item.orderId || `${Date.now()}-${Math.random()}`;
-					const price = item.quotePrice || item.receiverPrice || item.acceptPrice || item.orderPrice || item.price;
-					const time = item.quoteTime || item.receiverTime || item.acceptTime || item.orderTime || item.createTime;
-					const avatar = item.quoteUserAvatar || item.receiverAvatarUrl || item.acceptAvatarUrl || item.orderUserAvatar || '';
-					const name = item.quoteUserName || item.receiverUserName || item.acceptUserName || item.orderUserName || '匿名用户';
 					const userId = item.quoteUserId || item.receiverUserId || item.acceptUserId || item.orderUserId || '';
-					result.push({
-						id: String(id),
-						type: 'accepted',
-						userId: String(userId || ''),
-						avatar: this.buildImageUrl(avatar) || DEFAULT_AVATAR,
-						name,
-						time: this.formatBidderTime(time),
-						priceText: this.formatCurrency(price)
+					const rawTime = item.quoteTime || item.receiverTime || item.acceptTime || item.orderTime || item.createTime || '';
+					candidates.push({
+						source: 'accept',
+						item,
+						userId: userId ? String(userId) : '',
+						rawTime
 					});
 				});
+			});
+			// 按 userId 去重，保留时间最新的；无 userId 的直接保留
+			const userMap = new Map();
+			const noUserIdList = [];
+			candidates.forEach(candidate => {
+				if (!candidate.userId) {
+					noUserIdList.push(candidate);
+					return;
+				}
+				const existing = userMap.get(candidate.userId);
+				if (!existing) {
+					userMap.set(candidate.userId, candidate);
+					return;
+				}
+				if (toTimestamp(candidate.rawTime) >= toTimestamp(existing.rawTime)) {
+					userMap.set(candidate.userId, candidate);
+				}
+			});
+			const finalCandidates = [...userMap.values(), ...noUserIdList];
+			const result = finalCandidates.map(candidate => {
+				const item = candidate.item;
+				if (candidate.source === 'quote') {
+					return {
+						id: item.quoteId ? String(item.quoteId) : `${Date.now()}-${Math.random()}`,
+						type: isQuoteType ? 'quote' : 'accepted',
+						userId: item.quoteUserId ? String(item.quoteUserId) : '',
+						avatar: this.buildImageUrl(item.quoteUserAvatar || '') || DEFAULT_AVATAR,
+						name: item.quoteUserName || '匿名用户',
+						time: this.formatBidderTime(item.quoteTime),
+						priceText: this.formatCurrency(item.quotePrice),
+						hasPrice: !!(item.quotePrice !== null && item.quotePrice !== undefined && item.quotePrice !== '')
+					};
+				}
+				const id = item.quoteId || item.receiverId || item.acceptId || item.orderId || `${Date.now()}-${Math.random()}`;
+				const price = item.quotePrice || item.receiverPrice || item.acceptPrice || item.orderPrice || item.price;
+				const time = item.quoteTime || item.receiverTime || item.acceptTime || item.orderTime || item.createTime;
+				const avatar = item.quoteUserAvatar || item.receiverAvatarUrl || item.acceptAvatarUrl || item.orderUserAvatar || '';
+				const name = item.quoteUserName || item.receiverUserName || item.acceptUserName || item.orderUserName || '匿名用户';
+				const userId = item.quoteUserId || item.receiverUserId || item.acceptUserId || item.orderUserId || '';
+				return {
+					id: String(id),
+					type: 'accepted',
+					userId: String(userId || ''),
+					avatar: this.buildImageUrl(avatar) || DEFAULT_AVATAR,
+					name,
+					time: this.formatBidderTime(time),
+					priceText: this.formatCurrency(price)
+				};
 			});
 			return result;
 		},
@@ -682,6 +726,7 @@ export default {
 					loadingText: '提交中...'
 				});
 				this.hasAccepted = true;
+				uni.setStorageSync('square_card_update', { channelId: String(this.channelId) });
 				await this.fetchDetail();
 				uni.showToast({
 					title: (res && res.msg) || '申请成功',
@@ -737,6 +782,7 @@ export default {
 				});
 				this.hasQuoted = true;
 				this.showQuotePopup = false;
+				uni.setStorageSync('square_card_update', { channelId: String(this.channelId) });
 				await this.fetchDetail();
 				uni.showToast({
 					title: (res && res.msg) || '报价成功',
@@ -906,7 +952,7 @@ export default {
 .publisher-name {
 	font-size: 30rpx;
 	line-height: 42rpx;
-	font-weight: bold;
+	font-weight: 500;
 	color: #000000;
 }
 
@@ -1010,7 +1056,7 @@ export default {
 	font-size: 32rpx;
 	line-height: 42rpx;
 	color: #000000;
-	font-weight: bold;
+	font-weight: 500;
 }
 
 .task-desc {
@@ -1029,7 +1075,7 @@ export default {
 .section-title {
 	font-size: 30rpx;
 	line-height: 42rpx;
-	font-weight: bold;
+	font-weight: 500;
 	color: #000000;
 }
 
@@ -1146,7 +1192,7 @@ export default {
 .bidder-name {
 	font-size: 32rpx;
 	line-height: 45rpx;
-	font-weight: bold;
+	font-weight: 500;
 	color: #000000;
 }
 
