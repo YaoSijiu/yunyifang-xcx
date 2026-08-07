@@ -70,6 +70,7 @@
 						<text v-if="item.deadlineText" class="deadline">{{ item.deadlineText }}</text>
 					</view>
 					<view v-if="!item.hasCover" class="dash-divider"></view>
+					<text class="title">{{ item.title }}</text>
 					<text class="desc">{{ item.desc }}</text>
 					<image
 						v-if="item.hasCover"
@@ -359,7 +360,8 @@ export default {
 			publishDate: this.formatPublishDate(item.publishTime),
 			publishTime: item.publishTime || '',
 				deadlineText: this.buildDeadlineText(item.deliveryDate),
-				desc: item.taskDesc || item.taskTitle || '暂无任务描述',
+				title: item.taskTitle ||  '暂无任务标题',
+				desc: item.taskDesc || '暂无任务描述',
 				price: this.formatPrice(item.budgetAmount, item.isOtherPartyQuote),
 				statusLabel: Number(item.isOtherPartyQuote) === 1 ? '已报价' : '已接单',
 				avatar: publisherAvatar,
@@ -920,16 +922,31 @@ button::after {
 	border-top: 2rpx dashed #d4d4d4;
 }
 
+.title{
+	display: block;
+	padding: 22rpx 23rpx 0;
+	font-family: PingFang SC;
+	font-size: 30rpx;
+	font-weight: 500;
+	color: #000000;
+	// margin-bottom: 10rpx;
+}
+
 .desc {
 	display: block;
 	padding: 22rpx 23rpx 0;
 	font-family: PingFang SC;
-	font-size: 28rpx;
+	font-size: 24rpx;
 	color: #000000;
 	margin-bottom: 10rpx;
 }
 
 .task-card-cover .desc {
+	padding-top: 22rpx;
+	text-align: left;
+}
+
+.task-card-cover .title {
 	padding-top: 22rpx;
 	text-align: left;
 }

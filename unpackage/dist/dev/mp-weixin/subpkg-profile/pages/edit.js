@@ -176,6 +176,8 @@ var _default = {
       },
       showTitleModal: false,
       tempTitle: '',
+      lastNicknameValue: '',
+      lastTitleValue: '',
       areaTree: [],
       areaColumns: [[], [], []],
       areaIndexes: [0, 0, 0],
@@ -193,22 +195,85 @@ var _default = {
   },
   methods: {
     openTitleModal: function openTitleModal() {
-      this.tempTitle = this.profileData.title || '';
+      var title = this.profileData.title || '';
+      // 防止后端历史数据超长导致计数器显示异常
+      this.tempTitle = title.length > 100 ? title.substring(0, 100) : title;
+      this.lastTitleValue = this.tempTitle;
       this.showTitleModal = true;
     },
     closeTitleModal: function closeTitleModal() {
       this.showTitleModal = false;
     },
     confirmTitle: function confirmTitle() {
+      // 兜底截断，避免拼音组合态残留超长文本
+      if (this.tempTitle.length > 100) {
+        this.tempTitle = this.tempTitle.substring(0, 100);
+      }
       this.profileData.title = this.tempTitle;
       this.showTitleModal = false;
     },
-    checkNicknameLength: function checkNicknameLength() {
-      if (this.profileData.nickname.length > 10) {
-        uni.showToast({
-          title: '昵称不能超过10个字符',
-          icon: 'none'
-        });
+    onTitleInput: function onTitleInput(e) {
+      var value = e.detail.value;
+      // 长度未超限，直接接受并记录
+      if (value.length <= 100) {
+        this.tempTitle = value;
+        this.lastTitleValue = value;
+        return;
+      }
+      // 超过 100 个字符，判断是否处于拼音组合态
+      // 若新增部分为纯英文字母，视为拼音输入未上屏，不截断，等上屏后再判断
+      var last = this.lastTitleValue;
+      var added = last && value.startsWith(last) ? value.substring(last.length) : '';
+      if (added && /^[a-zA-Z]+$/.test(added)) {
+        this.tempTitle = value;
+        return;
+      }
+      // 非拼音组合态，截断到 100 个字符
+      var truncated = value.substring(0, 100);
+      this.tempTitle = truncated;
+      this.lastTitleValue = truncated;
+      uni.showToast({
+        title: '主页简介不能超过100个字符',
+        icon: 'none'
+      });
+    },
+    onTitleBlur: function onTitleBlur() {
+      // 失焦兜底截断（处理直接输入英文超长等边界情况）
+      if (this.tempTitle.length > 100) {
+        this.tempTitle = this.tempTitle.substring(0, 100);
+        this.lastTitleValue = this.tempTitle;
+      }
+    },
+    onNicknameInput: function onNicknameInput(e) {
+      var value = e.detail.value;
+      // 长度未超限，直接接受并记录
+      if (value.length <= 8) {
+        this.profileData.nickname = value;
+        this.lastNicknameValue = value;
+        return;
+      }
+      // 超过 8 个字符，判断是否处于拼音组合态
+      // 若新增部分为纯英文字母，视为拼音输入未上屏，不截断，等上屏后再判断
+      var last = this.lastNicknameValue;
+      var added = last && value.startsWith(last) ? value.substring(last.length) : '';
+      if (added && /^[a-zA-Z]+$/.test(added)) {
+        this.profileData.nickname = value;
+        return;
+      }
+      // 非拼音组合态，截断到 8 个字符
+      var truncated = value.substring(0, 8);
+      this.profileData.nickname = truncated;
+      this.lastNicknameValue = truncated;
+      uni.showToast({
+        title: '昵称不能超过8个字符',
+        icon: 'none'
+      });
+    },
+    onNicknameBlur: function onNicknameBlur() {
+      // 失焦兜底截断（处理直接输入英文超长等边界情况）
+      if (this.profileData.nickname.length > 8) {
+        this.profileData.nickname = this.profileData.nickname.substring(0, 8);
+        this.lastNicknameValue = this.profileData.nickname;
       }
     },
     resolveUrl: function resolveUrl(url) {
@@ -242,6 +307,7 @@ var _default = {
           phone: data.phone || '',
           background: data.homeBackground || ''
         };
+        _this.lastNicknameValue = _this.profileData.nickname;
       });
     },
     loadUserRegion: function loadUserRegion() {
@@ -448,18 +514,28 @@ var _default = {
                 });
                 return _context3.abrupt("return");
               case 3:
-                if (!(_this5.profileData.nickname.length > 10)) {
+                if (!(_this5.profileData.nickname.length > 8)) {
                   _context3.next = 6;
                   break;
                 }
                 uni.showToast({
-                  title: '昵称不能超过10个字符',
+                  title: '昵称不能超过8个字符',
                   icon: 'none'
                 });
                 return _context3.abrupt("return");
               case 6:
-                if (!(_this5.profileData.phone && !/^1[3-9]\d{9}$/.test(_this5.profileData.phone))) {
+                if (!(_this5.profileData.title && _this5.profileData.title.length > 100)) {
                   _context3.next = 9;
+                  break;
+                }
+                uni.showToast({
+                  title: '主页简介不能超过100个字符',
+                  icon: 'none'
+                });
+                return _context3.abrupt("return");
+              case 9:
+                if (!(_this5.profileData.phone && !/^1[3-9]\d{9}$/.test(_this5.profileData.phone))) {
+                  _context3.next = 12;
                   break;
                 }
                 uni.showToast({
@@ -467,9 +543,19 @@ var _default = {
                   icon: 'none'
                 });
                 return _context3.abrupt("return");
-              case 9:
+              case 12:
+                if (!(_this5.profileData.wechat && _this5.profileData.wechat.length > 20)) {
+                  _context3.next = 15;
+                  break;
+                }
+                uni.showToast({
+                  title: '微信号不能超过20个字符',
+                  icon: 'none'
+                });
+                return _context3.abrupt("return");
+              case 15:
                 if (!(_this5.regionChanged && !_this5.selectedRegionId)) {
-                  _context3.next = 12;
+                  _context3.next = 18;
                   break;
                 }
                 uni.showToast({
@@ -477,7 +563,7 @@ var _default = {
                   icon: 'none'
                 });
                 return _context3.abrupt("return");
-              case 12:
+              case 18:
                 postData = {
                   nickName: _this5.profileData.nickname,
                   avatarUrl: _this5.profileData.avatarUrl,
@@ -488,30 +574,30 @@ var _default = {
                 uni.showLoading({
                   title: '保存中...'
                 });
-                _context3.prev = 14;
-                _context3.next = 17;
+                _context3.prev = 20;
+                _context3.next = 23;
                 return _this5.$request.post('/wechat/user/editUserInfo', postData);
-              case 17:
+              case 23:
                 if (!_this5.regionChanged) {
-                  _context3.next = 24;
+                  _context3.next = 30;
                   break;
                 }
                 _userInfo = uni.getStorageSync('userInfo') || {};
                 userId = _this5.profileData.userId || _userInfo.userId || _userInfo.id;
                 if (userId) {
-                  _context3.next = 22;
+                  _context3.next = 28;
                   break;
                 }
                 throw {
                   msg: '用户信息不存在'
                 };
-              case 22:
-                _context3.next = 24;
+              case 28:
+                _context3.next = 30;
                 return _this5.$request.post('/wechat/basic/saveUserRegion', {
                   userId: Number(userId),
                   regionId: Number(_this5.selectedRegionId)
                 });
-              case 24:
+              case 30:
                 uni.hideLoading();
                 uni.showToast({
                   title: '保存成功',
@@ -526,23 +612,23 @@ var _default = {
                 setTimeout(function () {
                   uni.navigateBack();
                 }, 1500);
-                _context3.next = 36;
+                _context3.next = 42;
                 break;
-              case 31:
-                _context3.prev = 31;
-                _context3.t0 = _context3["catch"](14);
+              case 37:
+                _context3.prev = 37;
+                _context3.t0 = _context3["catch"](20);
                 uni.hideLoading();
                 console.error('保存失败', _context3.t0);
                 uni.showToast({
                   title: _context3.t0.msg || '保存失败',
                   icon: 'none'
                 });
-              case 36:
+              case 42:
               case "end":
                 return _context3.stop();
             }
           }
-        }, _callee3, null, [[14, 31]]);
+        }, _callee3, null, [[20, 37]]);
       }))();
     },
     uploadFile: function uploadFile(filePath) {

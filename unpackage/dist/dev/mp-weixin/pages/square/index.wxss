@@ -251,15 +251,27 @@ button.data-v-d4e6bb4e::after {
   margin: 26rpx auto 20rpx;
   border-top: 2rpx dashed #d4d4d4;
 }
+.title.data-v-d4e6bb4e {
+  display: block;
+  padding: 22rpx 23rpx 0;
+  font-family: PingFang SC;
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #000000;
+}
 .desc.data-v-d4e6bb4e {
   display: block;
   padding: 22rpx 23rpx 0;
   font-family: PingFang SC;
-  font-size: 28rpx;
+  font-size: 24rpx;
   color: #000000;
   margin-bottom: 10rpx;
 }
 .task-card-cover .desc.data-v-d4e6bb4e {
+  padding-top: 22rpx;
+  text-align: left;
+}
+.task-card-cover .title.data-v-d4e6bb4e {
   padding-top: 22rpx;
   text-align: left;
 }

@@ -325,6 +325,7 @@ var _env = _interopRequireDefault(__webpack_require__(/*! @/config/env.js */ 39)
 //
 //
 //
+//
 
 var DEFAULT_AVATAR = '/static/yunyiku/avatar.png';
 var DEFAULT_CATEGORY_OPTION = {
@@ -644,7 +645,8 @@ var _default = {
         publishDate: this.formatPublishDate(item.publishTime),
         publishTime: item.publishTime || '',
         deadlineText: this.buildDeadlineText(item.deliveryDate),
-        desc: item.taskDesc || item.taskTitle || '暂无任务描述',
+        title: item.taskTitle || '暂无任务标题',
+        desc: item.taskDesc || '暂无任务描述',
         price: this.formatPrice(item.budgetAmount, item.isOtherPartyQuote),
         statusLabel: Number(item.isOtherPartyQuote) === 1 ? '已报价' : '已接单',
         avatar: publisherAvatar,

@@ -14,7 +14,7 @@
 			<view class="cell-item">
 				<text class="cell-label">昵称</text>
 				<view class="cell-right">
-					<input class="cell-input" v-model="profileData.nickname" placeholder="轻触摸编辑" maxlength="8" @input="checkNicknameLength" />
+					<input class="cell-input" :value="profileData.nickname" placeholder="轻触摸编辑" @input="onNicknameInput" @blur="onNicknameBlur" />
 					<!-- <text class="arrow"></text> -->
 				</view>
 			</view>
@@ -40,7 +40,7 @@
 			<view class="cell-item">
 				<text class="cell-label">微信号</text>
 				<view class="cell-right">
-					<input class="cell-input" v-model="profileData.wechat" placeholder="轻触摸编辑" />
+					<input class="cell-input" v-model="profileData.wechat" placeholder="轻触摸编辑" maxlength="20" />
 					<!-- <text class="arrow"></text> -->
 				</view>
 			</view>
@@ -85,10 +85,11 @@
 					<view class="confirm-btn" @click="confirmTitle">完成</view>
 				</view>
 				<view class="modal-body">
-					<textarea class="modal-textarea" v-model="tempTitle" placeholder="请填写介绍" maxlength="50"
+					<textarea class="modal-textarea" :value="tempTitle" placeholder="请填写介绍"
+						@input="onTitleInput" @blur="onTitleBlur"
 						:disable-default-padding="true"></textarea>
 					<view class="modal-footer">
-						<view class="char-count">{{ tempTitle.length }}/50</view>
+						<view class="char-count">{{ tempTitle.length }}/100</view>
 					</view>
 				</view>
 			</view>
@@ -115,6 +116,8 @@ export default {
 			},
 			showTitleModal: false,
 			tempTitle: '',
+			lastNicknameValue: '',
+			lastTitleValue: '',
 			areaTree: [],
 			areaColumns: [[], [], []],
 			areaIndexes: [0, 0, 0],
@@ -133,24 +136,87 @@ export default {
 	},
 	methods: {
 		openTitleModal() {
-				this.tempTitle = this.profileData.title || '';
-				this.showTitleModal = true;
-			},
+			const title = this.profileData.title || '';
+			// 防止后端历史数据超长导致计数器显示异常
+			this.tempTitle = title.length > 100 ? title.substring(0, 100) : title;
+			this.lastTitleValue = this.tempTitle;
+			this.showTitleModal = true;
+		},
 			closeTitleModal() {
 				this.showTitleModal = false;
 			},
 			confirmTitle() {
+				// 兜底截断，避免拼音组合态残留超长文本
+				if (this.tempTitle.length > 100) {
+					this.tempTitle = this.tempTitle.substring(0, 100);
+				}
 				this.profileData.title = this.tempTitle;
 				this.showTitleModal = false;
 			},
-			checkNicknameLength() {
-				if (this.profileData.nickname.length > 10) {
-					uni.showToast({
-						title: '昵称不能超过10个字符',
-						icon: 'none'
-					});
+			onTitleInput(e) {
+				const value = e.detail.value;
+				// 长度未超限，直接接受并记录
+				if (value.length <= 100) {
+					this.tempTitle = value;
+					this.lastTitleValue = value;
+					return;
+				}
+				// 超过 100 个字符，判断是否处于拼音组合态
+				// 若新增部分为纯英文字母，视为拼音输入未上屏，不截断，等上屏后再判断
+				const last = this.lastTitleValue;
+				const added = last && value.startsWith(last) ? value.substring(last.length) : '';
+				if (added && /^[a-zA-Z]+$/.test(added)) {
+					this.tempTitle = value;
+					return;
+				}
+				// 非拼音组合态，截断到 100 个字符
+				const truncated = value.substring(0, 100);
+				this.tempTitle = truncated;
+				this.lastTitleValue = truncated;
+				uni.showToast({
+					title: '主页简介不能超过100个字符',
+					icon: 'none'
+				});
+			},
+			onTitleBlur() {
+				// 失焦兜底截断（处理直接输入英文超长等边界情况）
+				if (this.tempTitle.length > 100) {
+					this.tempTitle = this.tempTitle.substring(0, 100);
+					this.lastTitleValue = this.tempTitle;
 				}
 			},
+			onNicknameInput(e) {
+			const value = e.detail.value;
+			// 长度未超限，直接接受并记录
+			if (value.length <= 8) {
+				this.profileData.nickname = value;
+				this.lastNicknameValue = value;
+				return;
+			}
+			// 超过 8 个字符，判断是否处于拼音组合态
+			// 若新增部分为纯英文字母，视为拼音输入未上屏，不截断，等上屏后再判断
+			const last = this.lastNicknameValue;
+			const added = last && value.startsWith(last) ? value.substring(last.length) : '';
+			if (added && /^[a-zA-Z]+$/.test(added)) {
+				this.profileData.nickname = value;
+				return;
+			}
+			// 非拼音组合态，截断到 8 个字符
+			const truncated = value.substring(0, 8);
+			this.profileData.nickname = truncated;
+			this.lastNicknameValue = truncated;
+			uni.showToast({
+				title: '昵称不能超过8个字符',
+				icon: 'none'
+			});
+		},
+		onNicknameBlur() {
+			// 失焦兜底截断（处理直接输入英文超长等边界情况）
+			if (this.profileData.nickname.length > 8) {
+				this.profileData.nickname = this.profileData.nickname.substring(0, 8);
+				this.lastNicknameValue = this.profileData.nickname;
+			}
+		},
 		resolveUrl(url, defaultUrl = '') {
 			if (!url || url === defaultUrl) return defaultUrl;
 			if (/^(http|https|wxfile|data):/.test(url)) {
@@ -171,16 +237,17 @@ export default {
 				const storageUserInfo = uni.getStorageSync('userInfo') || {};
 				const data = res.data || {};
 				this.profileData = {
-					userId: data.userId || data.id || this.profileData.userId || storageUserInfo.userId || storageUserInfo.id || '',
-					avatar: data.avatarUrl || '/static/default-avatar.png',
-					avatarUrl: data.avatarUrl || '',
-					nickname: data.nickName || '',
-					title: data.title || '',
-					wechat: data.wxNumber || '',
-					phone: data.phone || '',
-					background: data.homeBackground || ''
-					};
-				});
+				userId: data.userId || data.id || this.profileData.userId || storageUserInfo.userId || storageUserInfo.id || '',
+				avatar: data.avatarUrl || '/static/default-avatar.png',
+				avatarUrl: data.avatarUrl || '',
+				nickname: data.nickName || '',
+				title: data.title || '',
+				wechat: data.wxNumber || '',
+				phone: data.phone || '',
+				background: data.homeBackground || ''
+				};
+				this.lastNicknameValue = this.profileData.nickname;
+			});
 		},
 		async loadUserRegion() {
 			try {
@@ -335,23 +402,40 @@ export default {
 				});
 				return;
 			}
-			if (this.profileData.nickname.length > 10) {
+			if (this.profileData.nickname.length > 8) {
+			uni.showToast({
+				title: '昵称不能超过8个字符',
+				icon: 'none'
+			});
+			return;
+		}
+
+			// 主页简介校验
+			if (this.profileData.title && this.profileData.title.length > 100) {
 				uni.showToast({
-					title: '昵称不能超过10个字符',
+					title: '主页简介不能超过100个字符',
 					icon: 'none'
 				});
 				return;
 			}
 
 			// 手机号校验
-			if (this.profileData.phone && !/^1[3-9]\d{9}$/.test(this.profileData.phone)) {
-				uni.showToast({
-					title: '请输入正确的手机号',
-					icon: 'none'
-				});
-				return;
-			}
-			if (this.regionChanged && !this.selectedRegionId) {
+		if (this.profileData.phone && !/^1[3-9]\d{9}$/.test(this.profileData.phone)) {
+			uni.showToast({
+				title: '请输入正确的手机号',
+				icon: 'none'
+			});
+			return;
+		}
+		// 微信号校验
+		if (this.profileData.wechat && this.profileData.wechat.length > 20) {
+			uni.showToast({
+				title: '微信号不能超过20个字符',
+				icon: 'none'
+			});
+			return;
+		}
+		if (this.regionChanged && !this.selectedRegionId) {
 				uni.showToast({
 					title: '请选择地区',
 					icon: 'none'

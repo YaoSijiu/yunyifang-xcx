@@ -2650,15 +2650,12 @@ export default {
 					loadingText: '提交中...'
 				})
 				uni.showToast({
-				title: '评价成功',
-				icon: 'success'
-			})
-			if (item) {
-				item.reviewed = true
-				item.reviewStatusChecked = true
-			}
-			this.reviewPopup.submitting = false
-			this.closeReviewPopup()
+					title: '评价成功',
+					icon: 'success'
+				})
+				this.reviewPopup.submitting = false
+				this.closeReviewPopup()
+				this.resetList()
 			} catch (e) {
 			} finally {
 				this.reviewPopup.submitting = false

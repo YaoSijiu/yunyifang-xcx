@@ -3252,12 +3252,9 @@ var _default = {
                   title: '评价成功',
                   icon: 'success'
                 });
-                if (item) {
-                  item.reviewed = true;
-                  item.reviewStatusChecked = true;
-                }
                 _this25.reviewPopup.submitting = false;
                 _this25.closeReviewPopup();
+                _this25.resetList();
                 _context20.next = 36;
                 break;
               case 34:
