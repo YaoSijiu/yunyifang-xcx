@@ -408,6 +408,9 @@
 .apply-btn-disabled.data-v-53280496 {
   background: #cccccc !important;
 }
+.apply-btn-cancel.data-v-53280496 {
+  background: #cccccc !important;
+}
 .share-btn.data-v-53280496 {
   width: 56rpx;
   height: 56rpx;

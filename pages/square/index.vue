@@ -1,5 +1,23 @@
 <template>
-	<view class="page">
+	<view class="page"
+		:class="{ 'pc-pulling': pcPulling && pcPullDistance > 0 }"
+		@mousedown="onPcPullStart"
+		@mousemove="onPcPullMove"
+		@mouseup="onPcPullEnd"
+		@mouseleave="onPcPullEnd"
+		@touchstart.passive="onPcPullStart"
+		@touchmove.passive="onPcPullMove"
+		@touchend="onPcPullEnd">
+		<view
+			class="pc-pull-tip"
+			:class="{ 'pc-pull-visible': pcPullTranslateY > 0 || refreshing }"
+			:style="{ height: pcPullThreshold + 'px', marginTop: (-pcPullThreshold) + 'px' }">
+			<view class="pc-pull-inner">
+				<view class="pc-pull-spinner" v-if="refreshing"></view>
+				<text class="pc-pull-text">{{ pcPullTip }}</text>
+			</view>
+		</view>
+		<view class="pc-scroll-wrap" :style="{ transform: 'translateY(' + pcPullTranslateY + 'px)', transition: (pcPulling ? 'none' : 'transform .25s ease-out') }">
 		<view class="top-area" :style="{ paddingTop: (statusBarHeight + 8) + 'px' }">
 			<view class="search-row">
 				<view class="search-box">
@@ -52,6 +70,7 @@
 			refresher-background="#ffffff"
 			@refresherrefresh="handleRefresh"
 			@scrolltolower="loadMore"
+			@scroll="handleTaskScroll"
 		>
 			<view class="task-list">
 				<view
@@ -99,11 +118,11 @@
 								<button
 						v-if="!item.isOwnTask"
 						class="task-action-btn"
-						:class="{ 'task-action-btn-quote': item.participantType === 'quote', 'task-action-btn-accept': item.participantType === 'accept', 'task-action-btn-disabled': item.hasOperated }"
-						:disabled="item.hasOperated"
+						:class="{ 'task-action-btn-quote': !item.hasOperated && item.participantType === 'quote', 'task-action-btn-accept': !item.hasOperated && item.participantType === 'accept', 'task-action-btn-disabled': item.hasOperated }"
+						:disabled="item.hasLockedOrder"
 						@click.stop="handleQuickAction(item)"
 					>
-						{{ item.hasOperated ? (item.participantType === 'quote' ? '已报价' : '已接单') : (item.participantType === 'quote' ? '报价' : '接单') }}
+						{{ item.hasLockedOrder ? '已接单' : (item.hasOperated ? (item.participantType === 'quote' ? '取消报价' : '取消接单') : (item.participantType === 'quote' ? '报价' : '接单')) }}
 					</button>
 						<button
 							class="task-share-btn"
@@ -130,6 +149,7 @@
 		</scroll-view>
 
 		<yun-tabbar :selected="1"></yun-tabbar>
+		</view>
 	</view>
 </template>
 
@@ -163,6 +183,12 @@ export default {
 			loading: false,
 			refreshing: false,
 			finished: false,
+			pcPullStartY: 0,
+			pcPullDistance: 0,
+			pcPulling: false,
+			pcPullTriggered: false,
+			pcPullThreshold: 70,
+			pcScrollTop: 0,
 			visibleList: [],
 			categoryOptions: [DEFAULT_CATEGORY_OPTION],
 			selectedCategoryIndex: 0,
@@ -179,6 +205,21 @@ export default {
 		selectedPriceLabel() {
 			const option = this.priceOptions[this.selectedPriceIndex];
 			return option ? option.label : PRICE_OPTIONS[0].label;
+		},
+		pcPullTranslateY() {
+			if (this.refreshing) {
+				return this.pcPullThreshold;
+			}
+			if (!this.pcPulling || this.pcPullDistance <= 0) {
+				return 0;
+			}
+			return Math.min(this.pcPullDistance, this.pcPullThreshold * 2.2);
+		},
+		pcPullTip() {
+			if (this.refreshing) {
+				return '正在刷新...';
+			}
+			return this.pcPullDistance >= this.pcPullThreshold ? '松开立即刷新' : '下拉可以刷新';
 		}
 	},
 	async onLoad() {
@@ -376,7 +417,8 @@ export default {
 				hasMoreParticipants: participantCount > 3 || participantList.length > 3,
 				professionList,
 				isOwnTask: this.checkIsOwnTask(item),
-				hasOperated: !!item.hasOperated
+				hasOperated: !!item.hasOperated,
+				hasLockedOrder: !!item.hasLockedOrder
 			};
 		},
 		getCurrentUserId() {
@@ -618,18 +660,20 @@ export default {
 				});
 				return;
 			}
+			if (item.hasLockedOrder) {
+				return;
+			}
 			if (item.hasOperated) {
-				uni.showToast({
-					title: item.participantType === 'quote' ? '您已报价，请勿重复提交' : '您已接单，请勿重复提交',
-					icon: 'none'
+				uni.navigateTo({
+					url: `/subpkg-task/pages/detail/index?id=${item.channelId}&channelId=${item.channelId}&taskId=${item.taskId}&autoAction=cancel&publishTime=${encodeURIComponent(item.publishTime || '')}`
 				});
 				return;
 			}
 			const actionType = item.participantType === 'quote' ? 'quote' : 'accept';
 		uni.navigateTo({
 			url: `/subpkg-task/pages/detail/index?id=${item.channelId}&channelId=${item.channelId}&taskId=${item.taskId}&autoAction=${actionType}&publishTime=${encodeURIComponent(item.publishTime || '')}`
-		});
-		},
+	});
+	},
 		updateCardOperatedStatus() {
 			const updateInfo = uni.getStorageSync(this.CARD_UPDATE_KEY);
 			if (!updateInfo || !updateInfo.channelId) {
@@ -639,11 +683,64 @@ export default {
 			const targetId = String(updateInfo.channelId);
 			const index = this.visibleList.findIndex(item => String(item.channelId) === targetId);
 			if (index !== -1) {
-				this.$set(this.visibleList[index], 'hasOperated', true);
+				this.$set(this.visibleList[index], 'hasOperated', !updateInfo.cancel);
+				if (updateInfo.cancel) {
+					this.$set(this.visibleList[index], 'hasLockedOrder', false);
+				}
 			}
 		},
 		handleShareTask() {
 			// open-type="share" 触发原生分享；这里仅阻止卡片点击冒泡。
+		},
+		handleTaskScroll(e) {
+			const detail = e && e.detail ? e.detail : {};
+			this.pcScrollTop = typeof detail.scrollTop === 'number' ? detail.scrollTop : 0;
+		},
+		getPointerY(e) {
+			if (!e) return 0;
+			const touch = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]);
+			if (touch && typeof touch.clientY === 'number') return touch.clientY;
+			if (typeof e.clientY === 'number') return e.clientY;
+			return 0;
+		},
+		onPcPullStart(e) {
+			if (this.refreshing) return;
+			const y = this.getPointerY(e);
+			if (this.pcScrollTop > 0) {
+				this.pcPulling = false;
+				return;
+			}
+			this.pcPulling = true;
+			this.pcPullTriggered = false;
+			this.pcPullStartY = y;
+			this.pcPullDistance = 0;
+		},
+		onPcPullMove(e) {
+			if (!this.pcPulling || this.refreshing) return;
+			const y = this.getPointerY(e);
+			let delta = y - this.pcPullStartY;
+			if (delta <= 0) {
+				this.pcPullDistance = 0;
+				return;
+			}
+			const max = this.pcPullThreshold * 2.2;
+			if (delta > max) {
+				delta = max + (delta - max) * 0.3;
+			}
+			this.pcPullDistance = delta;
+			if (delta >= this.pcPullThreshold) {
+				this.pcPullTriggered = true;
+			}
+		},
+		onPcPullEnd() {
+			if (!this.pcPulling) return;
+			const triggered = this.pcPullTriggered;
+			this.pcPulling = false;
+			this.pcPullTriggered = false;
+			this.pcPullDistance = 0;
+			if (triggered && !this.refreshing) {
+				this.handleRefresh();
+			}
 		}
 	},
 	onShareAppMessage(options) {
@@ -1068,5 +1165,64 @@ button::after {
 	height: 116rpx;
 	font-size: 22rpx;
 	color: #b2b2b2;
+}
+
+.pc-scroll-wrap {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	width: 100%;
+	will-change: transform;
+}
+
+.page.pc-pulling {
+	cursor: grab;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.pc-pull-tip {
+	width: 100%;
+	overflow: hidden;
+	pointer-events: none;
+	position: relative;
+}
+
+.pc-pull-visible .pc-pull-inner {
+	opacity: 1;
+}
+
+.pc-pull-inner {
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12rpx;
+	opacity: 0;
+	transition: opacity .2s ease;
+	padding-bottom: 10rpx;
+	box-sizing: border-box;
+}
+
+.pc-pull-text {
+	font-size: 24rpx;
+	color: #999999;
+	line-height: 1;
+}
+
+.pc-pull-spinner {
+	width: 28rpx;
+	height: 28rpx;
+	border: 3rpx solid #e5e5e5;
+	border-top-color: #ff6b35;
+	border-radius: 50%;
+	box-sizing: border-box;
+	animation: pc-pull-spin .7s linear infinite;
+}
+
+@keyframes pc-pull-spin {
+	to { transform: rotate(360deg); }
 }
 </style>

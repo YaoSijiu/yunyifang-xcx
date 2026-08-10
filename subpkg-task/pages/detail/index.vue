@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 	<view class="task-detail-page">
 		<scroll-view scroll-y class="page-scroll">
 			<view class="page-canvas">
@@ -78,11 +78,11 @@
 								<text>暂无报价</text>
 							</view>
 							<view v-for="item in bidders" :key="item.id" class="bidder-item">
-								<image class="bidder-avatar" :src="item.avatar" mode="aspectFill"></image>
-								<view class="bidder-info">
-									<text class="bidder-name">{{ item.name }}</text>
-									<text class="bidder-time">{{ item.time }}</text>
-								</view>
+							<image class="bidder-avatar" :src="item.avatar" mode="aspectFill" @click.stop="goBidderHome(item)"></image>
+							<view class="bidder-info" @click.stop="goBidderHome(item)">
+								<text class="bidder-name">{{ item.name }}</text>
+								<text class="bidder-time">{{ item.time }}</text>
+							</view>
 								<view class="bidder-right">
 								<text v-if="item.type === 'quote' && item.hasPrice" class="bidder-price">已报价：{{ item.priceText }}</text>
 								<text v-else class="bidder-price">{{ item.priceText }}</text>
@@ -110,7 +110,8 @@
 					class="apply-btn"
 					:class="{
 						'apply-btn-quoted': detail.canQuote,
-						'apply-btn-disabled': applyButtonDisabled
+						'apply-btn-disabled': applyButtonDisabled,
+						'apply-btn-cancel': canCancelParticipate
 					}"
 					:disabled="applyButtonDisabled"
 					@click="handleApply"
@@ -193,6 +194,7 @@ export default {
 			showQuotePopup: false,
 			hasQuoted: false,
 			hasAccepted: false,
+			hasLockedOrder: false,
 			applySubmitting: false,
 			quoteSubmitting: false,
 			loginPromptVisible: false,
@@ -225,12 +227,24 @@ export default {
 			return this.isLoggedIn ? 'share' : '';
 		},
 		applyButtonDisabled() {
-			if (this.detail.canQuote) {
-				return this.quoteSubmitting || this.hasQuoted;
+			if (this.hasLockedOrder) {
+				return true;
 			}
-			return this.applySubmitting || this.hasAccepted;
+			if (this.detail.canQuote) {
+				return this.quoteSubmitting;
+			}
+			return this.applySubmitting;
+		},
+		canCancelParticipate() {
+			if (this.hasLockedOrder) {
+				return false;
+			}
+			return (this.detail.canQuote && this.hasQuoted) || (!this.detail.canQuote && this.hasAccepted);
 		},
 		actionButtonText() {
+			if (this.hasLockedOrder) {
+				return '已接单';
+			}
 			if (!this.detail.canQuote && this.applySubmitting) {
 				return '提交中...';
 			}
@@ -238,13 +252,13 @@ export default {
 				return '提交中...';
 			}
 			if (this.detail.canQuote && this.hasQuoted) {
-				return '已报价';
+				return '取消报价';
 			}
 			if (this.detail.canQuote) {
 				return '报价';
 			}
 			if (this.hasAccepted) {
-				return '已接单';
+				return '取消接单';
 			}
 			return '申请接单';
 		}
@@ -366,6 +380,7 @@ export default {
 			this.bidders = this.normalizeBidders(data || {});
 			this.hasQuoted = this.checkHasQuoted(data && data.quoteUserList);
 			this.hasAccepted = this.checkHasAccepted(data || {});
+			this.hasLockedOrder = this.checkHasLockedOrder(data || {});
 			this.quoteForm.price = '';
 			this.currentPoster = 0;
 		},
@@ -541,7 +556,7 @@ export default {
 		},
 		formatCurrency(value) {
 			if (value === '' || value === null || value === undefined) {
-				return '预算待定';
+				return '等待甲方确认';
 			}
 			return `¥ ${value}`;
 		},
@@ -654,6 +669,21 @@ export default {
 			}
 			return false;
 		},
+		checkHasLockedOrder(data) {
+			const currentUserId = this.getCurrentUserId();
+			if (!currentUserId) {
+				return false;
+			}
+			const quoteList = Array.isArray(data && data.quoteUserList) ? data.quoteUserList : [];
+			return quoteList.some(item => {
+				const quoteUserId = item && item.quoteUserId ? String(item.quoteUserId) : '';
+				if (!quoteUserId || quoteUserId !== String(currentUserId)) {
+					return false;
+				}
+				// 报价已被选中且存在活跃订单（进行中）时，锁定为已接单，不可取消
+				return !!item.hasActiveOrder;
+			});
+		},
 		goBack() {
 			if (getCurrentPages().length > 1) {
 				uni.navigateBack();
@@ -673,6 +703,18 @@ export default {
 			}
 			uni.navigateTo({
 				url: `/subpkg-library/pages/visitor-home?userId=${encodeURIComponent(this.ownerUserId)}`
+			});
+		},
+		goBidderHome(item) {
+			if (!item || !item.userId) {
+				uni.showToast({
+					title: '用户信息缺失',
+					icon: 'none'
+				});
+				return;
+			}
+			uni.navigateTo({
+				url: `/subpkg-library/pages/visitor-home?userId=${encodeURIComponent(item.userId)}`
 			});
 		},
 		handlePosterChange(event) {
@@ -705,7 +747,15 @@ export default {
 				return;
 			}
 			if (this.detail.canQuote) {
+				if (this.hasQuoted) {
+					this.cancelParticipate();
+					return;
+				}
 				this.showQuotePopup = true;
+				return;
+			}
+			if (this.hasAccepted) {
+				this.cancelParticipate();
 				return;
 			}
 			if (!this.taskId || !this.channelId) {
@@ -794,8 +844,54 @@ export default {
 					icon: 'none'
 				});
 			} finally {
-				this.quoteSubmitting = false;
+			this.quoteSubmitting = false;
+		}
+		},
+		cancelParticipate() {
+			if (!this.ensureLoggedIn()) {
+				return;
 			}
+			if (!this.taskId || !this.channelId) {
+				uni.showToast({
+					title: '任务信息缺失',
+					icon: 'none'
+				});
+				return;
+			}
+			const cancelText = this.detail.canQuote ? '取消报价' : '取消接单';
+			uni.showModal({
+				title: '提示',
+				content: `确定${cancelText}吗？`,
+				confirmText: '确定',
+				cancelText: '再想想',
+				success: async (res) => {
+					if (!res.confirm) {
+						return;
+					}
+					try {
+						await request.post('/wechat/userTask/cancelQuote', {
+							taskId: Number(this.taskId),
+							channelId: Number(this.channelId)
+						}, {
+							loading: true,
+							loadingText: '取消中...'
+						});
+						this.hasQuoted = false;
+						this.hasAccepted = false;
+						uni.setStorageSync('square_card_update', { channelId: String(this.channelId), cancel: true });
+						await this.fetchDetail();
+						uni.showToast({
+							title: '取消成功',
+							icon: 'success'
+						});
+					} catch (e) {
+						uni.showToast({
+							title: (e && e.msg) || '取消失败',
+							icon: 'none'
+						});
+					}
+				}
+			});
 		},
 		handleShareClick() {
 			this.ensureLoggedIn();
@@ -807,6 +903,15 @@ export default {
 			const action = this.pendingAutoAction;
 			this.pendingAutoAction = '';
 			if (this.loadFailed || this.isOwnTask) {
+				return;
+			}
+			if (action === 'cancel') {
+				if (!this.ensureLoggedIn()) {
+					return;
+				}
+				if (this.canCancelParticipate) {
+					this.cancelParticipate();
+				}
 				return;
 			}
 			if (action === 'quote' && this.detail.canQuote) {
@@ -1287,6 +1392,10 @@ export default {
 }
 
 .apply-btn-disabled {
+	background: #cccccc !important;
+}
+
+.apply-btn-cancel {
 	background: #cccccc !important;
 }
 

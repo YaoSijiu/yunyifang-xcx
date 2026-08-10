@@ -73,19 +73,12 @@
   flex: 1;
   white-space: nowrap;
   width: 80%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  /* 针对不同平台的隐藏滚动条 */
-  scrollbar-width: none;
-  /* Firefox */
-  -ms-overflow-style: none;
-  /* IE 10+ */
+  overflow: hidden;
 }
-.tab-scroll.data-v-44ee474d::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-  background-color: transparent !important;
+.tabs-inner.data-v-44ee474d {
+  display: inline-flex;
+  align-items: center;
+  will-change: transform;
 }
 .tab-item1.data-v-44ee474d {
   position: relative;

@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 	<view class="create-container">
 		<!-- 1. 标题 -->
 		<view class="input-section">

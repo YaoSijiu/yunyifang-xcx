@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 	<view class="container">
 		<yun-storage-warning :visible="false" type="flowout" @cancel="() => {}" @confirm="() => {}" />
 		<!-- 顶部 Tab 导航栏 -->

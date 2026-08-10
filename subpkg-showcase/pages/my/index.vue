@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 	<view class="my-showcase-page">
 		<view class="fixed-header">
 			<view class="tab-row">

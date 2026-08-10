@@ -326,6 +326,26 @@ var _env = _interopRequireDefault(__webpack_require__(/*! @/config/env.js */ 39)
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 var DEFAULT_AVATAR = '/static/yunyiku/avatar.png';
 var DEFAULT_CATEGORY_OPTION = {
@@ -366,6 +386,12 @@ var _default = {
       loading: false,
       refreshing: false,
       finished: false,
+      pcPullStartY: 0,
+      pcPullDistance: 0,
+      pcPulling: false,
+      pcPullTriggered: false,
+      pcPullThreshold: 70,
+      pcScrollTop: 0,
       visibleList: [],
       categoryOptions: [DEFAULT_CATEGORY_OPTION],
       selectedCategoryIndex: 0,
@@ -382,6 +408,21 @@ var _default = {
     selectedPriceLabel: function selectedPriceLabel() {
       var option = this.priceOptions[this.selectedPriceIndex];
       return option ? option.label : PRICE_OPTIONS[0].label;
+    },
+    pcPullTranslateY: function pcPullTranslateY() {
+      if (this.refreshing) {
+        return this.pcPullThreshold;
+      }
+      if (!this.pcPulling || this.pcPullDistance <= 0) {
+        return 0;
+      }
+      return Math.min(this.pcPullDistance, this.pcPullThreshold * 2.2);
+    },
+    pcPullTip: function pcPullTip() {
+      if (this.refreshing) {
+        return '正在刷新...';
+      }
+      return this.pcPullDistance >= this.pcPullThreshold ? '松开立即刷新' : '下拉可以刷新';
     }
   },
   onLoad: function onLoad() {
@@ -661,7 +702,8 @@ var _default = {
         hasMoreParticipants: participantCount > 3 || participantList.length > 3,
         professionList: professionList,
         isOwnTask: this.checkIsOwnTask(item),
-        hasOperated: !!item.hasOperated
+        hasOperated: !!item.hasOperated,
+        hasLockedOrder: !!item.hasLockedOrder
       };
     },
     getCurrentUserId: function getCurrentUserId() {
@@ -865,10 +907,12 @@ var _default = {
         });
         return;
       }
+      if (item.hasLockedOrder) {
+        return;
+      }
       if (item.hasOperated) {
-        uni.showToast({
-          title: item.participantType === 'quote' ? '您已报价，请勿重复提交' : '您已接单，请勿重复提交',
-          icon: 'none'
+        uni.navigateTo({
+          url: "/subpkg-task/pages/detail/index?id=".concat(item.channelId, "&channelId=").concat(item.channelId, "&taskId=").concat(item.taskId, "&autoAction=cancel&publishTime=").concat(encodeURIComponent(item.publishTime || ''))
         });
         return;
       }
@@ -888,11 +932,64 @@ var _default = {
         return String(item.channelId) === targetId;
       });
       if (index !== -1) {
-        this.$set(this.visibleList[index], 'hasOperated', true);
+        this.$set(this.visibleList[index], 'hasOperated', !updateInfo.cancel);
+        if (updateInfo.cancel) {
+          this.$set(this.visibleList[index], 'hasLockedOrder', false);
+        }
       }
     },
     handleShareTask: function handleShareTask() {
       // open-type="share" 触发原生分享；这里仅阻止卡片点击冒泡。
+    },
+    handleTaskScroll: function handleTaskScroll(e) {
+      var detail = e && e.detail ? e.detail : {};
+      this.pcScrollTop = typeof detail.scrollTop === 'number' ? detail.scrollTop : 0;
+    },
+    getPointerY: function getPointerY(e) {
+      if (!e) return 0;
+      var touch = e.touches && e.touches[0] || e.changedTouches && e.changedTouches[0];
+      if (touch && typeof touch.clientY === 'number') return touch.clientY;
+      if (typeof e.clientY === 'number') return e.clientY;
+      return 0;
+    },
+    onPcPullStart: function onPcPullStart(e) {
+      if (this.refreshing) return;
+      var y = this.getPointerY(e);
+      if (this.pcScrollTop > 0) {
+        this.pcPulling = false;
+        return;
+      }
+      this.pcPulling = true;
+      this.pcPullTriggered = false;
+      this.pcPullStartY = y;
+      this.pcPullDistance = 0;
+    },
+    onPcPullMove: function onPcPullMove(e) {
+      if (!this.pcPulling || this.refreshing) return;
+      var y = this.getPointerY(e);
+      var delta = y - this.pcPullStartY;
+      if (delta <= 0) {
+        this.pcPullDistance = 0;
+        return;
+      }
+      var max = this.pcPullThreshold * 2.2;
+      if (delta > max) {
+        delta = max + (delta - max) * 0.3;
+      }
+      this.pcPullDistance = delta;
+      if (delta >= this.pcPullThreshold) {
+        this.pcPullTriggered = true;
+      }
+    },
+    onPcPullEnd: function onPcPullEnd() {
+      if (!this.pcPulling) return;
+      var triggered = this.pcPullTriggered;
+      this.pcPulling = false;
+      this.pcPullTriggered = false;
+      this.pcPullDistance = 0;
+      if (triggered && !this.refreshing) {
+        this.handleRefresh();
+      }
     }
   },
   onShareAppMessage: function onShareAppMessage(options) {

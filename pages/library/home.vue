@@ -18,8 +18,15 @@
 				</view>
 			</view>
 
-			<scroll-view scroll-x class="primary-tabs" show-scrollbar="false">
-				<view class="primary-tabs-track">
+			<view class="primary-tabs"
+			@mousedown="onDragStart"
+			@mousemove="onDragMove"
+			@mouseup="onDragEnd"
+			@mouseleave="onDragEnd"
+			@touchstart="onDragStart"
+			@touchmove="onDragMove"
+			@touchend="onDragEnd">
+			<view class="primary-tabs-track" :style="{ transform: 'translateX(' + translateX + 'px)' }">
 					<view
 						v-for="(item, index) in primaryTabs"
 						:key="item.key"
@@ -30,10 +37,10 @@
 						<text>{{ item.label }}</text>
 						<image v-if="activePrimaryTab === index" class="primary-underline" src="/static/common/选中条.png" />
 					</view>
-				</view>
-			</scroll-view>
+			</view>
+		</view>
 
-			<view class="secondary-tabs">
+		<view class="secondary-tabs">
 				<view
 					v-for="(item, index) in secondaryTabs"
 					:key="item.key"
@@ -162,7 +169,7 @@
 				</view>
 			</view>
 			<view v-if="!loading && visibleCards.length === 0" class="empty-state">
-				<text>暂无橱窗</text>
+				<text>{{ emptyStateText }}</text>
 			</view>
 			<view v-if="visibleCards.length > 0" class="load-state">
 				<text v-if="loading">加载中...</text>
@@ -188,6 +195,7 @@ const PRICE_OPTIONS = [
 	{ label: '500-1000', minPrice: '500', maxPrice: '1000' },
 	{ label: '1000以上', minPrice: '1000', maxPrice: '' }
 ];
+const ALL_REGION_OPTION = { id: '', name: '全部', children: [] };
 
 export default {
 	data() {
@@ -210,6 +218,7 @@ export default {
 			areaLoading: false,
 			selectedRegionId: '',
 			selectedRegionText: '',
+			selectedRegionPath: [],
 			priceOptions: PRICE_OPTIONS,
 			selectedPriceIndex: 0,
 			primaryTabs: [
@@ -222,13 +231,24 @@ export default {
 				{ label: '地理位置', key: 'location' },
 				{ label: '价格区间', key: 'price' }
 			],
-			visibleCards: []
+			visibleCards: [],
+			translateX: 0,
+			isDragging: false,
+			dragStartX: 0,
+			dragStartTranslate: 0,
+			maxScroll: 0,
+			hasDragged: false,
+			preventClick: false
 		};
 	},
 	computed: {
 		selectedPriceLabel() {
 			const option = this.priceOptions[this.selectedPriceIndex];
 			return option ? option.label : DEFAULT_PRICE_OPTION.label;
+		},
+		emptyStateText() {
+			const activeTab = this.primaryTabs[this.activePrimaryTab];
+			return activeTab && activeTab.type === 'follow' ? '暂无关注' : '暂无橱窗';
 		}
 	},
 	created() {
@@ -272,6 +292,7 @@ export default {
 			}
 		},
 		switchPrimaryTab(index) {
+			if (this.preventClick) return;
 			this.activePrimaryTab = index;
 			this.resetCards();
 		},
@@ -282,6 +303,44 @@ export default {
 				this.primaryTabs = this.buildPrimaryTabs(tags);
 			} catch (e) {
 				this.primaryTabs = this.buildPrimaryTabs([]);
+			} finally {
+				this.$nextTick(() => { this.updateScrollBounds(); });
+			}
+		},
+		updateScrollBounds() {
+			const query = uni.createSelectorQuery().in(this);
+			query.select('.primary-tabs').boundingClientRect();
+			query.select('.primary-tabs-track').boundingClientRect();
+			query.exec(res => {
+				if (res && res[0] && res[1]) {
+					this.maxScroll = Math.max(0, res[1].width - res[0].width);
+					if (this.translateX < -this.maxScroll) {
+						this.translateX = -this.maxScroll;
+					}
+				}
+			});
+		},
+		onDragStart(e) {
+			this.isDragging = true;
+			this.hasDragged = false;
+			const point = (e.touches && e.touches[0]) ? e.touches[0] : e;
+			this.dragStartX = point.clientX || 0;
+			this.dragStartTranslate = this.translateX;
+		},
+		onDragMove(e) {
+			if (!this.isDragging) return;
+			const point = (e.touches && e.touches[0]) ? e.touches[0] : e;
+			const delta = (point.clientX || 0) - this.dragStartX;
+			if (Math.abs(delta) > 5) { this.hasDragged = true; }
+			let newX = this.dragStartTranslate + delta;
+			newX = Math.max(-this.maxScroll, Math.min(0, newX));
+			this.translateX = newX;
+		},
+		onDragEnd() {
+			this.isDragging = false;
+			if (this.hasDragged) {
+				this.preventClick = true;
+				setTimeout(() => { this.preventClick = false; }, 100);
 			}
 		},
 		extractTaskTypeTags(res) {
@@ -415,13 +474,19 @@ export default {
 			const provinceIndex = indexes[0] || 0;
 			const cityIndex = indexes[1] || 0;
 			const provinces = this.areaTree;
-			const cities = provinces[provinceIndex] && provinces[provinceIndex].children && provinces[provinceIndex].children.length
-				? provinces[provinceIndex].children
+			const realProvince = provinceIndex > 0 ? provinces[provinceIndex - 1] : null;
+			const cities = realProvince && realProvince.children && realProvince.children.length
+				? realProvince.children
 				: [];
-			const areas = cities[cityIndex] && cities[cityIndex].children && cities[cityIndex].children.length
-				? cities[cityIndex].children
+			const realCity = realProvince && cityIndex > 0 ? cities[cityIndex - 1] : null;
+			const areas = realCity && realCity.children && realCity.children.length
+				? realCity.children
 				: [];
-			this.areaColumns = [provinces, cities, areas];
+			this.areaColumns = [
+				provinces.length ? [ALL_REGION_OPTION].concat(provinces) : [],
+				cities.length ? [ALL_REGION_OPTION].concat(cities) : [],
+				areas.length ? [ALL_REGION_OPTION].concat(areas) : []
+			];
 		},
 		onAreaChange(event) {
 			const indexes = event && event.detail && Array.isArray(event.detail.value)
@@ -430,22 +495,26 @@ export default {
 			this.areaIndexes = indexes;
 			this.updateAreaColumns(indexes);
 			const path = this.getSelectedRegionPath(indexes);
-			const selected = path[path.length - 1];
-			if (!selected || !selected.id) {
-				uni.showToast({
-					title: '请选择地区',
-					icon: 'none'
-				});
-				return;
+			const locationIndex = this.secondaryTabs.findIndex(item => item.key === 'location');
+			this.selectedRegionPath = path;
+			if (path.length === 0) {
+				this.selectedRegionId = '';
+				this.selectedRegionText = '';
+				if (this.activeSecondaryTab === locationIndex) {
+					this.activeSecondaryTab = 0;
+				}
+			} else {
+				const selected = path[path.length - 1];
+				this.selectedRegionId = String(selected.id);
+				this.selectedRegionText = path.map(item => item.name).filter(Boolean).join('');
+				this.activeSecondaryTab = locationIndex;
 			}
-			this.selectedRegionId = String(selected.id);
-			this.selectedRegionText = path.map(item => item.name).filter(Boolean).join('');
-			this.activeSecondaryTab = this.secondaryTabs.findIndex(item => item.key === 'location');
 			this.resetCards();
 		},
 		clearRegionFilter() {
 			this.selectedRegionId = '';
 			this.selectedRegionText = '';
+			this.selectedRegionPath = [];
 			this.areaIndexes = [0, 0, 0];
 			this.updateAreaColumns(this.areaIndexes);
 			const locationIndex = this.secondaryTabs.findIndex(item => item.key === 'location');
@@ -455,10 +524,34 @@ export default {
 			this.resetCards();
 		},
 		getSelectedRegionPath(indexes) {
-			const province = this.areaColumns[0][indexes[0] || 0];
-			const city = this.areaColumns[1][indexes[1] || 0];
-			const area = this.areaColumns[2][indexes[2] || 0];
-			return [province, city, area].filter(Boolean);
+			const provinceIndex = indexes[0] || 0;
+			const cityIndex = indexes[1] || 0;
+			const areaIndex = indexes[2] || 0;
+			if (provinceIndex === 0) {
+				return [];
+			}
+			const provinces = this.areaTree;
+			const province = provinces[provinceIndex - 1];
+			if (!province) {
+				return [];
+			}
+			if (cityIndex === 0) {
+				return [province];
+			}
+			const cities = province.children || [];
+			const city = cities[cityIndex - 1];
+			if (!city) {
+				return [province];
+			}
+			if (areaIndex === 0) {
+				return [province, city];
+			}
+			const areas = city.children || [];
+			const area = areas[areaIndex - 1];
+			if (!area) {
+				return [province, city];
+			}
+			return [province, city, area];
 		},
 		onPriceChange(event) {
 			this.selectedPriceIndex = Number(event.detail.value) || 0;
@@ -657,6 +750,7 @@ export default {
 .primary-tabs {
 	background: #ffffff;
 	white-space: nowrap;
+	overflow: hidden;
 }
 
 .primary-tabs-track {

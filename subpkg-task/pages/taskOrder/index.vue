@@ -1,8 +1,17 @@
-﻿<template>
+<template>
 	<view class="task-order-page">
 		<view class="header-panel">
-			<scroll-view class="tab-scroll" scroll-x enable-flex :show-scrollbar="false">
-				<view class="tabs">
+			<view class="tab-scroll"
+				:class="{ 'is-dragging': isDragging }"
+				@mousedown="onDragStart"
+				@mousemove="onDragMove"
+				@mouseup="onDragEnd"
+				@mouseleave="onDragEnd"
+				@touchstart="onDragStart"
+				@touchmove="onDragMove"
+				@touchend="onDragEnd"
+				@wheel="onWheel">
+				<view class="tabs" :style="{ transform: 'translateX(' + translateX + 'px)' }">
 					<view
 						v-for="tab in tabs"
 						:key="tab.value"
@@ -14,7 +23,7 @@
 						<image v-if="activeTab === tab.value" class="active-mark" src="/static/common/选中条.png" />
 					</view>
 				</view>
-			</scroll-view>
+			</view>
 
 			<view class="search-bar">
 				<view class="search-icon"></view>
@@ -400,7 +409,14 @@ export default {
 				{ label: '退款中', value: 'refund', status: 'refunding' },
 				{ label: '已完成', value: 'done', status: 'completed' }
 			],
-			orderList: []
+			orderList: [],
+			translateX: 0,
+			isDragging: false,
+			dragStartX: 0,
+			dragStartTranslate: 0,
+			maxScroll: 0,
+			hasDragged: false,
+			preventClick: false
 		}
 	},
 	computed: {
@@ -424,6 +440,9 @@ export default {
 			return
 		}
 		this.resetList()
+	},
+	updated() {
+		this.$nextTick(() => { this.updateScrollBounds(); })
 	},
 	beforeDestroy() {
 		if (this.searchTimer) {
@@ -480,11 +499,59 @@ export default {
 			})
 		},
 		changeTab(value) {
+			if (this.preventClick) return;
 			if (this.activeTab === value) {
 				return
 			}
 			this.activeTab = value
 			this.resetList()
+		},
+		updateScrollBounds() {
+			const query = uni.createSelectorQuery().in(this);
+			query.select('.tab-scroll').boundingClientRect();
+			query.select('.tabs').boundingClientRect();
+			query.exec(res => {
+				if (res && res[0] && res[1]) {
+					this.maxScroll = Math.max(0, res[1].width - res[0].width);
+					if (this.translateX < -this.maxScroll) {
+						this.translateX = -this.maxScroll;
+					}
+				}
+			});
+		},
+		onDragStart(e) {
+			this.isDragging = true;
+			this.hasDragged = false;
+			const point = (e.touches && e.touches[0]) ? e.touches[0] : e;
+			this.dragStartX = point.clientX || 0;
+			this.dragStartTranslate = this.translateX;
+		},
+		onDragMove(e) {
+			if (!this.isDragging) return;
+			const point = (e.touches && e.touches[0]) ? e.touches[0] : e;
+			const delta = (point.clientX || 0) - this.dragStartX;
+			if (Math.abs(delta) > 5) { this.hasDragged = true; }
+			let newX = this.dragStartTranslate + delta;
+			newX = Math.max(-this.maxScroll, Math.min(0, newX));
+			this.translateX = newX;
+		},
+		onDragEnd() {
+			this.isDragging = false;
+			if (this.hasDragged) {
+				this.preventClick = true;
+				setTimeout(() => { this.preventClick = false; }, 100);
+			}
+		},
+		onWheel(e) {
+			if (this.maxScroll <= 0) return;
+			const delta = (e.deltaY || 0) + (e.deltaX || 0);
+			if (!delta) return;
+			if (e.preventDefault) {
+				try { e.preventDefault(); } catch (err) {}
+			}
+			let newX = this.translateX - delta;
+			newX = Math.max(-this.maxScroll, Math.min(0, newX));
+			this.translateX = newX;
 		},
 		handleKeywordInput() {
 			if (this.searchTimer) {
@@ -1669,12 +1736,25 @@ page {
 	width: 100%;
 	margin-top: 32rpx;
 	white-space: nowrap;
+	overflow: hidden;
+	cursor: grab;
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+}
+
+.tab-scroll.is-dragging {
+	cursor: grabbing;
 }
 
 .tabs {
 	display: inline-flex;
 	align-items: center;
 	padding: 0 8rpx 0 12rpx;
+	will-change: transform;
+	user-select: none;
+	-webkit-user-select: none;
 }
 
 .tab-item {

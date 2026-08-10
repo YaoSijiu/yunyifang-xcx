@@ -166,10 +166,11 @@ page {
   }
   
   /* 针对所有可能的滚动容器 */
-  .scroll-view, .list-container, .content-wrapper, 
-  .swiper-item, .work-grid, .collection-detail, 
+  .scroll-view, .list-container, .content-wrapper,
+  .swiper-item, .work-grid, .collection-detail,
   .tab-content, .tag-tabs, .main-swiper,
-  .page, .page-container, .container {
+  .page, .page-container, .container,
+  .primary-tabs, .tab-scroll {
     overflow: auto !important;
     scrollbar-width: none !important;
     -ms-overflow-style: none !important;
@@ -188,7 +189,9 @@ page {
   .main-swiper::-webkit-scrollbar,
   .page::-webkit-scrollbar,
   .page-container::-webkit-scrollbar,
-  .container::-webkit-scrollbar {
+  .container::-webkit-scrollbar,
+  .primary-tabs::-webkit-scrollbar,
+  .tab-scroll::-webkit-scrollbar {
     display: none !important;
   }
 }
@@ -215,10 +218,11 @@ page {
   }
   
   /* 针对所有可能的滚动容器 */
-  .scroll-view, .list-container, .content-wrapper, 
-  .swiper-item, .work-grid, .collection-detail, 
+  .scroll-view, .list-container, .content-wrapper,
+  .swiper-item, .work-grid, .collection-detail,
   .tab-content, .tag-tabs, .main-swiper,
-  .page, .page-container, .container {
+  .page, .page-container, .container,
+  .primary-tabs, .tab-scroll {
     overflow: auto !important;
     scrollbar-width: none !important;
     -ms-overflow-style: none !important;
@@ -237,7 +241,9 @@ page {
   .main-swiper::-webkit-scrollbar,
   .page::-webkit-scrollbar,
   .page-container::-webkit-scrollbar,
-  .container::-webkit-scrollbar {
+  .container::-webkit-scrollbar,
+  .primary-tabs::-webkit-scrollbar,
+  .tab-scroll::-webkit-scrollbar {
     display: none !important;
   }
 }

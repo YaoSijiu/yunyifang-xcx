@@ -106,6 +106,7 @@ var render = function () {
   var g1 = _vm.form.description.length
   var g2 = _vm.selectedSkillNames.length
   var g3 = !(g2 === 0) ? _vm.selectedSkillNames.join("、") : null
+  var g4 = _vm.form.unit.length
   var l0 = _vm.__map(_vm.guarantees, function (item, __i0__) {
     var $orig = _vm.__get_orig(item)
     var m0 = _vm.isGuaranteeSelected(item)
@@ -114,10 +115,10 @@ var render = function () {
       m0: m0,
     }
   })
-  var g4 = !_vm.guaranteeLoading && _vm.guarantees.length === 0
-  var g5 = _vm.showSkillPopup ? _vm.skillTree.length : null
+  var g5 = !_vm.guaranteeLoading && _vm.guarantees.length === 0
+  var g6 = _vm.showSkillPopup ? _vm.skillTree.length : null
   var l1 =
-    _vm.showSkillPopup && g5 > 0
+    _vm.showSkillPopup && g6 > 0
       ? _vm.__map(_vm.skillTree, function (item, __i1__) {
           var $orig = _vm.__get_orig(item)
           var m1 = _vm.getSelectedChildCount(item)
@@ -130,19 +131,19 @@ var render = function () {
         })
       : null
   var l2 =
-    _vm.showSkillPopup && g5 > 0
+    _vm.showSkillPopup && g6 > 0
       ? _vm.__map(_vm.activeSkillChildren, function (item, __i2__) {
           var $orig = _vm.__get_orig(item)
-          var g6 = _vm.selectedSkillIds.includes(String(item.id))
           var g7 = _vm.selectedSkillIds.includes(String(item.id))
+          var g8 = _vm.selectedSkillIds.includes(String(item.id))
           return {
             $orig: $orig,
-            g6: g6,
             g7: g7,
+            g8: g8,
           }
         })
       : null
-  var g8 = _vm.showSkillPopup
+  var g9 = _vm.showSkillPopup
     ? !_vm.skillLoading && _vm.skillOptions.length === 0
     : null
   _vm.$mp.data = Object.assign(
@@ -153,12 +154,13 @@ var render = function () {
         g1: g1,
         g2: g2,
         g3: g3,
-        l0: l0,
         g4: g4,
+        l0: l0,
         g5: g5,
+        g6: g6,
         l1: l1,
         l2: l2,
-        g8: g8,
+        g9: g9,
       },
     }
   )
@@ -225,7 +227,7 @@ var _default = {
         description: '',
         requirement: '',
         price: '',
-        unit: '次'
+        unit: ''
       },
       unitOptions: ['次', '张', '套', '份', '小时', '天'],
       skillTree: [],

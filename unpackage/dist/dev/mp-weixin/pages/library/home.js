@@ -358,6 +358,13 @@ var _env = _interopRequireDefault(__webpack_require__(/*! @/config/env.js */ 39)
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 var DEFAULT_PRICE_OPTION = {
   label: '价格区间',
@@ -381,6 +388,11 @@ var PRICE_OPTIONS = [DEFAULT_PRICE_OPTION, {
   minPrice: '1000',
   maxPrice: ''
 }];
+var ALL_REGION_OPTION = {
+  id: '',
+  name: '全部',
+  children: []
+};
 var _default = {
   data: function data() {
     return {
@@ -402,6 +414,7 @@ var _default = {
       areaLoading: false,
       selectedRegionId: '',
       selectedRegionText: '',
+      selectedRegionPath: [],
       priceOptions: PRICE_OPTIONS,
       selectedPriceIndex: 0,
       primaryTabs: [{
@@ -427,13 +440,24 @@ var _default = {
         label: '价格区间',
         key: 'price'
       }],
-      visibleCards: []
+      visibleCards: [],
+      translateX: 0,
+      isDragging: false,
+      dragStartX: 0,
+      dragStartTranslate: 0,
+      maxScroll: 0,
+      hasDragged: false,
+      preventClick: false
     };
   },
   computed: {
     selectedPriceLabel: function selectedPriceLabel() {
       var option = this.priceOptions[this.selectedPriceIndex];
       return option ? option.label : DEFAULT_PRICE_OPTION.label;
+    },
+    emptyStateText: function emptyStateText() {
+      var activeTab = this.primaryTabs[this.activePrimaryTab];
+      return activeTab && activeTab.type === 'follow' ? '暂无关注' : '暂无橱窗';
     }
   },
   created: function created() {
@@ -506,6 +530,7 @@ var _default = {
       }))();
     },
     switchPrimaryTab: function switchPrimaryTab(index) {
+      if (this.preventClick) return;
       this.activePrimaryTab = index;
       this.resetCards();
     },
@@ -531,12 +556,60 @@ var _default = {
                 _context2.t0 = _context2["catch"](0);
                 _this2.primaryTabs = _this2.buildPrimaryTabs([]);
               case 11:
+                _context2.prev = 11;
+                _this2.$nextTick(function () {
+                  _this2.updateScrollBounds();
+                });
+                return _context2.finish(11);
+              case 14:
               case "end":
                 return _context2.stop();
             }
           }
-        }, _callee2, null, [[0, 8]]);
+        }, _callee2, null, [[0, 8, 11, 14]]);
       }))();
+    },
+    updateScrollBounds: function updateScrollBounds() {
+      var _this3 = this;
+      var query = uni.createSelectorQuery().in(this);
+      query.select('.primary-tabs').boundingClientRect();
+      query.select('.primary-tabs-track').boundingClientRect();
+      query.exec(function (res) {
+        if (res && res[0] && res[1]) {
+          _this3.maxScroll = Math.max(0, res[1].width - res[0].width);
+          if (_this3.translateX < -_this3.maxScroll) {
+            _this3.translateX = -_this3.maxScroll;
+          }
+        }
+      });
+    },
+    onDragStart: function onDragStart(e) {
+      this.isDragging = true;
+      this.hasDragged = false;
+      var point = e.touches && e.touches[0] ? e.touches[0] : e;
+      this.dragStartX = point.clientX || 0;
+      this.dragStartTranslate = this.translateX;
+    },
+    onDragMove: function onDragMove(e) {
+      if (!this.isDragging) return;
+      var point = e.touches && e.touches[0] ? e.touches[0] : e;
+      var delta = (point.clientX || 0) - this.dragStartX;
+      if (Math.abs(delta) > 5) {
+        this.hasDragged = true;
+      }
+      var newX = this.dragStartTranslate + delta;
+      newX = Math.max(-this.maxScroll, Math.min(0, newX));
+      this.translateX = newX;
+    },
+    onDragEnd: function onDragEnd() {
+      var _this4 = this;
+      this.isDragging = false;
+      if (this.hasDragged) {
+        this.preventClick = true;
+        setTimeout(function () {
+          _this4.preventClick = false;
+        }, 100);
+      }
     },
     extractTaskTypeTags: function extractTaskTypeTags(res) {
       if (Array.isArray(res)) {
@@ -561,7 +634,7 @@ var _default = {
       return [];
     },
     buildPrimaryTabs: function buildPrimaryTabs(tags) {
-      var _this3 = this;
+      var _this5 = this;
       var fixedTabs = [{
         label: '关注',
         key: 'fixed_follow',
@@ -573,8 +646,8 @@ var _default = {
       }];
       var seenKeys = {};
       var dynamicTabs = (tags || []).reduce(function (result, item) {
-        var categoryName = _this3.resolveProfessionCategoryName(item);
-        var categoryKey = _this3.resolveProfessionCategoryKey(item);
+        var categoryName = _this5.resolveProfessionCategoryName(item);
+        var categoryKey = _this5.resolveProfessionCategoryKey(item);
         if (!categoryName || !categoryKey || seenKeys[categoryKey]) {
           return result;
         }
@@ -582,7 +655,7 @@ var _default = {
         result.push({
           label: categoryName,
           key: "category_".concat(categoryKey),
-          professionCategoryId: _this3.resolveProfessionCategoryId(item),
+          professionCategoryId: _this5.resolveProfessionCategoryId(item),
           categoryCode: item && item.categoryCode ? String(item.categoryCode) : ''
         });
         return result;
@@ -626,40 +699,40 @@ var _default = {
       this.resetCards();
     },
     loadAreaTree: function loadAreaTree() {
-      var _this4 = this;
+      var _this6 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee3() {
         var res, tree;
         return _regenerator.default.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                if (!_this4.areaLoading) {
+                if (!_this6.areaLoading) {
                   _context3.next = 2;
                   break;
                 }
                 return _context3.abrupt("return");
               case 2:
-                _this4.areaLoading = true;
+                _this6.areaLoading = true;
                 _context3.prev = 3;
                 _context3.next = 6;
                 return _request.default.get('/wechat/basic/areaTree');
               case 6:
                 res = _context3.sent;
-                tree = _this4.normalizeAreas(res && res.data ? res.data : res);
-                _this4.areaTree = tree;
-                _this4.areaIndexes = [0, 0, 0];
-                _this4.updateAreaColumns(_this4.areaIndexes);
+                tree = _this6.normalizeAreas(res && res.data ? res.data : res);
+                _this6.areaTree = tree;
+                _this6.areaIndexes = [0, 0, 0];
+                _this6.updateAreaColumns(_this6.areaIndexes);
                 _context3.next = 18;
                 break;
               case 13:
                 _context3.prev = 13;
                 _context3.t0 = _context3["catch"](3);
-                _this4.areaTree = [];
-                _this4.areaColumns = [[], [], []];
-                _this4.areaIndexes = [0, 0, 0];
+                _this6.areaTree = [];
+                _this6.areaColumns = [[], [], []];
+                _this6.areaIndexes = [0, 0, 0];
               case 18:
                 _context3.prev = 18;
-                _this4.areaLoading = false;
+                _this6.areaLoading = false;
                 return _context3.finish(18);
               case 21:
               case "end":
@@ -670,12 +743,12 @@ var _default = {
       }))();
     },
     normalizeAreas: function normalizeAreas(list) {
-      var _this5 = this;
+      var _this7 = this;
       return (Array.isArray(list) ? list : []).map(function (item) {
         return {
           id: item.id || item.regionId || item.value || '',
           name: item.name || item.regionName || item.label || '',
-          children: _this5.normalizeAreas(item.children || item.childList || item.child || [])
+          children: _this7.normalizeAreas(item.children || item.childList || item.child || [])
         };
       }).filter(function (item) {
         return item.id || item.name;
@@ -705,35 +778,41 @@ var _default = {
       var provinceIndex = indexes[0] || 0;
       var cityIndex = indexes[1] || 0;
       var provinces = this.areaTree;
-      var cities = provinces[provinceIndex] && provinces[provinceIndex].children && provinces[provinceIndex].children.length ? provinces[provinceIndex].children : [];
-      var areas = cities[cityIndex] && cities[cityIndex].children && cities[cityIndex].children.length ? cities[cityIndex].children : [];
-      this.areaColumns = [provinces, cities, areas];
+      var realProvince = provinceIndex > 0 ? provinces[provinceIndex - 1] : null;
+      var cities = realProvince && realProvince.children && realProvince.children.length ? realProvince.children : [];
+      var realCity = realProvince && cityIndex > 0 ? cities[cityIndex - 1] : null;
+      var areas = realCity && realCity.children && realCity.children.length ? realCity.children : [];
+      this.areaColumns = [provinces.length ? [ALL_REGION_OPTION].concat(provinces) : [], cities.length ? [ALL_REGION_OPTION].concat(cities) : [], areas.length ? [ALL_REGION_OPTION].concat(areas) : []];
     },
     onAreaChange: function onAreaChange(event) {
       var indexes = event && event.detail && Array.isArray(event.detail.value) ? event.detail.value : this.areaIndexes;
       this.areaIndexes = indexes;
       this.updateAreaColumns(indexes);
       var path = this.getSelectedRegionPath(indexes);
-      var selected = path[path.length - 1];
-      if (!selected || !selected.id) {
-        uni.showToast({
-          title: '请选择地区',
-          icon: 'none'
-        });
-        return;
-      }
-      this.selectedRegionId = String(selected.id);
-      this.selectedRegionText = path.map(function (item) {
-        return item.name;
-      }).filter(Boolean).join('');
-      this.activeSecondaryTab = this.secondaryTabs.findIndex(function (item) {
+      var locationIndex = this.secondaryTabs.findIndex(function (item) {
         return item.key === 'location';
       });
+      this.selectedRegionPath = path;
+      if (path.length === 0) {
+        this.selectedRegionId = '';
+        this.selectedRegionText = '';
+        if (this.activeSecondaryTab === locationIndex) {
+          this.activeSecondaryTab = 0;
+        }
+      } else {
+        var selected = path[path.length - 1];
+        this.selectedRegionId = String(selected.id);
+        this.selectedRegionText = path.map(function (item) {
+          return item.name;
+        }).filter(Boolean).join('');
+        this.activeSecondaryTab = locationIndex;
+      }
       this.resetCards();
     },
     clearRegionFilter: function clearRegionFilter() {
       this.selectedRegionId = '';
       this.selectedRegionText = '';
+      this.selectedRegionPath = [];
       this.areaIndexes = [0, 0, 0];
       this.updateAreaColumns(this.areaIndexes);
       var locationIndex = this.secondaryTabs.findIndex(function (item) {
@@ -745,10 +824,34 @@ var _default = {
       this.resetCards();
     },
     getSelectedRegionPath: function getSelectedRegionPath(indexes) {
-      var province = this.areaColumns[0][indexes[0] || 0];
-      var city = this.areaColumns[1][indexes[1] || 0];
-      var area = this.areaColumns[2][indexes[2] || 0];
-      return [province, city, area].filter(Boolean);
+      var provinceIndex = indexes[0] || 0;
+      var cityIndex = indexes[1] || 0;
+      var areaIndex = indexes[2] || 0;
+      if (provinceIndex === 0) {
+        return [];
+      }
+      var provinces = this.areaTree;
+      var province = provinces[provinceIndex - 1];
+      if (!province) {
+        return [];
+      }
+      if (cityIndex === 0) {
+        return [province];
+      }
+      var cities = province.children || [];
+      var city = cities[cityIndex - 1];
+      if (!city) {
+        return [province];
+      }
+      if (areaIndex === 0) {
+        return [province, city];
+      }
+      var areas = city.children || [];
+      var area = areas[areaIndex - 1];
+      if (!area) {
+        return [province, city];
+      }
+      return [province, city, area];
     },
     onPriceChange: function onPriceChange(event) {
       this.selectedPriceIndex = Number(event.detail.value) || 0;
@@ -770,21 +873,21 @@ var _default = {
       this.fetchShowcaseList(this.pageNo + 1, false);
     },
     fetchShowcaseList: function fetchShowcaseList(pageNo, isRefresh) {
-      var _this6 = this;
+      var _this8 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee4() {
         var requestSeq, res, rows, cards;
         return _regenerator.default.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                requestSeq = ++_this6.requestSeq;
-                _this6.loading = true;
+                requestSeq = ++_this8.requestSeq;
+                _this8.loading = true;
                 _context4.prev = 2;
                 _context4.next = 5;
-                return _request.default.get('/wechat/homePage/showCase/list', _this6.buildQueryParams(pageNo));
+                return _request.default.get('/wechat/homePage/showCase/list', _this8.buildQueryParams(pageNo));
               case 5:
                 res = _context4.sent;
-                if (!(requestSeq !== _this6.requestSeq)) {
+                if (!(requestSeq !== _this8.requestSeq)) {
                   _context4.next = 8;
                   break;
                 }
@@ -792,24 +895,24 @@ var _default = {
               case 8:
                 rows = Array.isArray(res.rows) ? res.rows : [];
                 cards = rows.map(function (item) {
-                  return _this6.normalizeShowcaseCard(item);
+                  return _this8.normalizeShowcaseCard(item);
                 });
-                _this6.total = Number(res.total) || 0;
-                _this6.pageNo = pageNo;
-                _this6.visibleCards = isRefresh ? cards : _this6.visibleCards.concat(cards);
-                _this6.finished = rows.length < _this6.pageSize || _this6.visibleCards.length >= _this6.total;
+                _this8.total = Number(res.total) || 0;
+                _this8.pageNo = pageNo;
+                _this8.visibleCards = isRefresh ? cards : _this8.visibleCards.concat(cards);
+                _this8.finished = rows.length < _this8.pageSize || _this8.visibleCards.length >= _this8.total;
                 _context4.next = 19;
                 break;
               case 16:
                 _context4.prev = 16;
                 _context4.t0 = _context4["catch"](2);
-                if (requestSeq === _this6.requestSeq) {
-                  _this6.finished = isRefresh;
+                if (requestSeq === _this8.requestSeq) {
+                  _this8.finished = isRefresh;
                 }
               case 19:
                 _context4.prev = 19;
-                if (requestSeq === _this6.requestSeq) {
-                  _this6.loading = false;
+                if (requestSeq === _this8.requestSeq) {
+                  _this8.loading = false;
                 }
                 return _context4.finish(19);
               case 22:
@@ -888,13 +991,13 @@ var _default = {
       this.resetCards();
     },
     handleSearchInput: function handleSearchInput(event) {
-      var _this7 = this;
+      var _this9 = this;
       this.searchKeyword = event.detail.value;
       if (this.searchTimer) {
         clearTimeout(this.searchTimer);
       }
       this.searchTimer = setTimeout(function () {
-        _this7.resetCards();
+        _this9.resetCards();
       }, 300);
     },
     previewCard: function previewCard(card) {

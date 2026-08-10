@@ -58,17 +58,14 @@
 .tag-tabs.data-v-6934f5d0 {
   flex: 1;
   white-space: nowrap;
-  overflow-x: auto;
-  overflow-y: hidden;
-}
-.tag-tabs.data-v-6934f5d0::-webkit-scrollbar {
-  display: none !important;
+  overflow: hidden;
 }
 .tab-content.data-v-6934f5d0 {
   display: inline-block;
   margin-right: 40rpx;
   padding-bottom: 10rpx;
   position: relative;
+  will-change: transform;
 }
 /* 移除重复的滚动条样式 */
 /* 工作网格区域 */

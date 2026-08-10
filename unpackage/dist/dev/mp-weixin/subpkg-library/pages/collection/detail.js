@@ -503,6 +503,8 @@ var _env = _interopRequireDefault(__webpack_require__(/*! @/config/env.js */ 39)
 //
 //
 //
+//
+//
 var _default = {
   // 团队操作权限常量
   TEAM_OPERATE_ROLES: {
@@ -538,12 +540,14 @@ var _default = {
       // 是否为团队模式
       isShareAccess: false,
       collectId: null,
-      scrollToId: '',
-      // 用于滚动到指定标签
       // 鼠标拖拽相关
       isDragging: false,
-      startX: 0,
-      scrollLeft: 0,
+      dragStartX: 0,
+      dragStartTranslate: 0,
+      translateX: 0,
+      maxScroll: 0,
+      hasDragged: false,
+      preventClick: false,
       works: [{
         id: 1,
         title: '植物书包装设计',
@@ -803,6 +807,9 @@ var _default = {
                     title: collectionName
                   });
                   _this2.tagsNum = tagsNum;
+                  _this2.$nextTick(function () {
+                    _this2.updateScrollBounds();
+                  });
                   _this2.userInfo = {
                     nickName: data['nickName'],
                     avatarUrl: data['avatarUrl'],
@@ -882,17 +889,10 @@ var _default = {
     },
     // 切换标签
     switchTag: function switchTag(tag, index) {
-      var _this3 = this;
+      if (this.preventClick) return;
       if (this.currentTag === tag) return;
       this.currentTag = tag;
       this.currentTagIndex = index;
-      // 当切换到第一个标签或第三个及以后的标签时，执行标签栏的滚动操作
-      if (index <= 2 || index >= 2) {
-        // 滚动到对应的标签
-        this.$nextTick(function () {
-          _this3.scrollToId = 'tab_' + index;
-        });
-      }
     },
     // 根据标签获取作品
     getWorksByTag: function getWorksByTag(tag) {
@@ -947,21 +947,21 @@ var _default = {
       this.closeCollectionPopup();
     },
     handleEditCollection: function handleEditCollection() {
-      var _this4 = this;
+      var _this3 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee2() {
         var ok;
         return _regenerator.default.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _this4.closeCollectionPopup();
-                if (_this4.collectId) {
+                _this3.closeCollectionPopup();
+                if (_this3.collectId) {
                   _context2.next = 3;
                   break;
                 }
                 return _context2.abrupt("return");
               case 3:
-                if (_this4.isOwner) {
+                if (_this3.isOwner) {
                   _context2.next = 6;
                   break;
                 }
@@ -971,12 +971,12 @@ var _default = {
                 });
                 return _context2.abrupt("return");
               case 6:
-                if (!_this4.isTeamMode) {
+                if (!_this3.isTeamMode) {
                   _context2.next = 12;
                   break;
                 }
                 _context2.next = 9;
-                return _this4.checkTeamPermissions(_this4.$options.TEAM_OPERATE_ROLES.MANAGE_COLLECTIONS);
+                return _this3.checkTeamPermissions(_this3.$options.TEAM_OPERATE_ROLES.MANAGE_COLLECTIONS);
               case 9:
                 ok = _context2.sent;
                 if (ok) {
@@ -986,7 +986,7 @@ var _default = {
                 return _context2.abrupt("return");
               case 12:
                 uni.navigateTo({
-                  url: "/subpkg-library/pages/collection/create?id=".concat(_this4.collectId, "&title=").concat(encodeURIComponent(_this4.title || ''), "&workType=").concat(_this4.isTeamMode ? 1 : 0)
+                  url: "/subpkg-library/pages/collection/create?id=".concat(_this3.collectId, "&title=").concat(encodeURIComponent(_this3.title || ''), "&workType=").concat(_this3.isTeamMode ? 1 : 0)
                 });
               case 13:
               case "end":
@@ -1002,21 +1002,21 @@ var _default = {
       this.downloadWorks('collection', this.collectId);
     },
     handleDeleteCollection: function handleDeleteCollection() {
-      var _this5 = this;
+      var _this4 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee4() {
         var ok;
         return _regenerator.default.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                _this5.closeCollectionPopup();
-                if (_this5.collectId) {
+                _this4.closeCollectionPopup();
+                if (_this4.collectId) {
                   _context4.next = 3;
                   break;
                 }
                 return _context4.abrupt("return");
               case 3:
-                if (_this5.isOwner) {
+                if (_this4.isOwner) {
                   _context4.next = 6;
                   break;
                 }
@@ -1026,12 +1026,12 @@ var _default = {
                 });
                 return _context4.abrupt("return");
               case 6:
-                if (!_this5.isTeamMode) {
+                if (!_this4.isTeamMode) {
                   _context4.next = 12;
                   break;
                 }
                 _context4.next = 9;
-                return _this5.checkTeamPermissions(_this5.$options.TEAM_OPERATE_ROLES.MANAGE_COLLECTIONS);
+                return _this4.checkTeamPermissions(_this4.$options.TEAM_OPERATE_ROLES.MANAGE_COLLECTIONS);
               case 9:
                 ok = _context4.sent;
                 if (ok) {
@@ -1058,7 +1058,7 @@ var _default = {
                             case 2:
                               _context3.prev = 2;
                               _context3.next = 5;
-                              return _this5.$request.delete("/wechat/works/deleteWorkCollections/".concat(_this5.collectId));
+                              return _this4.$request.delete("/wechat/works/deleteWorkCollections/".concat(_this4.collectId));
                             case 5:
                               res = _context3.sent;
                               if (res.code == 200) {
@@ -1104,7 +1104,7 @@ var _default = {
     },
     // 编辑作品
     handleEditWork: function handleEditWork() {
-      var _this6 = this;
+      var _this5 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee5() {
         var ok;
         return _regenerator.default.wrap(function _callee5$(_context5) {
@@ -1112,20 +1112,20 @@ var _default = {
             switch (_context5.prev = _context5.next) {
               case 0:
                 console.log('点击编辑作品');
-                if (_this6.currentWorkItem) {
+                if (_this5.currentWorkItem) {
                   _context5.next = 3;
                   break;
                 }
                 return _context5.abrupt("return");
               case 3:
-                _this6.closeWorkPopup();
+                _this5.closeWorkPopup();
                 // 团队模式下检查权限
-                if (!_this6.isTeamMode) {
+                if (!_this5.isTeamMode) {
                   _context5.next = 10;
                   break;
                 }
                 _context5.next = 7;
-                return _this6.checkTeamPermissions(_this6.$options.TEAM_OPERATE_ROLES.MANAGE_WORKS);
+                return _this5.checkTeamPermissions(_this5.$options.TEAM_OPERATE_ROLES.MANAGE_WORKS);
               case 7:
                 ok = _context5.sent;
                 if (ok) {
@@ -1135,7 +1135,7 @@ var _default = {
                 return _context5.abrupt("return");
               case 10:
                 uni.navigateTo({
-                  url: "/subpkg-library/pages/works/create?id=".concat(_this6.currentWorkItem.id, "&title=").concat(_this6.currentWorkItem.title, "&workType=").concat(_this6.isTeamMode ? 1 : 0)
+                  url: "/subpkg-library/pages/works/create?id=".concat(_this5.currentWorkItem.id, "&title=").concat(_this5.currentWorkItem.title, "&workType=").concat(_this5.isTeamMode ? 1 : 0)
                 });
               case 11:
               case "end":
@@ -1146,27 +1146,27 @@ var _default = {
       }))();
     },
     handleVisableWork: function handleVisableWork() {
-      var _this7 = this;
+      var _this6 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee6() {
         var ok, newIsHide, actionText, confirmText;
         return _regenerator.default.wrap(function _callee6$(_context6) {
           while (1) {
             switch (_context6.prev = _context6.next) {
               case 0:
-                if (_this7.currentWorkItem) {
+                if (_this6.currentWorkItem) {
                   _context6.next = 2;
                   break;
                 }
                 return _context6.abrupt("return");
               case 2:
-                _this7.closeWorkPopup();
+                _this6.closeWorkPopup();
                 // 团队模式下检查权限
-                if (!_this7.isTeamMode) {
+                if (!_this6.isTeamMode) {
                   _context6.next = 9;
                   break;
                 }
                 _context6.next = 6;
-                return _this7.checkTeamPermissions(_this7.$options.TEAM_OPERATE_ROLES.MANAGE_WORKS);
+                return _this6.checkTeamPermissions(_this6.$options.TEAM_OPERATE_ROLES.MANAGE_WORKS);
               case 6:
                 ok = _context6.sent;
                 if (ok) {
@@ -1175,7 +1175,7 @@ var _default = {
                 }
                 return _context6.abrupt("return");
               case 9:
-                newIsHide = _this7.currentWorkItem.hide === '1' ? '0' : '1';
+                newIsHide = _this6.currentWorkItem.hide === '1' ? '0' : '1';
                 actionText = newIsHide === '1' ? '设为仅自己可见' : '设为公开';
                 confirmText = newIsHide === '1' ? '设为仅自己可见' : '设为公开';
                 uni.showModal({
@@ -1184,17 +1184,17 @@ var _default = {
                   success: function success(modalRes) {
                     if (modalRes.confirm) {
                       var params = {
-                        worksId: _this7.currentWorkItem.id,
+                        worksId: _this6.currentWorkItem.id,
                         isHide: newIsHide //0:否 1:是
                       };
 
-                      _this7.$request.put("/wechat/works/setWorkHide", params).then(function (res) {
+                      _this6.$request.put("/wechat/works/setWorkHide", params).then(function (res) {
                         if (res.code == 200) {
                           uni.showToast({
                             title: '设置成功',
                             icon: 'none'
                           });
-                          _this7.getCollectionsInfo(_this7.collectId);
+                          _this6.getCollectionsInfo(_this6.collectId);
                         }
                       });
                     }
@@ -1209,27 +1209,27 @@ var _default = {
       }))();
     },
     handleToggleWorkTop: function handleToggleWorkTop() {
-      var _this8 = this;
+      var _this7 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee7() {
         var ok, newIsTop, params, res;
         return _regenerator.default.wrap(function _callee7$(_context7) {
           while (1) {
             switch (_context7.prev = _context7.next) {
               case 0:
-                if (!(!_this8.currentWorkItem || !_this8.collectId)) {
+                if (!(!_this7.currentWorkItem || !_this7.collectId)) {
                   _context7.next = 2;
                   break;
                 }
                 return _context7.abrupt("return");
               case 2:
-                _this8.closeWorkPopup();
+                _this7.closeWorkPopup();
                 // 团队模式下检查权限
-                if (!_this8.isTeamMode) {
+                if (!_this7.isTeamMode) {
                   _context7.next = 9;
                   break;
                 }
                 _context7.next = 6;
-                return _this8.checkTeamPermissions(_this8.$options.TEAM_OPERATE_ROLES.MANAGE_WORKS);
+                return _this7.checkTeamPermissions(_this7.$options.TEAM_OPERATE_ROLES.MANAGE_WORKS);
               case 6:
                 ok = _context7.sent;
                 if (ok) {
@@ -1238,16 +1238,16 @@ var _default = {
                 }
                 return _context7.abrupt("return");
               case 9:
-                newIsTop = _this8.currentWorkItem.isTop == 1 ? 0 : 1;
+                newIsTop = _this7.currentWorkItem.isTop == 1 ? 0 : 1;
                 _context7.prev = 10;
                 params = {
-                  collectionId: _this8.collectId,
-                  workId: _this8.currentWorkItem.id,
+                  collectionId: _this7.collectId,
+                  workId: _this7.currentWorkItem.id,
                   isTop: newIsTop,
                   sort: 1
                 };
                 _context7.next = 14;
-                return _this8.$request.put('/wechat/works/setCollectionWorkTop', params);
+                return _this7.$request.put('/wechat/works/setCollectionWorkTop', params);
               case 14:
                 res = _context7.sent;
                 if (res.code == 200) {
@@ -1255,7 +1255,7 @@ var _default = {
                     title: newIsTop === 1 ? '置顶成功' : '取消置顶成功',
                     icon: 'success'
                   });
-                  _this8.getCollectionsInfo(_this8.collectId);
+                  _this7.getCollectionsInfo(_this7.collectId);
                 }
                 _context7.next = 22;
                 break;
@@ -1277,27 +1277,27 @@ var _default = {
     },
     // 删除作品
     handleDeleteWork: function handleDeleteWork() {
-      var _this9 = this;
+      var _this8 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee9() {
         var ok;
         return _regenerator.default.wrap(function _callee9$(_context9) {
           while (1) {
             switch (_context9.prev = _context9.next) {
               case 0:
-                if (_this9.currentWorkItem) {
+                if (_this8.currentWorkItem) {
                   _context9.next = 2;
                   break;
                 }
                 return _context9.abrupt("return");
               case 2:
-                _this9.closeWorkPopup();
+                _this8.closeWorkPopup();
                 // 团队模式下检查权限
-                if (!_this9.isTeamMode) {
+                if (!_this8.isTeamMode) {
                   _context9.next = 9;
                   break;
                 }
                 _context9.next = 6;
-                return _this9.checkTeamPermissions(_this9.$options.TEAM_OPERATE_ROLES.MANAGE_WORKS);
+                return _this8.checkTeamPermissions(_this8.$options.TEAM_OPERATE_ROLES.MANAGE_WORKS);
               case 6:
                 ok = _context9.sent;
                 if (ok) {
@@ -1322,20 +1322,20 @@ var _default = {
                               }
                               _context8.prev = 1;
                               _context8.next = 4;
-                              return _this9.$request.delete("/wechat/works/deleteWork/".concat(_this9.currentWorkItem.id));
+                              return _this8.$request.delete("/wechat/works/deleteWork/".concat(_this8.currentWorkItem.id));
                             case 4:
                               res = _context8.sent;
                               if (res.code == 200) {
                                 // 从本地列表中删除
-                                index = _this9.works.findIndex(function (work) {
-                                  return work.id === _this9.currentWorkItem.id;
+                                index = _this8.works.findIndex(function (work) {
+                                  return work.id === _this8.currentWorkItem.id;
                                 });
                                 if (index !== -1) {
-                                  _this9.works.splice(index, 1);
+                                  _this8.works.splice(index, 1);
                                 }
 
                                 // 更新标签列表
-                                _this9.updateTagsAfterDeletion();
+                                _this8.updateTagsAfterDeletion();
                                 uni.showToast({
                                   title: '删除成功',
                                   icon: 'success'
@@ -1406,7 +1406,7 @@ var _default = {
     },
     // 处理压缩包下载
     downloadZip: function downloadZip(resourceType, id) {
-      var _this10 = this;
+      var _this9 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee10() {
         var userInfo, isTeam, res;
         return _regenerator.default.wrap(function _callee10$(_context10) {
@@ -1420,7 +1420,7 @@ var _default = {
                   mask: true
                 });
                 _context10.next = 5;
-                return _this10.$request.post('/wechat/basic/downLoadWorksPc', {
+                return _this9.$request.post('/wechat/basic/downLoadWorksPc', {
                   id: id,
                   resourceType: resourceType,
                   userName: userInfo.nickName || '',
@@ -1474,7 +1474,7 @@ var _default = {
       }))();
     },
     downloadWorks: function downloadWorks(resourceType, id) {
-      var _this11 = this;
+      var _this10 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee11() {
         var isPC, isLoggedIn, userInfo, isTeam, res;
         return _regenerator.default.wrap(function _callee11$(_context11) {
@@ -1482,14 +1482,14 @@ var _default = {
             switch (_context11.prev = _context11.next) {
               case 0:
                 // 检查是否是电脑端且已登录
-                isPC = _this11.isPC();
-                isLoggedIn = _this11.isLoggedIn();
+                isPC = _this10.isPC();
+                isLoggedIn = _this10.isLoggedIn();
                 if (!(isPC && isLoggedIn)) {
                   _context11.next = 6;
                   break;
                 }
                 // 电脑端且已登录，使用压缩包下载
-                _this11.downloadZip(resourceType, id);
+                _this10.downloadZip(resourceType, id);
                 _context11.next = 21;
                 break;
               case 6:
@@ -1502,7 +1502,7 @@ var _default = {
                 });
                 _context11.prev = 9;
                 _context11.next = 12;
-                return _this11.$request.post('/wechat/basic/downLoadWorks', {
+                return _this10.$request.post('/wechat/basic/downLoadWorks', {
                   id: id,
                   resourceType: resourceType,
                   userName: userInfo.nickName || '',
@@ -1512,7 +1512,7 @@ var _default = {
                 res = _context11.sent;
                 if (res.code === 200 && res.data && res.data.length > 0) {
                   uni.hideLoading();
-                  _this11.downloadFiles(res.data);
+                  _this10.downloadFiles(res.data);
                 } else {
                   uni.hideLoading();
                   uni.showToast({
@@ -1540,15 +1540,15 @@ var _default = {
       }))();
     },
     downloadFiles: function downloadFiles(filePaths) {
-      var _this12 = this;
+      var _this11 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee12() {
         var totalFiles, downloadedFiles, savedFiles, _loop, i, toastMessage;
         return _regenerator.default.wrap(function _callee12$(_context13) {
           while (1) {
             switch (_context13.prev = _context13.next) {
               case 0:
-                _this12.progress = 0;
-                _this12.stageText = '准备下载...';
+                _this11.progress = 0;
+                _this11.stageText = '准备下载...';
                 totalFiles = filePaths.length;
                 downloadedFiles = 0;
                 savedFiles = 0;
@@ -1559,10 +1559,10 @@ var _default = {
                       switch (_context12.prev = _context12.next) {
                         case 0:
                           filePath = filePaths[i];
-                          fullUrl = _this12.ossUrl + filePath;
-                          fileType = _this12.getFileType(filePath);
+                          fullUrl = _this11.ossUrl + filePath;
+                          fileType = _this11.getFileType(filePath);
                           _context12.prev = 3;
-                          _this12.stageText = "\u4E0B\u8F7D\u4E2D (".concat(i + 1, "/").concat(totalFiles, ")");
+                          _this11.stageText = "\u4E0B\u8F7D\u4E2D (".concat(i + 1, "/").concat(totalFiles, ")");
                           _context12.next = 7;
                           return new Promise(function (resolve, reject) {
                             uni.downloadFile({
@@ -1594,7 +1594,7 @@ var _default = {
                             break;
                           }
                           _context12.next = 14;
-                          return _this12.saveImageToAlbum(tempFilePath);
+                          return _this11.saveImageToAlbum(tempFilePath);
                         case 14:
                           _context12.next = 19;
                           break;
@@ -1604,7 +1604,7 @@ var _default = {
                             break;
                           }
                           _context12.next = 19;
-                          return _this12.saveVideoToAlbum(tempFilePath);
+                          return _this11.saveVideoToAlbum(tempFilePath);
                         case 19:
                           savedFiles++;
                           _context12.next = 25;
@@ -1615,7 +1615,7 @@ var _default = {
                           console.error("\u4FDD\u5B58\u6587\u4EF6\u5931\u8D25 ".concat(filePath, ":"), _context12.t0);
                           // 继续处理其他文件
                         case 25:
-                          _this12.progress = Math.round(downloadedFiles / totalFiles * 100);
+                          _this11.progress = Math.round(downloadedFiles / totalFiles * 100);
                           _context12.next = 31;
                           break;
                         case 28:
@@ -1642,8 +1642,8 @@ var _default = {
                 _context13.next = 7;
                 break;
               case 12:
-                _this12.stageText = '下载完成';
-                _this12.progress = 100;
+                _this11.stageText = '下载完成';
+                _this11.progress = 100;
                 toastMessage = "\u6210\u529F\u4E0B\u8F7D ".concat(downloadedFiles, " \u4E2A\u6587\u4EF6");
                 if (savedFiles > 0) {
                   toastMessage += "\uFF0C\u5176\u4E2D ".concat(savedFiles, " \u4E2A\u5DF2\u4FDD\u5B58\u5230\u76F8\u518C");
@@ -1655,8 +1655,8 @@ var _default = {
 
                 // 3秒后重置进度条
                 setTimeout(function () {
-                  _this12.progress = 0;
-                  _this12.stageText = '';
+                  _this11.progress = 0;
+                  _this11.stageText = '';
                 }, 3000);
               case 18:
               case "end":
@@ -1706,7 +1706,7 @@ var _default = {
     },
     // 检查团队权限
     checkTeamPermissions: function checkTeamPermissions(role) {
-      var _this13 = this;
+      var _this12 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee13() {
         return _regenerator.default.wrap(function _callee13$(_context14) {
           while (1) {
@@ -1714,10 +1714,10 @@ var _default = {
               case 0:
                 _context14.prev = 0;
                 _context14.next = 3;
-                return _this13.$request.get('/wechat/basic/hasTeamRight');
+                return _this12.$request.get('/wechat/basic/hasTeamRight');
               case 3:
                 _context14.next = 5;
-                return _this13.$request.get('/wechat/basic/hasOperateRight', {
+                return _this12.$request.get('/wechat/basic/hasOperateRight', {
                   role: role
                 });
               case 5:
@@ -1737,26 +1737,47 @@ var _default = {
     // 鼠标按下事件
     handleMouseDown: function handleMouseDown(e) {
       this.isDragging = true;
-      this.startX = e.clientX || e.touches[0].clientX;
-      this.scrollLeft = e.currentTarget.scrollLeft;
-      // 更改鼠标样式为拖拽状态
-      e.currentTarget.style.cursor = 'grabbing';
+      this.hasDragged = false;
+      var point = e.touches && e.touches[0] ? e.touches[0] : e;
+      this.dragStartX = point.clientX || 0;
+      this.dragStartTranslate = this.translateX;
     },
     // 鼠标移动事件
     handleMouseMove: function handleMouseMove(e) {
       if (!this.isDragging) return;
-      var x = e.clientX || e.touches[0].clientX;
-      var walk = (x - this.startX) * 2; // 滚动速度
-      e.currentTarget.scrollLeft = this.scrollLeft + walk;
-      e.preventDefault(); // 防止默认行为
+      var point = e.touches && e.touches[0] ? e.touches[0] : e;
+      var delta = (point.clientX || 0) - this.dragStartX;
+      if (Math.abs(delta) > 5) {
+        this.hasDragged = true;
+      }
+      var newX = this.dragStartTranslate + delta;
+      newX = Math.max(-this.maxScroll, Math.min(0, newX));
+      this.translateX = newX;
     },
     // 鼠标释放事件
-    handleMouseUp: function handleMouseUp(e) {
+    handleMouseUp: function handleMouseUp() {
+      var _this13 = this;
       this.isDragging = false;
-      // 恢复鼠标样式
-      if (e.currentTarget) {
-        e.currentTarget.style.cursor = 'grab';
+      if (this.hasDragged) {
+        this.preventClick = true;
+        setTimeout(function () {
+          _this13.preventClick = false;
+        }, 100);
       }
+    },
+    updateScrollBounds: function updateScrollBounds() {
+      var _this14 = this;
+      var query = uni.createSelectorQuery().in(this);
+      query.select('.tag-tabs').boundingClientRect();
+      query.select('.tab-content').boundingClientRect();
+      query.exec(function (res) {
+        if (res && res[0] && res[1]) {
+          _this14.maxScroll = Math.max(0, res[1].width - res[0].width);
+          if (_this14.translateX < -_this14.maxScroll) {
+            _this14.translateX = -_this14.maxScroll;
+          }
+        }
+      });
     }
   }
 };

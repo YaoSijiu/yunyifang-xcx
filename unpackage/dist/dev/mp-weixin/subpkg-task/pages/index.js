@@ -1107,13 +1107,6 @@ var _default = {
         });
         return false;
       }
-      if (!this.form.description.trim()) {
-        uni.showToast({
-          title: '请输入需求描述',
-          icon: 'none'
-        });
-        return false;
-      }
       if (this.form.description.length > 100) {
         uni.showToast({
           title: '需求描述不能超过100个字符',

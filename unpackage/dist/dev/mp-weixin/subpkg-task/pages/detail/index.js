@@ -217,6 +217,7 @@ var _default = {
       showQuotePopup: false,
       hasQuoted: false,
       hasAccepted: false,
+      hasLockedOrder: false,
       applySubmitting: false,
       quoteSubmitting: false,
       loginPromptVisible: false,
@@ -249,12 +250,24 @@ var _default = {
       return this.isLoggedIn ? 'share' : '';
     },
     applyButtonDisabled: function applyButtonDisabled() {
-      if (this.detail.canQuote) {
-        return this.quoteSubmitting || this.hasQuoted;
+      if (this.hasLockedOrder) {
+        return true;
       }
-      return this.applySubmitting || this.hasAccepted;
+      if (this.detail.canQuote) {
+        return this.quoteSubmitting;
+      }
+      return this.applySubmitting;
+    },
+    canCancelParticipate: function canCancelParticipate() {
+      if (this.hasLockedOrder) {
+        return false;
+      }
+      return this.detail.canQuote && this.hasQuoted || !this.detail.canQuote && this.hasAccepted;
     },
     actionButtonText: function actionButtonText() {
+      if (this.hasLockedOrder) {
+        return '已接单';
+      }
       if (!this.detail.canQuote && this.applySubmitting) {
         return '提交中...';
       }
@@ -262,13 +275,13 @@ var _default = {
         return '提交中...';
       }
       if (this.detail.canQuote && this.hasQuoted) {
-        return '已报价';
+        return '取消报价';
       }
       if (this.detail.canQuote) {
         return '报价';
       }
       if (this.hasAccepted) {
-        return '已接单';
+        return '取消接单';
       }
       return '申请接单';
     }
@@ -427,6 +440,7 @@ var _default = {
       this.bidders = this.normalizeBidders(data || {});
       this.hasQuoted = this.checkHasQuoted(data && data.quoteUserList);
       this.hasAccepted = this.checkHasAccepted(data || {});
+      this.hasLockedOrder = this.checkHasLockedOrder(data || {});
       this.quoteForm.price = '';
       this.currentPoster = 0;
     },
@@ -589,7 +603,7 @@ var _default = {
     },
     formatCurrency: function formatCurrency(value) {
       if (value === '' || value === null || value === undefined) {
-        return '预算待定';
+        return '等待甲方确认';
       }
       return "\xA5 ".concat(value);
     },
@@ -698,6 +712,21 @@ var _default = {
       }
       return false;
     },
+    checkHasLockedOrder: function checkHasLockedOrder(data) {
+      var currentUserId = this.getCurrentUserId();
+      if (!currentUserId) {
+        return false;
+      }
+      var quoteList = Array.isArray(data && data.quoteUserList) ? data.quoteUserList : [];
+      return quoteList.some(function (item) {
+        var quoteUserId = item && item.quoteUserId ? String(item.quoteUserId) : '';
+        if (!quoteUserId || quoteUserId !== String(currentUserId)) {
+          return false;
+        }
+        // 报价已被选中且存在活跃订单（进行中）时，锁定为已接单，不可取消
+        return !!item.hasActiveOrder;
+      });
+    },
     goBack: function goBack() {
       if (getCurrentPages().length > 1) {
         uni.navigateBack();
@@ -717,6 +746,18 @@ var _default = {
       }
       uni.navigateTo({
         url: "/subpkg-library/pages/visitor-home?userId=".concat(encodeURIComponent(this.ownerUserId))
+      });
+    },
+    goBidderHome: function goBidderHome(item) {
+      if (!item || !item.userId) {
+        uni.showToast({
+          title: '用户信息缺失',
+          icon: 'none'
+        });
+        return;
+      }
+      uni.navigateTo({
+        url: "/subpkg-library/pages/visitor-home?userId=".concat(encodeURIComponent(item.userId))
       });
     },
     handlePosterChange: function handlePosterChange(event) {
@@ -764,14 +805,28 @@ var _default = {
                 return _context3.abrupt("return");
               case 4:
                 if (!_this6.detail.canQuote) {
-                  _context3.next = 7;
+                  _context3.next = 10;
                   break;
                 }
+                if (!_this6.hasQuoted) {
+                  _context3.next = 8;
+                  break;
+                }
+                _this6.cancelParticipate();
+                return _context3.abrupt("return");
+              case 8:
                 _this6.showQuotePopup = true;
                 return _context3.abrupt("return");
-              case 7:
+              case 10:
+                if (!_this6.hasAccepted) {
+                  _context3.next = 13;
+                  break;
+                }
+                _this6.cancelParticipate();
+                return _context3.abrupt("return");
+              case 13:
                 if (!(!_this6.taskId || !_this6.channelId)) {
-                  _context3.next = 10;
+                  _context3.next = 16;
                   break;
                 }
                 uni.showToast({
@@ -779,50 +834,50 @@ var _default = {
                   icon: 'none'
                 });
                 return _context3.abrupt("return");
-              case 10:
+              case 16:
                 _this6.applySubmitting = true;
-                _context3.prev = 11;
+                _context3.prev = 17;
                 payload = {
                   taskId: Number(_this6.taskId),
                   channelId: Number(_this6.channelId)
                 };
-                _context3.next = 15;
+                _context3.next = 21;
                 return _request.default.post('/wechat/userTask/applyReceive', payload, {
                   loading: true,
                   loadingText: '提交中...'
                 });
-              case 15:
+              case 21:
                 res = _context3.sent;
                 _this6.hasAccepted = true;
                 uni.setStorageSync('square_card_update', {
                   channelId: String(_this6.channelId)
                 });
-                _context3.next = 20;
+                _context3.next = 26;
                 return _this6.fetchDetail();
-              case 20:
+              case 26:
                 uni.showToast({
                   title: res && res.msg || '申请成功',
                   icon: 'success'
                 });
-                _context3.next = 26;
+                _context3.next = 32;
                 break;
-              case 23:
-                _context3.prev = 23;
-                _context3.t0 = _context3["catch"](11);
+              case 29:
+                _context3.prev = 29;
+                _context3.t0 = _context3["catch"](17);
                 uni.showToast({
                   title: _context3.t0 && _context3.t0.msg || '申请失败',
                   icon: 'none'
                 });
-              case 26:
-                _context3.prev = 26;
+              case 32:
+                _context3.prev = 32;
                 _this6.applySubmitting = false;
-                return _context3.finish(26);
-              case 29:
+                return _context3.finish(32);
+              case 35:
               case "end":
                 return _context3.stop();
             }
           }
-        }, _callee3, null, [[11, 23, 26, 29]]);
+        }, _callee3, null, [[17, 29, 32, 35]]);
       }))();
     },
     closeQuotePopup: function closeQuotePopup() {
@@ -919,6 +974,82 @@ var _default = {
         }, _callee4, null, [[12, 25, 28, 31]]);
       }))();
     },
+    cancelParticipate: function cancelParticipate() {
+      var _this8 = this;
+      if (!this.ensureLoggedIn()) {
+        return;
+      }
+      if (!this.taskId || !this.channelId) {
+        uni.showToast({
+          title: '任务信息缺失',
+          icon: 'none'
+        });
+        return;
+      }
+      var cancelText = this.detail.canQuote ? '取消报价' : '取消接单';
+      uni.showModal({
+        title: '提示',
+        content: "\u786E\u5B9A".concat(cancelText, "\u5417\uFF1F"),
+        confirmText: '确定',
+        cancelText: '再想想',
+        success: function () {
+          var _success = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee5(res) {
+            return _regenerator.default.wrap(function _callee5$(_context5) {
+              while (1) {
+                switch (_context5.prev = _context5.next) {
+                  case 0:
+                    if (res.confirm) {
+                      _context5.next = 2;
+                      break;
+                    }
+                    return _context5.abrupt("return");
+                  case 2:
+                    _context5.prev = 2;
+                    _context5.next = 5;
+                    return _request.default.post('/wechat/userTask/cancelQuote', {
+                      taskId: Number(_this8.taskId),
+                      channelId: Number(_this8.channelId)
+                    }, {
+                      loading: true,
+                      loadingText: '取消中...'
+                    });
+                  case 5:
+                    _this8.hasQuoted = false;
+                    _this8.hasAccepted = false;
+                    uni.setStorageSync('square_card_update', {
+                      channelId: String(_this8.channelId),
+                      cancel: true
+                    });
+                    _context5.next = 10;
+                    return _this8.fetchDetail();
+                  case 10:
+                    uni.showToast({
+                      title: '取消成功',
+                      icon: 'success'
+                    });
+                    _context5.next = 16;
+                    break;
+                  case 13:
+                    _context5.prev = 13;
+                    _context5.t0 = _context5["catch"](2);
+                    uni.showToast({
+                      title: _context5.t0 && _context5.t0.msg || '取消失败',
+                      icon: 'none'
+                    });
+                  case 16:
+                  case "end":
+                    return _context5.stop();
+                }
+              }
+            }, _callee5, null, [[2, 13]]);
+          }));
+          function success(_x) {
+            return _success.apply(this, arguments);
+          }
+          return success;
+        }()
+      });
+    },
     handleShareClick: function handleShareClick() {
       this.ensureLoggedIn();
     },
@@ -929,6 +1060,15 @@ var _default = {
       var action = this.pendingAutoAction;
       this.pendingAutoAction = '';
       if (this.loadFailed || this.isOwnTask) {
+        return;
+      }
+      if (action === 'cancel') {
+        if (!this.ensureLoggedIn()) {
+          return;
+        }
+        if (this.canCancelParticipate) {
+          this.cancelParticipate();
+        }
         return;
       }
       if (action === 'quote' && this.detail.canQuote) {

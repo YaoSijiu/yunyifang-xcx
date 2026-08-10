@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 	<view class="showcase-page">
 		<view class="page-canvas">
 				<view class="form-card">
@@ -18,17 +18,21 @@
 					<view class="field-block">
 						<view class="field-header">
 							<text class="field-title">橱窗标题</text>
+						</view>
+						<input class="plain-input" v-model="form.title" maxlength="30" placeholder="最多输入30个字符(15个汉字）" placeholder-class="placeholder-text" />
+						<view class="field-header">
 							<text class="field-count">{{ form.title.length }}/30</text>
 						</view>
-						<input class="plain-input" v-model="form.title" maxlength="30" placeholder="最多输入30个字" placeholder-class="placeholder-text" />
 					</view>
 
 					<view class="field-block.no-margin">
 						<view class="field-header">
 							<text class="field-title">商品描述</text>
+						</view>
+						<textarea class="plain-textarea" v-model="form.description" maxlength="100" placeholder="最多输入100个字符(50个汉字）" placeholder-class="placeholder-text"></textarea>
+						<view class="field-header">
 							<text class="field-count">{{ form.description.length }}/100</text>
 						</view>
-						<textarea class="plain-textarea" v-model="form.description" maxlength="100" placeholder="最多输入100个字" placeholder-class="placeholder-text"></textarea>
 					</view>
 
 					<!-- <view class="field-block no-margin">
@@ -50,26 +54,27 @@
 						</view>
 					</view>
 
-					<view class="line-field">
-						<text class="line-label">单价</text>
-						<input
-							class="line-input"
-							type="digit"
-							v-model="form.price"
-							placeholder="请输入价格"
-							placeholder-class="line-placeholder"
-						/>
-					</view>
-
 					<picker :range="unitOptions" @change="handleUnitChange">
 						<view class="line-field">
-							<text class="line-label">单位</text>
+							<text class="line-label">单价</text>
 							<view class="line-control">
-								<text class="line-value">{{ form.unit || '单位' }}</text>
+								<text class="line-placeholder" v-if="form.unit.length === 0">单价</text>
+								<text class="line-value" v-else>{{ form.unit }}</text>
 								<image class="line-arrow" src="/static/icon/xiangxia.svg" mode="aspectFit"></image>
 							</view>
 						</view>
 					</picker>
+					
+					<view class="line-field">
+						<text class="line-label">价格</text>
+						<input
+							class="line-input"
+							type="digit"
+							v-model="form.price"
+							placeholder="￥0.0"
+							placeholder-class="line-placeholder"
+						/>
+					</view>
 
 					<view class="guarantee-list">
 						<view class="guarantee-row" v-for="item in guarantees" :key="item.id">
@@ -155,7 +160,7 @@ export default {
 				description: '',
 				requirement: '',
 				price: '',
-				unit: '次'
+				unit: ''
 			},
 			unitOptions: ['次', '张', '套', '份', '小时', '天'],
 			skillTree: [],
@@ -738,6 +743,8 @@ export default {
 }
 
 .field-count {
+	position: absolute;
+	right: 55rpx;
 	font-size: 22rpx;
 	color: #999999;
 }
@@ -793,8 +800,8 @@ export default {
 .plain-input {
 	height: 86rpx;
 	font-size: 28rpx;
-	border-bottom: 1rpx solid #eeeeee;
-	color: #222222;
+	// border-bottom: 1rpx solid #eeeeee;
+	color: #D4D4D4;
 }
 
 .plain-textarea {
@@ -804,7 +811,7 @@ export default {
 	font-size: 28rpx;
 	line-height: 40rpx;
 	color: #222222;
-	border-bottom: 1rpx solid #eeeeee;
+	// border-bottom: 1rpx solid #eeeeee;
 	box-sizing: border-box;
 }
 
@@ -858,9 +865,9 @@ export default {
 .line-input {
 	flex: 1;
 	height: 68rpx;
-	border: 1rpx solid #D9D9D9;
+	// border: 1rpx solid #D9D9D9;
 	border-radius: 6rpx;
-	padding: 0 30rpx;
+	padding: 0 7rpx;
 	box-sizing: border-box;
 	font-size: 28rpx;
 	color: #333333;

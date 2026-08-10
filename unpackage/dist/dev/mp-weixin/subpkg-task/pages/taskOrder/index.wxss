@@ -16,11 +16,23 @@ page.data-v-7e43740c {
 	width: 100%;
 	margin-top: 32rpx;
 	white-space: nowrap;
+	overflow: hidden;
+	cursor: grab;
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+}
+.tab-scroll.is-dragging.data-v-7e43740c {
+	cursor: grabbing;
 }
 .tabs.data-v-7e43740c {
 	display: inline-flex;
 	align-items: center;
 	padding: 0 8rpx 0 12rpx;
+	will-change: transform;
+	user-select: none;
+	-webkit-user-select: none;
 }
 .tab-item.data-v-7e43740c {
 	position: relative;

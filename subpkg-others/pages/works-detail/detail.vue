@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 	<view>
 		<view class="container" v-if="!loading">
 

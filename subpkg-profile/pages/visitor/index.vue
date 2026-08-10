@@ -2,7 +2,15 @@
 	<view class="container">
 		<!-- 2. 分类 Tab 栏 -->
 		<view class="tab-header">
-			<scroll-view scroll-x class="tab-scroll" :show-scrollbar="false">
+			<view class="tab-scroll"
+				@mousedown="onDragStart"
+				@mousemove="onDragMove"
+				@mouseup="onDragEnd"
+				@mouseleave="onDragEnd"
+				@touchstart="onDragStart"
+				@touchmove="onDragMove"
+				@touchend="onDragEnd">
+				<view class="tabs-inner" :style="{ transform: 'translateX(' + translateX + 'px)' }">
 				<view class="tab-item" v-for="(tab, index) in tabs" :key="index" :id="'tab_' + index"
 					:class="{ active: currentTab === index }" @click="switchTab(index)">
 					<view class="tab-item-text">
@@ -12,7 +20,8 @@
 					<view class="badge" :style="{ backgroundColor: currentTab === index ? '#333' : '#999' }"
 						v-if="tab.count >= 0">{{ tab.count }}</view>
 				</view>
-			</scroll-view>
+				</view>
+			</view>
 
 			<view class="expand-btn" @click="showFilterPopup = true">
 				<text class="expand-text">展开</text>
@@ -213,6 +222,13 @@
 				showTagEditPopup: false,
 				selectedTagIndex: 0,
 				currentVisitor: null,
+				translateX: 0,
+				isDragging: false,
+				dragStartX: 0,
+				dragStartTranslate: 0,
+				maxScroll: 0,
+				hasDragged: false,
+				preventClick: false
 			}
 		},
 		onLoad() {
@@ -234,9 +250,10 @@
 			}
 
 			this.isVip = true;
-			this.getList();
-			this.getTabCounts();
-		},
+		this.getList();
+		this.getTabCounts();
+		this.$nextTick(() => { this.updateScrollBounds(); });
+	},
 		onReachBottom() {
 			if (this.visitorList.length < this.total) {
 				this.pageNum++;
@@ -244,6 +261,42 @@
 			}
 		},
 		methods: {
+			updateScrollBounds() {
+				const query = uni.createSelectorQuery().in(this);
+				query.select('.tab-scroll').boundingClientRect();
+				query.select('.tabs-inner').boundingClientRect();
+				query.exec(res => {
+					if (res && res[0] && res[1]) {
+						this.maxScroll = Math.max(0, res[1].width - res[0].width);
+						if (this.translateX < -this.maxScroll) {
+							this.translateX = -this.maxScroll;
+						}
+					}
+				});
+			},
+			onDragStart(e) {
+				this.isDragging = true;
+				this.hasDragged = false;
+				const point = (e.touches && e.touches[0]) ? e.touches[0] : e;
+				this.dragStartX = point.clientX || 0;
+				this.dragStartTranslate = this.translateX;
+			},
+			onDragMove(e) {
+				if (!this.isDragging) return;
+				const point = (e.touches && e.touches[0]) ? e.touches[0] : e;
+				const delta = (point.clientX || 0) - this.dragStartX;
+				if (Math.abs(delta) > 5) { this.hasDragged = true; }
+				let newX = this.dragStartTranslate + delta;
+				newX = Math.max(-this.maxScroll, Math.min(0, newX));
+				this.translateX = newX;
+			},
+			onDragEnd() {
+				this.isDragging = false;
+				if (this.hasDragged) {
+					this.preventClick = true;
+					setTimeout(() => { this.preventClick = false; }, 100);
+				}
+			},
 			// 格式化访问时间
 			formatVisitTime(timestamp) {
 				if (!timestamp) return '';
@@ -313,7 +366,7 @@
 				this.getTabCounts();
 			},
 			switchTab(index) {
-				
+				if (this.preventClick) return;
 				this.currentTab = index;
 				this.filterActiveTab = index;
 				// 根据不同的tab获取不同的数据
@@ -546,21 +599,13 @@
 		flex: 1;
 		white-space: nowrap;
 		width: 80%;
-		overflow-x: auto;
-		overflow-y: hidden;
+		overflow: hidden;
+	}
 
-		/* 针对不同平台的隐藏滚动条 */
-		scrollbar-width: none;
-		/* Firefox */
-		-ms-overflow-style: none;
-
-		/* IE 10+ */
-		&::-webkit-scrollbar {
-			display: none !important;
-			width: 0 !important;
-			height: 0 !important;
-			background-color: transparent !important;
-		}
+	.tabs-inner {
+		display: inline-flex;
+		align-items: center;
+		will-change: transform;
 	}
 
 	.tab-item1 {

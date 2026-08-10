@@ -77,6 +77,7 @@
 .primary-tabs.data-v-b6963da8 {
   background: #ffffff;
   white-space: nowrap;
+  overflow: hidden;
 }
 .primary-tabs-track.data-v-b6963da8 {
   display: inline-flex;

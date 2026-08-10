@@ -1,33 +1,37 @@
-﻿<template>
+<template>
 	<view class="task-page">
 		<view class="page-canvas">
 				<view class="form-card intro-card">
 					<view class="field-block title-block">
 						<view class="field-header">
 							<text class="field-title">任务标题</text>
-							<text class="field-count">{{ form.title.length }}/30</text>
 						</view>
 						<input
 							class="plain-input title-input"
 							v-model="form.title"
 							maxlength="30"
-							placeholder="最多输入30个字"
+							placeholder="最多输入30个字符(15个汉字）"
 							placeholder-class="placeholder-text"
 						/>
+						<view class="field-header">
+							<text class="field-count">{{ form.title.length }}/30</text>
+						</view>
 					</view>
 
 					<view class="field-block desc-block">
 						<view class="field-header">
 							<text class="field-title">需求描述</text>
-							<text class="field-count desc-count">{{ form.description.length }}/100</text>
 						</view>
 						<textarea
 							class="plain-textarea"
 							v-model="form.description"
 							maxlength="100"
-							placeholder="最多输入100个字"
+							placeholder="最多输入100个字符(50个汉字）"
 							placeholder-class="placeholder-text"
 						></textarea>
+						<view class="field-header">
+							<text class="field-count desc-count">{{ form.description.length }}/100</text>
+						</view>
 					</view>
 
 					<view class="upload-list">
@@ -802,13 +806,6 @@ export default {
 				});
 				return false;
 			}
-			if (!this.form.description.trim()) {
-				uni.showToast({
-					title: '请输入需求描述',
-					icon: 'none'
-				});
-				return false;
-			}
 			if (this.form.description.length > 100) {
 				uni.showToast({
 					title: '需求描述不能超过100个字符',
@@ -1151,7 +1148,7 @@ export default {
 	font-size: 28rpx;
 	line-height: 40rpx;
 	color: #222222;
-	border-bottom: 1rpx solid #eeeeee;
+	// border-bottom: 1rpx solid #eeeeee;
 }
 
 .plain-textarea {
@@ -1161,7 +1158,7 @@ export default {
 	font-size: 28rpx;
 	line-height: 40rpx;
 	color: #222222;
-	border-bottom: 1rpx solid #eeeeee;
+	// border-bottom: 1rpx solid #eeeeee;
 	box-sizing: border-box;
 }
 
@@ -1171,7 +1168,7 @@ export default {
 }
 
 .field-count {
-	position: static;
+	position: absolute;
 	right: 2rpx;
 	bottom: 0;
 	font-size: 22rpx;
@@ -1340,9 +1337,9 @@ export default {
 .budget-input {
 	flex: 1;
 	height: 68rpx;
-	border: 1rpx solid #d9d9d9;
+	// border: 1rpx solid #d9d9d9;
 	border-radius: 6rpx;
-	padding: 0 30rpx;
+	padding: 0 7rpx;
 	box-sizing: border-box;
 	font-size: 28rpx;
 	color: #333333;

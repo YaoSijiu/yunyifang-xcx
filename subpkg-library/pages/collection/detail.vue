@@ -1,12 +1,14 @@
 <template>
 	<view class="collection-detail">
 		<!-- 标签栏 -->
-		<view class="tag-tabs-container">
-			<scroll-view class="tag-tabs" scroll-x="true" show-scrollbar="false" enable-flex="true"
-				scroll-with-animation="true" :style="{ cursor: 'grab' }" @mousedown="handleMouseDown"
+			<view class="tag-tabs-container">
+			<view class="tag-tabs"
+				:style="{ cursor: 'grab' }" @mousedown="handleMouseDown"
 				@mousemove="handleMouseMove" @mouseup="handleMouseUp" @mouseleave="handleMouseUp"
-				:scroll-into-view="scrollToId">
-				<view class="tab-content">
+				@touchstart="handleMouseDown"
+				@touchmove="handleMouseMove"
+				@touchend="handleMouseUp">
+				<view class="tab-content" :style="{ transform: 'translateX(' + translateX + 'px)' }">
 					<view class="tab-item" @click="switchTag('全部', 0)" id="tab_0">
 						<text :class="{ active: currentTag === '全部' }">全部</text>
 						<view class="badge" :style="{ backgroundColor: currentTag === '全部' ? '#333' : '#999' }">
@@ -25,7 +27,7 @@
 						<image v-if="currentTag === tag" class="yellow-underline" src="/static/common/选中条.png" />
 					</view>
 				</view>
-			</scroll-view>
+			</view>
 		</view>
 
 		<!-- 加载动画 -->
@@ -278,13 +280,16 @@
 				userId: null,
 				isTeamMode: false, // 是否为团队模式
 				isShareAccess: false,
-				collectId: null,
-				scrollToId: '', // 用于滚动到指定标签
-				// 鼠标拖拽相关
-				isDragging: false,
-				startX: 0,
-				scrollLeft: 0,
-				works: [{
+			collectId: null,
+			// 鼠标拖拽相关
+			isDragging: false,
+			dragStartX: 0,
+			dragStartTranslate: 0,
+			translateX: 0,
+			maxScroll: 0,
+			hasDragged: false,
+			preventClick: false,
+			works: [{
 						id: 1,
 						title: '植物书包装设计',
 						img: '/static/home/示例.png',
@@ -547,6 +552,7 @@
 							title: collectionName
 						})
 						this.tagsNum = tagsNum
+					this.$nextTick(() => { this.updateScrollBounds(); })
 						this.userInfo = {
 							nickName: data['nickName'],
 							avatarUrl: data['avatarUrl'],
@@ -615,16 +621,10 @@
 
 			// 切换标签
 			switchTag(tag, index) {
+				if (this.preventClick) return;
 				if (this.currentTag === tag) return;
 				this.currentTag = tag;
 				this.currentTagIndex = index;
-				// 当切换到第一个标签或第三个及以后的标签时，执行标签栏的滚动操作
-				if (index <=2 || index >= 2) {
-					// 滚动到对应的标签
-					this.$nextTick(() => {
-						this.scrollToId = 'tab_' + index;
-					});
-				}
 			},
 			
 			// 根据标签获取作品
@@ -1136,26 +1136,41 @@
 			// 鼠标按下事件
 			handleMouseDown(e) {
 				this.isDragging = true;
-				this.startX = e.clientX || e.touches[0].clientX;
-				this.scrollLeft = e.currentTarget.scrollLeft;
-				// 更改鼠标样式为拖拽状态
-				e.currentTarget.style.cursor = 'grabbing';
+				this.hasDragged = false;
+				const point = (e.touches && e.touches[0]) ? e.touches[0] : e;
+				this.dragStartX = point.clientX || 0;
+				this.dragStartTranslate = this.translateX;
 			},
 			// 鼠标移动事件
-		handleMouseMove(e) {
-			if (!this.isDragging) return;
-			const x = e.clientX || e.touches[0].clientX;
-			const walk = (x - this.startX) * 2; // 滚动速度
-			e.currentTarget.scrollLeft = this.scrollLeft + walk;
-			e.preventDefault(); // 防止默认行为
-		},
+			handleMouseMove(e) {
+				if (!this.isDragging) return;
+				const point = (e.touches && e.touches[0]) ? e.touches[0] : e;
+				const delta = (point.clientX || 0) - this.dragStartX;
+				if (Math.abs(delta) > 5) { this.hasDragged = true; }
+				let newX = this.dragStartTranslate + delta;
+				newX = Math.max(-this.maxScroll, Math.min(0, newX));
+				this.translateX = newX;
+			},
 			// 鼠标释放事件
-			handleMouseUp(e) {
+			handleMouseUp() {
 				this.isDragging = false;
-				// 恢复鼠标样式
-				if (e.currentTarget) {
-					e.currentTarget.style.cursor = 'grab';
+				if (this.hasDragged) {
+					this.preventClick = true;
+					setTimeout(() => { this.preventClick = false; }, 100);
 				}
+			},
+			updateScrollBounds() {
+				const query = uni.createSelectorQuery().in(this);
+				query.select('.tag-tabs').boundingClientRect();
+				query.select('.tab-content').boundingClientRect();
+				query.exec(res => {
+					if (res && res[0] && res[1]) {
+						this.maxScroll = Math.max(0, res[1].width - res[0].width);
+						if (this.translateX < -this.maxScroll) {
+							this.translateX = -this.maxScroll;
+						}
+					}
+				});
 			},
 		},
 	};
@@ -1205,12 +1220,7 @@
 	.tag-tabs {
 		flex: 1;
 		white-space: nowrap;
-		overflow-x: auto;
-		overflow-y: hidden;
-	}
-
-	.tag-tabs::-webkit-scrollbar {
-		display: none !important;
+		overflow: hidden;
 	}
 
 	.tab-content {
@@ -1218,6 +1228,7 @@
 		margin-right: 40rpx;
 		padding-bottom: 10rpx;
 		position: relative;
+		will-change: transform;
 	}
 
 	/* 移除重复的滚动条样式 */
