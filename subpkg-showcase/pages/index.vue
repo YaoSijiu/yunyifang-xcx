@@ -1,4 +1,4 @@
-<template>
+﻿<template>
 	<view class="showcase-page">
 		<view class="page-canvas">
 				<view class="form-card">
@@ -19,7 +19,7 @@
 						<view class="field-header">
 							<text class="field-title">橱窗标题</text>
 						</view>
-						<input class="plain-input" v-model="form.title" maxlength="30" placeholder="最多输入30个字符(15个汉字）" placeholder-class="placeholder-text" />
+						<input class="plain-input" v-model="form.title" maxlength="30" placeholder="最多输入30个字符(15个汉字）" placeholder-style="color: #999999; font-size: 28rpx;" />
 						<view class="field-header">
 							<text class="field-count">{{ form.title.length }}/30</text>
 						</view>
@@ -29,7 +29,7 @@
 						<view class="field-header">
 							<text class="field-title">商品描述</text>
 						</view>
-						<textarea class="plain-textarea" v-model="form.description" maxlength="100" placeholder="最多输入100个字符(50个汉字）" placeholder-class="placeholder-text"></textarea>
+						<textarea class="plain-textarea" v-model="form.description" maxlength="100" placeholder="最多输入100个字符(50个汉字）" placeholder-style="color: #999999; font-size: 28rpx;"></textarea>
 						<view class="field-header">
 							<text class="field-count">{{ form.description.length }}/100</text>
 						</view>
@@ -801,7 +801,7 @@ export default {
 	height: 86rpx;
 	font-size: 28rpx;
 	// border-bottom: 1rpx solid #eeeeee;
-	color: #D4D4D4;
+	color: #000000;
 }
 
 .plain-textarea {
@@ -819,7 +819,10 @@ export default {
 	height: 220rpx;
 }
 
-.placeholder-text,
+// .placeholder-text{
+// 	color: #D4D4D4;
+// 	font-size: 28rpx;
+// }
 .line-placeholder {
 	color: #888888;
 	font-size: 28rpx;

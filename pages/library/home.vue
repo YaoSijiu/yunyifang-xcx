@@ -18,25 +18,49 @@
 				</view>
 			</view>
 
+			<view class="primary-tabs-wrapper">
 			<view class="primary-tabs"
-			@mousedown="onDragStart"
-			@mousemove="onDragMove"
-			@mouseup="onDragEnd"
-			@mouseleave="onDragEnd"
-			@touchstart="onDragStart"
-			@touchmove="onDragMove"
-			@touchend="onDragEnd">
-			<view class="primary-tabs-track" :style="{ transform: 'translateX(' + translateX + 'px)' }">
-					<view
-						v-for="(item, index) in primaryTabs"
-						:key="item.key"
-						class="primary-tab"
-						:class="{ active: activePrimaryTab === index }"
-						@click="switchPrimaryTab(index)"
-					>
-						<text>{{ item.label }}</text>
-						<image v-if="activePrimaryTab === index" class="primary-underline" src="/static/common/选中条.png" />
-					</view>
+				@mousedown="onDragStart"
+				@mousemove="onDragMove"
+				@mouseup="onDragEnd"
+				@mouseleave="onDragEnd"
+				@touchstart="onDragStart"
+				@touchmove="onDragMove"
+				@touchend="onDragEnd">
+				<view class="primary-tabs-track" :style="{ transform: 'translateX(' + translateX + 'px)' }">
+						<view
+							v-for="(item, index) in primaryTabs"
+							:key="item.key"
+							class="primary-tab"
+							:class="{ active: activePrimaryTab === index }"
+							@click="switchPrimaryTab(index)"
+						>
+							<text>{{ item.label }}</text>
+							<image v-if="activePrimaryTab === index" class="primary-underline" src="/static/common/选中条.png" />
+						</view>
+				</view>
+			</view>
+			<view class="expand-btn" @click="toggleTabDropdown">
+				<image class="triangle" :class="{ rotated: tabExpanded }" src="/static/icon/xiangxia.svg" mode="aspectFit"></image>
+				<!-- <text class="triangle" :class="{ rotated: tabExpanded }">▼</text> -->
+			</view>
+		</view>
+
+		<view v-if="tabExpanded" class="tab-dropdown-mask" :style="{ top: tabPanelTop + 'px' }" @click="tabExpanded = false">
+			
+			<view class="tab-dropdown-panel" @click.stop>
+				<view class="tab-dropdown-panel-title">
+					<text class="tab-dropdown-panel-tags">所有标签</text>
+				</view>
+				<view
+					v-for="(item, index) in primaryTabs"
+					:key="item.key"
+					class="tab-expand-item"
+					:class="{ active: activePrimaryTab === index }"
+					@click="onTabExpandSelect(index)"
+				>
+					<text class="tab-expand-label">{{ item.label }}</text>
+				</view>
 			</view>
 		</view>
 
@@ -48,27 +72,17 @@
 					:class="{ 'secondary-control-price': item.key === 'price' }"
 				>
 					<view
-						v-if="item.key === 'location'"
+					v-if="item.key === 'location'"
 						class="location-filter-wrap"
 					>
-						<picker
-							class="secondary-picker"
-							mode="multiSelector"
-							range-key="name"
-							:range="areaColumns"
-							:value="areaIndexes"
-							@columnchange="onAreaColumnChange"
-							@change="onAreaChange"
+						<view
+							class="secondary-tab"
+							:class="{ active: activeSecondaryTab === index }"
 							@click="prepareAreaPicker"
 						>
-							<view
-								class="secondary-tab"
-								:class="{ active: activeSecondaryTab === index }"
-							>
-								<text class="secondary-text">{{ selectedRegionText || item.label }}</text>
-								<image class="filter-arrow" src="/static/icon/xiangxia.svg" mode="aspectFit"></image>
-							</view>
-						</picker>
+							<text class="secondary-text">{{ selectedRegionText || item.label }}</text>
+							<image class="filter-arrow" src="/static/icon/xiangxia.svg" mode="aspectFit"></image>
+						</view>
 						<text
 							v-if="selectedRegionId"
 							class="filter-clear"
@@ -110,61 +124,122 @@
 			@scrolltolower="loadMoreCards"
 		>
 			<view class="card-grid">
-				<view
-					v-for="card in visibleCards"
-					:key="card.id"
-					class="card"
-					@click="previewCard(card)"
-				>
-					<view class="card-cover-wrap">
-						<image v-if="card.cover" class="card-cover" :src="card.cover" mode="aspectFill"></image>
-						<view v-else class="scene-cover" :class="card.scene">
-							<view v-if="card.scene === 'scene-pineapple'" class="pineapple-badge"></view>
-							<view v-if="card.scene === 'scene-pineapple'" class="pineapple-lines">
-								<text></text>
-								<text></text>
-								<text></text>
-							</view>
-							<view v-if="card.scene === 'scene-pineapple'" class="pineapple-poster">
-								<view class="poster-head"></view>
-								<view class="poster-grid">
-									<text></text>
+				<view class="card-column">
+					<view
+						v-for="card in leftColumn"
+						:key="card.id"
+						class="card"
+						@click="previewCard(card)"
+					>
+						<view class="card-cover-wrap" :style="{ height: card.coverHeight + 'rpx' }">
+							<image v-if="card.cover" class="card-cover" :src="card.cover" mode="aspectFill"></image>
+							<view v-else class="scene-cover" :class="card.scene">
+								<view v-if="card.scene === 'scene-pineapple'" class="pineapple-badge"></view>
+								<view v-if="card.scene === 'scene-pineapple'" class="pineapple-lines">
 									<text></text>
 									<text></text>
 									<text></text>
 								</view>
+								<view v-if="card.scene === 'scene-pineapple'" class="pineapple-poster">
+									<view class="poster-head"></view>
+									<view class="poster-grid">
+										<text></text>
+										<text></text>
+										<text></text>
+										<text></text>
+									</view>
+								</view>
+								<view v-if="card.scene === 'scene-pineapple'" class="pineapple-fruit"></view>
+								<view v-if="card.scene === 'scene-pineapple'" class="pineapple-slice pineapple-slice-left"></view>
+								<view v-if="card.scene === 'scene-pineapple'" class="pineapple-slice pineapple-slice-right"></view>
+
+								<view v-if="card.scene === 'scene-mooncake'" class="mooncake-sun"></view>
+								<view v-if="card.scene === 'scene-mooncake'" class="mooncake-box-main"></view>
+								<view v-if="card.scene === 'scene-mooncake'" class="mooncake-box-small mooncake-box-small-left"></view>
+								<view v-if="card.scene === 'scene-mooncake'" class="mooncake-box-small mooncake-box-small-right"></view>
+								<view v-if="card.scene === 'scene-mooncake'" class="mooncake-tag"></view>
+
+								<view v-if="card.scene === 'scene-zongzi'" class="zongzi-shadow"></view>
+								<view v-if="card.scene === 'scene-zongzi'" class="zongzi-pack zongzi-pack-top"></view>
+								<view v-if="card.scene === 'scene-zongzi'" class="zongzi-pack zongzi-pack-bottom"></view>
+								<view v-if="card.scene === 'scene-zongzi'" class="zongzi-branch zongzi-branch-left"></view>
+								<view v-if="card.scene === 'scene-zongzi'" class="zongzi-branch zongzi-branch-mid"></view>
+								<view v-if="card.scene === 'scene-zongzi'" class="zongzi-branch zongzi-branch-right"></view>
 							</view>
-							<view v-if="card.scene === 'scene-pineapple'" class="pineapple-fruit"></view>
-							<view v-if="card.scene === 'scene-pineapple'" class="pineapple-slice pineapple-slice-left"></view>
-							<view v-if="card.scene === 'scene-pineapple'" class="pineapple-slice pineapple-slice-right"></view>
-
-							<view v-if="card.scene === 'scene-mooncake'" class="mooncake-sun"></view>
-							<view v-if="card.scene === 'scene-mooncake'" class="mooncake-box-main"></view>
-							<view v-if="card.scene === 'scene-mooncake'" class="mooncake-box-small mooncake-box-small-left"></view>
-							<view v-if="card.scene === 'scene-mooncake'" class="mooncake-box-small mooncake-box-small-right"></view>
-							<view v-if="card.scene === 'scene-mooncake'" class="mooncake-tag"></view>
-
-							<view v-if="card.scene === 'scene-zongzi'" class="zongzi-shadow"></view>
-							<view v-if="card.scene === 'scene-zongzi'" class="zongzi-pack zongzi-pack-top"></view>
-							<view v-if="card.scene === 'scene-zongzi'" class="zongzi-pack zongzi-pack-bottom"></view>
-							<view v-if="card.scene === 'scene-zongzi'" class="zongzi-branch zongzi-branch-left"></view>
-							<view v-if="card.scene === 'scene-zongzi'" class="zongzi-branch zongzi-branch-mid"></view>
-							<view v-if="card.scene === 'scene-zongzi'" class="zongzi-branch zongzi-branch-right"></view>
+							<view class="card-menu">
+								<text></text>
+								<text></text>
+								<text></text>
+							</view>
 						</view>
-						<view class="card-menu">
-							<text></text>
-							<text></text>
-							<text></text>
+						<view class="card-meta">
+							<image class="designer-avatar" :src="card.avatar" mode="aspectFill"></image>
+							<text class="designer-name">{{ card.author }}</text>
+						</view>
+						<view class="card-title">{{ card.title }}</view>
+						<view class="card-footer">
+							<text class="price">{{ card.price }}</text>
+							<text class="sold">{{ card.sold }}</text>
 						</view>
 					</view>
-					<view class="card-meta">
-						<image class="designer-avatar" :src="card.avatar" mode="aspectFill"></image>
-						<text class="designer-name">{{ card.author }}</text>
-					</view>
-					<view class="card-title">{{ card.title }}</view>
-					<view class="card-footer">
-						<text class="price">{{ card.price }}</text>
-						<text class="sold">{{ card.sold }}</text>
+				</view>
+				<view class="card-column">
+					<view
+						v-for="card in rightColumn"
+						:key="card.id"
+						class="card"
+						@click="previewCard(card)"
+					>
+						<view class="card-cover-wrap" :style="{ height: card.coverHeight + 'rpx' }">
+							<image v-if="card.cover" class="card-cover" :src="card.cover" mode="aspectFill"></image>
+							<view v-else class="scene-cover" :class="card.scene">
+								<view v-if="card.scene === 'scene-pineapple'" class="pineapple-badge"></view>
+								<view v-if="card.scene === 'scene-pineapple'" class="pineapple-lines">
+									<text></text>
+									<text></text>
+									<text></text>
+								</view>
+								<view v-if="card.scene === 'scene-pineapple'" class="pineapple-poster">
+									<view class="poster-head"></view>
+									<view class="poster-grid">
+										<text></text>
+										<text></text>
+										<text></text>
+										<text></text>
+									</view>
+								</view>
+								<view v-if="card.scene === 'scene-pineapple'" class="pineapple-fruit"></view>
+								<view v-if="card.scene === 'scene-pineapple'" class="pineapple-slice pineapple-slice-left"></view>
+								<view v-if="card.scene === 'scene-pineapple'" class="pineapple-slice pineapple-slice-right"></view>
+
+								<view v-if="card.scene === 'scene-mooncake'" class="mooncake-sun"></view>
+								<view v-if="card.scene === 'scene-mooncake'" class="mooncake-box-main"></view>
+								<view v-if="card.scene === 'scene-mooncake'" class="mooncake-box-small mooncake-box-small-left"></view>
+								<view v-if="card.scene === 'scene-mooncake'" class="mooncake-box-small mooncake-box-small-right"></view>
+								<view v-if="card.scene === 'scene-mooncake'" class="mooncake-tag"></view>
+
+								<view v-if="card.scene === 'scene-zongzi'" class="zongzi-shadow"></view>
+								<view v-if="card.scene === 'scene-zongzi'" class="zongzi-pack zongzi-pack-top"></view>
+								<view v-if="card.scene === 'scene-zongzi'" class="zongzi-pack zongzi-pack-bottom"></view>
+								<view v-if="card.scene === 'scene-zongzi'" class="zongzi-branch zongzi-branch-left"></view>
+								<view v-if="card.scene === 'scene-zongzi'" class="zongzi-branch zongzi-branch-mid"></view>
+								<view v-if="card.scene === 'scene-zongzi'" class="zongzi-branch zongzi-branch-right"></view>
+							</view>
+							<view class="card-menu">
+								<text></text>
+								<text></text>
+								<text></text>
+							</view>
+						</view>
+						<view class="card-meta">
+							<image class="designer-avatar" :src="card.avatar" mode="aspectFill"></image>
+							<text class="designer-name">{{ card.author }}</text>
+						</view>
+						<view class="card-title">{{ card.title }}</view>
+						<view class="card-footer">
+							<text class="price">{{ card.price }}</text>
+							<text class="sold">{{ card.sold }}</text>
+						</view>
 					</view>
 				</view>
 			</view>
@@ -178,6 +253,44 @@
 			</view>
 			<view class="bottom-gap"></view>
 		</scroll-view>
+
+		<view
+		v-if="areaPopupVisible"
+		class="area-popup-mask"
+		@click="cancelAreaSelection"
+	>
+		<view class="area-popup" @click.stop>
+			<view class="area-popup-header">
+				<text class="area-popup-title">地理位置</text>
+				<view class="area-popup-close" @click="cancelAreaSelection">×</view>
+			</view>
+			<picker-view
+				class="area-popup-picker"
+				indicator-style="height: 88rpx;"
+				:value="tempAreaIndexes"
+				@change="onAreaColumnChange"
+			>
+				<picker-view-column class="area-popup-column">
+					<view
+						v-for="(item, idx) in areaColumns[0]"
+						:key="idx"
+						class="area-popup-option"
+					>{{ item.name }}</view>
+				</picker-view-column>
+				<picker-view-column class="area-popup-column">
+					<view
+						v-for="(item, idx) in areaColumns[1]"
+						:key="idx"
+						class="area-popup-option"
+					>{{ item.name }}</view>
+				</picker-view-column>
+			</picker-view>
+			<view class="area-popup-footer">
+				<view class="area-popup-btn area-popup-btn-cancel" @click="cancelAreaSelection">取消</view>
+				<view class="area-popup-btn area-popup-btn-confirm" @click="confirmAreaSelection">确定</view>
+			</view>
+		</view>
+	</view>
 
 		<yun-tabbar :selected="0"></yun-tabbar>
 	</view>
@@ -195,7 +308,6 @@ const PRICE_OPTIONS = [
 	{ label: '500-1000', minPrice: '500', maxPrice: '1000' },
 	{ label: '1000以上', minPrice: '1000', maxPrice: '' }
 ];
-const ALL_REGION_OPTION = { id: '', name: '全部', children: [] };
 
 export default {
 	data() {
@@ -213,9 +325,13 @@ export default {
 			requestSeq: 0,
 			hasCheckedProfessionPush: false,
 			areaTree: [],
-			areaColumns: [[], [], []],
-			areaIndexes: [0, 0, 0],
+			areaColumns: [[], []],
+			areaIndexes: [0, 0],
+			tempAreaIndexes: [0, 0],
 			areaLoading: false,
+			areaPopupVisible: false,
+			tabExpanded: false,
+			tabPanelTop: 0,
 			selectedRegionId: '',
 			selectedRegionText: '',
 			selectedRegionPath: [],
@@ -232,6 +348,10 @@ export default {
 				{ label: '价格区间', key: 'price' }
 			],
 			visibleCards: [],
+			leftColumn: [],
+			rightColumn: [],
+			leftColumnHeight: 0,
+			rightColumnHeight: 0,
 			translateX: 0,
 			isDragging: false,
 			dragStartX: 0,
@@ -295,6 +415,25 @@ export default {
 			if (this.preventClick) return;
 			this.activePrimaryTab = index;
 			this.resetCards();
+		},
+		onTabExpandSelect(index) {
+			this.activePrimaryTab = index;
+			this.tabExpanded = false;
+			this.resetCards();
+		},
+		toggleTabDropdown() {
+			if (this.tabExpanded) {
+				this.tabExpanded = false;
+				return;
+			}
+			const query = uni.createSelectorQuery().in(this);
+			query.select('.primary-tabs-wrapper').boundingClientRect();
+			query.exec(res => {
+				if (res && res[0]) {
+					this.tabPanelTop = res[0].bottom;
+				}
+				this.tabExpanded = true;
+			});
 		},
 		async loadTaskTypeTabs() {
 			try {
@@ -433,12 +572,12 @@ export default {
 				const res = await request.get('/wechat/basic/areaTree');
 				const tree = this.normalizeAreas(res && res.data ? res.data : res);
 				this.areaTree = tree;
-				this.areaIndexes = [0, 0, 0];
+				this.areaIndexes = [0, 0];
 				this.updateAreaColumns(this.areaIndexes);
 			} catch (e) {
 				this.areaTree = [];
-				this.areaColumns = [[], [], []];
-				this.areaIndexes = [0, 0, 0];
+				this.areaColumns = [[], []];
+				this.areaIndexes = [0, 0];
 			} finally {
 				this.areaLoading = false;
 			}
@@ -454,47 +593,33 @@ export default {
 			if (!this.areaTree.length) {
 				this.loadAreaTree();
 			}
+			this.tempAreaIndexes = this.areaIndexes.slice();
+			this.updateAreaColumns(this.tempAreaIndexes);
+			this.areaPopupVisible = true;
 		},
 		onAreaColumnChange(event) {
-			const detail = event.detail || {};
-			const indexes = this.areaIndexes.slice();
-			const column = Number(detail.column) || 0;
-			indexes[column] = Number(detail.value) || 0;
-			if (column === 0) {
+			const newValue = event.detail.value;
+			const indexes = Array.isArray(newValue) ? newValue.slice() : [0, 0];
+			if (indexes[0] !== this.tempAreaIndexes[0]) {
 				indexes[1] = 0;
-				indexes[2] = 0;
 			}
-			if (column === 1) {
-				indexes[2] = 0;
-			}
-			this.areaIndexes = indexes;
+			this.tempAreaIndexes = indexes;
 			this.updateAreaColumns(indexes);
 		},
 		updateAreaColumns(indexes) {
 			const provinceIndex = indexes[0] || 0;
-			const cityIndex = indexes[1] || 0;
 			const provinces = this.areaTree;
 			const realProvince = provinceIndex > 0 ? provinces[provinceIndex - 1] : null;
 			const cities = realProvince && realProvince.children && realProvince.children.length
 				? realProvince.children
 				: [];
-			const realCity = realProvince && cityIndex > 0 ? cities[cityIndex - 1] : null;
-			const areas = realCity && realCity.children && realCity.children.length
-				? realCity.children
-				: [];
-			this.areaColumns = [
-				provinces.length ? [ALL_REGION_OPTION].concat(provinces) : [],
-				cities.length ? [ALL_REGION_OPTION].concat(cities) : [],
-				areas.length ? [ALL_REGION_OPTION].concat(areas) : []
-			];
+			const provinceCol = provinces.length ? [{ id: '', name: '全部' }].concat(provinces) : [];
+			const cityCol = cities.length ? [{ id: '', name: '全部' }].concat(cities) : [{ id: '', name: '全部' }];
+			this.areaColumns = [provinceCol, cityCol];
 		},
-		onAreaChange(event) {
-			const indexes = event && event.detail && Array.isArray(event.detail.value)
-				? event.detail.value
-				: this.areaIndexes;
-			this.areaIndexes = indexes;
-			this.updateAreaColumns(indexes);
-			const path = this.getSelectedRegionPath(indexes);
+		confirmAreaSelection() {
+			this.areaIndexes = this.tempAreaIndexes.slice();
+			const path = this.getSelectedRegionPath(this.areaIndexes);
 			const locationIndex = this.secondaryTabs.findIndex(item => item.key === 'location');
 			this.selectedRegionPath = path;
 			if (path.length === 0) {
@@ -509,24 +634,15 @@ export default {
 				this.selectedRegionText = path.map(item => item.name).filter(Boolean).join('');
 				this.activeSecondaryTab = locationIndex;
 			}
+			this.areaPopupVisible = false;
 			this.resetCards();
 		},
-		clearRegionFilter() {
-			this.selectedRegionId = '';
-			this.selectedRegionText = '';
-			this.selectedRegionPath = [];
-			this.areaIndexes = [0, 0, 0];
-			this.updateAreaColumns(this.areaIndexes);
-			const locationIndex = this.secondaryTabs.findIndex(item => item.key === 'location');
-			if (this.activeSecondaryTab === locationIndex) {
-				this.activeSecondaryTab = 0;
-			}
-			this.resetCards();
+		cancelAreaSelection() {
+			this.areaPopupVisible = false;
 		},
 		getSelectedRegionPath(indexes) {
 			const provinceIndex = indexes[0] || 0;
 			const cityIndex = indexes[1] || 0;
-			const areaIndex = indexes[2] || 0;
 			if (provinceIndex === 0) {
 				return [];
 			}
@@ -543,15 +659,20 @@ export default {
 			if (!city) {
 				return [province];
 			}
-			if (areaIndex === 0) {
-				return [province, city];
+			return [province, city];
+		},
+		clearRegionFilter() {
+			this.selectedRegionId = '';
+			this.selectedRegionText = '';
+			this.selectedRegionPath = [];
+			this.areaIndexes = [0, 0];
+			this.tempAreaIndexes = [0, 0];
+			this.updateAreaColumns(this.areaIndexes);
+			const locationIndex = this.secondaryTabs.findIndex(item => item.key === 'location');
+			if (this.activeSecondaryTab === locationIndex) {
+				this.activeSecondaryTab = 0;
 			}
-			const areas = city.children || [];
-			const area = areas[areaIndex - 1];
-			if (!area) {
-				return [province, city];
-			}
-			return [province, city, area];
+			this.resetCards();
 		},
 		onPriceChange(event) {
 			this.selectedPriceIndex = Number(event.detail.value) || 0;
@@ -562,6 +683,10 @@ export default {
 			this.pageNo = 1;
 			this.finished = false;
 			this.visibleCards = [];
+			this.leftColumn = [];
+			this.rightColumn = [];
+			this.leftColumnHeight = 0;
+			this.rightColumnHeight = 0;
 			this.fetchShowcaseList(1, true);
 		},
 		loadMoreCards() {
@@ -573,19 +698,26 @@ export default {
 		async fetchShowcaseList(pageNo, isRefresh) {
 			const requestSeq = ++this.requestSeq;
 			this.loading = true;
+			let newCards = [];
 
 			try {
 				const res = await request.get('/wechat/homePage/showCase/list', this.buildQueryParams(pageNo));
-				if (requestSeq !== this.requestSeq) {
-					return;
-				}
-				const rows = Array.isArray(res.rows) ? res.rows : [];
-				const cards = rows.map((item) => this.normalizeShowcaseCard(item));
+				if (requestSeq === this.requestSeq) {
+					const rows = Array.isArray(res.rows) ? res.rows : [];
+					newCards = rows.map((item) => this.normalizeShowcaseCard(item));
 
-				this.total = Number(res.total) || 0;
-				this.pageNo = pageNo;
-				this.visibleCards = isRefresh ? cards : this.visibleCards.concat(cards);
-				this.finished = rows.length < this.pageSize || this.visibleCards.length >= this.total;
+					this.total = Number(res.total) || 0;
+					this.pageNo = pageNo;
+					this.visibleCards = isRefresh ? newCards : this.visibleCards.concat(newCards);
+					this.finished = rows.length < this.pageSize || this.visibleCards.length >= this.total;
+
+					if (isRefresh) {
+						this.leftColumn = [];
+						this.rightColumn = [];
+						this.leftColumnHeight = 0;
+						this.rightColumnHeight = 0;
+					}
+				}
 			} catch (e) {
 				if (requestSeq === this.requestSeq) {
 					this.finished = isRefresh;
@@ -594,6 +726,10 @@ export default {
 				if (requestSeq === this.requestSeq) {
 					this.loading = false;
 				}
+			}
+
+			if (requestSeq === this.requestSeq && newCards.length > 0) {
+				this.distributeCards(newCards, requestSeq);
 			}
 		},
 		buildQueryParams(pageNo) {
@@ -640,8 +776,43 @@ export default {
 				sold: `已售${Number(item.salesCount) || 0}`,
 				cover: this.buildImageUrl(item.coverImage),
 				avatar: this.buildImageUrl(item.avatarUrl) || '/static/yunyiku/avatar.png',
+				aspectRatio: 1,
+				coverHeight: 346,
 				raw: item
 			};
+		},
+		getImageInfo(src) {
+			return new Promise((resolve) => {
+				uni.getImageInfo({
+					src: src,
+					success: (res) => resolve(res),
+					fail: () => resolve(null)
+				});
+			});
+		},
+		calcCoverHeight(aspectRatio) {
+			const ratio = Math.max(0.66, Math.min(1.5, aspectRatio));
+			return Math.round(346 / ratio);
+		},
+		async distributeCards(cards, seq) {
+			for (const card of cards) {
+				if (seq !== this.requestSeq) return;
+				if (card.cover) {
+					const info = await this.getImageInfo(card.cover);
+					if (info) {
+						card.aspectRatio = info.width / info.height;
+					}
+				}
+				card.coverHeight = this.calcCoverHeight(card.aspectRatio);
+				const cardHeight = card.coverHeight + 220;
+				if (this.leftColumnHeight <= this.rightColumnHeight) {
+					this.leftColumn.push(card);
+					this.leftColumnHeight += cardHeight;
+				} else {
+					this.rightColumn.push(card);
+					this.rightColumnHeight += cardHeight;
+				}
+			}
 		},
 		formatPrice(price, unit) {
 			const amount = price === null || price === undefined || price === '' ? '0' : price;
@@ -782,6 +953,89 @@ export default {
 	height: 11rpx;
 }
 
+.primary-tabs-wrapper {
+	display: flex;
+	align-items: center;
+	background: #ffffff;
+}
+
+.primary-tabs-wrapper .primary-tabs {
+	flex: 1;
+	min-width: 0;
+}
+
+.expand-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 26rpx 24rpx;
+	height: 100%;
+	flex-shrink: 0;
+	background: linear-gradient(to right, transparent, #ffffff 30%);
+	border-left: 1rpx solid #f0f0f0;
+	align-self: stretch;
+}
+
+.expand-btn .triangle {
+	width: 18rpx;
+	height: 12rpx;
+	
+	flex-shrink: 0;
+	color: #999;
+	transition: transform 0.3s ease;
+}
+
+.expand-btn .triangle.rotated {
+	transform: rotate(180deg);
+}
+
+.tab-dropdown-mask {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: 9998;
+}
+
+.tab-dropdown-panel {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20rpx;
+	padding: 24rpx;
+	background: #ffffff;
+}
+
+.tab-expand-item {
+	display: flex;
+	align-items: center;
+	height: 25rpx;
+	justify-content: center;
+	padding: 14rpx 16rpx;
+	border-radius: 10rpx;
+	border-radius: 226rpx;
+	border: 1rpx solid #CECECE;
+}
+
+.tab-expand-item.active {
+	background: #fff3eb;
+	border: 1rpx solid #F37738;
+}
+
+.tab-expand-label {
+	font-size: 28rpx;
+	color: #333;
+}
+
+.tab-expand-item.active .tab-expand-label {
+	color: #f37738;
+	font-weight: 500;
+}
+
 .secondary-tabs {
 	display: flex;
 	align-items: center;
@@ -868,14 +1122,19 @@ export default {
 
 .card-grid {
 	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
 	padding: 14rpx 23rpx 0;
+	column-gap: 12rpx;
+}
+
+.card-column {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
 }
 
 .card {
-	width: 346rpx;
-	min-height: 530rpx;
+	width: 100%;
 	background: #ffffff;
 	border-radius: 16rpx;
 	overflow: hidden;
@@ -885,7 +1144,7 @@ export default {
 
 .card-cover-wrap {
 	position: relative;
-	height: 346rpx;
+	width: 100%;
 	background: #f3f3f3;
 }
 
@@ -1226,5 +1485,113 @@ export default {
 
 .bottom-gap {
 	height: 24rpx;
+}
+
+.area-popup-mask {
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: 9999;
+	display: flex;
+	align-items: flex-end;
+}
+
+.area-popup {
+	width: 100%;
+	background: #ffffff;
+	border-radius: 30rpx 30rpx 30rpx 30rpx;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	padding-bottom: env(safe-area-inset-bottom);
+	margin: 22rpx;
+}
+
+.area-popup-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 50rpx 32rpx 30rpx;
+	position: relative;
+}
+
+.area-popup-title {
+	font-size: 36rpx;
+	font-weight: 500;
+	color: #1a1a1a;
+}
+
+.area-popup-close {
+	position: absolute;
+	right: 32rpx;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 56rpx;
+	height: 56rpx;
+	line-height: 52rpx;
+	text-align: center;
+	font-size: 76rpx;
+	font-weight: 300;
+	color: #000;
+}
+
+.area-popup-picker {
+	width: 100%;
+	height: 460rpx;
+}
+
+.area-popup-column {
+	flex: 1;
+}
+
+.area-popup-option {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 30rpx;
+	color: #333333;
+}
+
+.area-popup-footer {
+	display: flex;
+	padding: 24rpx 51rpx;
+	padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+	gap: 42rpx;
+}
+
+.area-popup-btn {
+	flex: 1;
+	width: 280rpx;
+	height: 72rpx;
+	border-radius: 44rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 30rpx;
+	font-weight: 500;
+	margin-bottom: 40rpx;
+}
+
+.area-popup-btn-cancel {
+	border: 1rpx solid #979797;
+	background: #FFFFFF;
+	color: #979797;
+}
+
+.area-popup-btn-confirm {
+	background: #F37738;
+	color: #ffffff;
+}
+
+.tab-dropdown-panel-title{
+	width: 100%;
+}
+
+.tab-dropdown-panel-tags{
+	font-size: 28rpx;
+	font-weight: 500;
 }
 </style>

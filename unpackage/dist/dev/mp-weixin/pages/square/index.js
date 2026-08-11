@@ -735,11 +735,28 @@ var _default = {
         return avatarList;
       }
       var sourceList = this.extractParticipantSourceList(item, participantType);
+      // 有效状态白名单：报价只保留待选择/已选中/已生成订单；订单保留待支付/待接单/服务中/已完成
+      var VALID_QUOTE_STATUS = new Set(['pending', 'selected', 'ordered']);
+      var VALID_ORDER_STATUS = new Set(['pending_pay', 'pending_accept', 'in_service', 'completed']);
+      var isParticipantStatusValid = function isParticipantStatusValid(participant) {
+        if (!participant) return false;
+        var quoteStatus = participant.quoteStatus;
+        if (quoteStatus !== null && quoteStatus !== undefined && quoteStatus !== '') {
+          return VALID_QUOTE_STATUS.has(String(quoteStatus).toLowerCase());
+        }
+        var orderStatus = participant.orderStatus || participant.status;
+        if (orderStatus !== null && orderStatus !== undefined && orderStatus !== '') {
+          return VALID_ORDER_STATUS.has(String(orderStatus).toLowerCase());
+        }
+        // 没有状态字段的旧记录保守视为有效
+        return true;
+      };
       // 按 userId 去重（同一用户多次报价/接单只保留一条）；无 userId 的按 avatar 去重
       var seenUserId = new Set();
       var seenAvatar = new Set();
       var dedupedSource = sourceList.filter(function (participant) {
         if (!participant) return false;
+        if (!isParticipantStatusValid(participant)) return false;
         var userId = participant.userId || participant.wxUserId || participant.quoteUserId || participant.receiverUserId || participant.acceptUserId || participant.id || '';
         if (userId) {
           var key = String(userId);

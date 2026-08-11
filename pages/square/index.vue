@@ -449,11 +449,28 @@ export default {
 				return avatarList;
 			}
 			const sourceList = this.extractParticipantSourceList(item, participantType);
+			// 有效状态白名单：报价只保留待选择/已选中/已生成订单；订单保留待支付/待接单/服务中/已完成
+			const VALID_QUOTE_STATUS = new Set(['pending', 'selected', 'ordered']);
+			const VALID_ORDER_STATUS = new Set(['pending_pay', 'pending_accept', 'in_service', 'completed']);
+			const isParticipantStatusValid = (participant) => {
+				if (!participant) return false;
+				const quoteStatus = participant.quoteStatus;
+				if (quoteStatus !== null && quoteStatus !== undefined && quoteStatus !== '') {
+					return VALID_QUOTE_STATUS.has(String(quoteStatus).toLowerCase());
+				}
+				const orderStatus = participant.orderStatus || participant.status;
+				if (orderStatus !== null && orderStatus !== undefined && orderStatus !== '') {
+					return VALID_ORDER_STATUS.has(String(orderStatus).toLowerCase());
+				}
+				// 没有状态字段的旧记录保守视为有效
+				return true;
+			};
 			// 按 userId 去重（同一用户多次报价/接单只保留一条）；无 userId 的按 avatar 去重
 			const seenUserId = new Set();
 			const seenAvatar = new Set();
 			const dedupedSource = sourceList.filter(participant => {
 				if (!participant) return false;
+				if (!isParticipantStatusValid(participant)) return false;
 				const userId = participant.userId ||
 					participant.wxUserId ||
 					participant.quoteUserId ||

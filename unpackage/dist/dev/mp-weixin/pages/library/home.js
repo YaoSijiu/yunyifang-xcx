@@ -127,6 +127,11 @@ var render = function () {
   var _c = _vm._self._c || _h
   var g0 = !_vm.loading && _vm.visibleCards.length === 0
   var g1 = _vm.visibleCards.length
+  if (!_vm._isMounted) {
+    _vm.e0 = function ($event) {
+      _vm.tabExpanded = false
+    }
+  }
   _vm.$mp.data = Object.assign(
     {},
     {
@@ -180,192 +185,9 @@ var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime
 var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ 48));
 var _request = _interopRequireDefault(__webpack_require__(/*! @/utils/request.js */ 38));
 var _env = _interopRequireDefault(__webpack_require__(/*! @/config/env.js */ 39));
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 var DEFAULT_PRICE_OPTION = {
   label: '价格区间',
   minPrice: '',
@@ -388,11 +210,6 @@ var PRICE_OPTIONS = [DEFAULT_PRICE_OPTION, {
   minPrice: '1000',
   maxPrice: ''
 }];
-var ALL_REGION_OPTION = {
-  id: '',
-  name: '全部',
-  children: []
-};
 var _default = {
   data: function data() {
     return {
@@ -409,9 +226,13 @@ var _default = {
       requestSeq: 0,
       hasCheckedProfessionPush: false,
       areaTree: [],
-      areaColumns: [[], [], []],
-      areaIndexes: [0, 0, 0],
+      areaColumns: [[], []],
+      areaIndexes: [0, 0],
+      tempAreaIndexes: [0, 0],
       areaLoading: false,
+      areaPopupVisible: false,
+      tabExpanded: false,
+      tabPanelTop: 0,
       selectedRegionId: '',
       selectedRegionText: '',
       selectedRegionPath: [],
@@ -441,6 +262,10 @@ var _default = {
         key: 'price'
       }],
       visibleCards: [],
+      leftColumn: [],
+      rightColumn: [],
+      leftColumnHeight: 0,
+      rightColumnHeight: 0,
       translateX: 0,
       isDragging: false,
       dragStartX: 0,
@@ -534,8 +359,28 @@ var _default = {
       this.activePrimaryTab = index;
       this.resetCards();
     },
-    loadTaskTypeTabs: function loadTaskTypeTabs() {
+    onTabExpandSelect: function onTabExpandSelect(index) {
+      this.activePrimaryTab = index;
+      this.tabExpanded = false;
+      this.resetCards();
+    },
+    toggleTabDropdown: function toggleTabDropdown() {
       var _this2 = this;
+      if (this.tabExpanded) {
+        this.tabExpanded = false;
+        return;
+      }
+      var query = uni.createSelectorQuery().in(this);
+      query.select('.primary-tabs-wrapper').boundingClientRect();
+      query.exec(function (res) {
+        if (res && res[0]) {
+          _this2.tabPanelTop = res[0].bottom;
+        }
+        _this2.tabExpanded = true;
+      });
+    },
+    loadTaskTypeTabs: function loadTaskTypeTabs() {
+      var _this3 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee2() {
         var res, tags;
         return _regenerator.default.wrap(function _callee2$(_context2) {
@@ -547,18 +392,18 @@ var _default = {
                 return _request.default.get('/wechat/homePage/taskTypeTags');
               case 3:
                 res = _context2.sent;
-                tags = _this2.extractTaskTypeTags(res);
-                _this2.primaryTabs = _this2.buildPrimaryTabs(tags);
+                tags = _this3.extractTaskTypeTags(res);
+                _this3.primaryTabs = _this3.buildPrimaryTabs(tags);
                 _context2.next = 11;
                 break;
               case 8:
                 _context2.prev = 8;
                 _context2.t0 = _context2["catch"](0);
-                _this2.primaryTabs = _this2.buildPrimaryTabs([]);
+                _this3.primaryTabs = _this3.buildPrimaryTabs([]);
               case 11:
                 _context2.prev = 11;
-                _this2.$nextTick(function () {
-                  _this2.updateScrollBounds();
+                _this3.$nextTick(function () {
+                  _this3.updateScrollBounds();
                 });
                 return _context2.finish(11);
               case 14:
@@ -570,15 +415,15 @@ var _default = {
       }))();
     },
     updateScrollBounds: function updateScrollBounds() {
-      var _this3 = this;
+      var _this4 = this;
       var query = uni.createSelectorQuery().in(this);
       query.select('.primary-tabs').boundingClientRect();
       query.select('.primary-tabs-track').boundingClientRect();
       query.exec(function (res) {
         if (res && res[0] && res[1]) {
-          _this3.maxScroll = Math.max(0, res[1].width - res[0].width);
-          if (_this3.translateX < -_this3.maxScroll) {
-            _this3.translateX = -_this3.maxScroll;
+          _this4.maxScroll = Math.max(0, res[1].width - res[0].width);
+          if (_this4.translateX < -_this4.maxScroll) {
+            _this4.translateX = -_this4.maxScroll;
           }
         }
       });
@@ -602,12 +447,12 @@ var _default = {
       this.translateX = newX;
     },
     onDragEnd: function onDragEnd() {
-      var _this4 = this;
+      var _this5 = this;
       this.isDragging = false;
       if (this.hasDragged) {
         this.preventClick = true;
         setTimeout(function () {
-          _this4.preventClick = false;
+          _this5.preventClick = false;
         }, 100);
       }
     },
@@ -634,7 +479,7 @@ var _default = {
       return [];
     },
     buildPrimaryTabs: function buildPrimaryTabs(tags) {
-      var _this5 = this;
+      var _this6 = this;
       var fixedTabs = [{
         label: '关注',
         key: 'fixed_follow',
@@ -646,8 +491,8 @@ var _default = {
       }];
       var seenKeys = {};
       var dynamicTabs = (tags || []).reduce(function (result, item) {
-        var categoryName = _this5.resolveProfessionCategoryName(item);
-        var categoryKey = _this5.resolveProfessionCategoryKey(item);
+        var categoryName = _this6.resolveProfessionCategoryName(item);
+        var categoryKey = _this6.resolveProfessionCategoryKey(item);
         if (!categoryName || !categoryKey || seenKeys[categoryKey]) {
           return result;
         }
@@ -655,7 +500,7 @@ var _default = {
         result.push({
           label: categoryName,
           key: "category_".concat(categoryKey),
-          professionCategoryId: _this5.resolveProfessionCategoryId(item),
+          professionCategoryId: _this6.resolveProfessionCategoryId(item),
           categoryCode: item && item.categoryCode ? String(item.categoryCode) : ''
         });
         return result;
@@ -699,40 +544,40 @@ var _default = {
       this.resetCards();
     },
     loadAreaTree: function loadAreaTree() {
-      var _this6 = this;
+      var _this7 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee3() {
         var res, tree;
         return _regenerator.default.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                if (!_this6.areaLoading) {
+                if (!_this7.areaLoading) {
                   _context3.next = 2;
                   break;
                 }
                 return _context3.abrupt("return");
               case 2:
-                _this6.areaLoading = true;
+                _this7.areaLoading = true;
                 _context3.prev = 3;
                 _context3.next = 6;
                 return _request.default.get('/wechat/basic/areaTree');
               case 6:
                 res = _context3.sent;
-                tree = _this6.normalizeAreas(res && res.data ? res.data : res);
-                _this6.areaTree = tree;
-                _this6.areaIndexes = [0, 0, 0];
-                _this6.updateAreaColumns(_this6.areaIndexes);
+                tree = _this7.normalizeAreas(res && res.data ? res.data : res);
+                _this7.areaTree = tree;
+                _this7.areaIndexes = [0, 0];
+                _this7.updateAreaColumns(_this7.areaIndexes);
                 _context3.next = 18;
                 break;
               case 13:
                 _context3.prev = 13;
                 _context3.t0 = _context3["catch"](3);
-                _this6.areaTree = [];
-                _this6.areaColumns = [[], [], []];
-                _this6.areaIndexes = [0, 0, 0];
+                _this7.areaTree = [];
+                _this7.areaColumns = [[], []];
+                _this7.areaIndexes = [0, 0];
               case 18:
                 _context3.prev = 18;
-                _this6.areaLoading = false;
+                _this7.areaLoading = false;
                 return _context3.finish(18);
               case 21:
               case "end":
@@ -743,12 +588,12 @@ var _default = {
       }))();
     },
     normalizeAreas: function normalizeAreas(list) {
-      var _this7 = this;
+      var _this8 = this;
       return (Array.isArray(list) ? list : []).map(function (item) {
         return {
           id: item.id || item.regionId || item.value || '',
           name: item.name || item.regionName || item.label || '',
-          children: _this7.normalizeAreas(item.children || item.childList || item.child || [])
+          children: _this8.normalizeAreas(item.children || item.childList || item.child || [])
         };
       }).filter(function (item) {
         return item.id || item.name;
@@ -758,37 +603,40 @@ var _default = {
       if (!this.areaTree.length) {
         this.loadAreaTree();
       }
+      this.tempAreaIndexes = this.areaIndexes.slice();
+      this.updateAreaColumns(this.tempAreaIndexes);
+      this.areaPopupVisible = true;
     },
     onAreaColumnChange: function onAreaColumnChange(event) {
-      var detail = event.detail || {};
-      var indexes = this.areaIndexes.slice();
-      var column = Number(detail.column) || 0;
-      indexes[column] = Number(detail.value) || 0;
-      if (column === 0) {
+      var newValue = event.detail.value;
+      var indexes = Array.isArray(newValue) ? newValue.slice() : [0, 0];
+      if (indexes[0] !== this.tempAreaIndexes[0]) {
         indexes[1] = 0;
-        indexes[2] = 0;
       }
-      if (column === 1) {
-        indexes[2] = 0;
-      }
-      this.areaIndexes = indexes;
+      this.tempAreaIndexes = indexes;
       this.updateAreaColumns(indexes);
     },
     updateAreaColumns: function updateAreaColumns(indexes) {
       var provinceIndex = indexes[0] || 0;
-      var cityIndex = indexes[1] || 0;
       var provinces = this.areaTree;
       var realProvince = provinceIndex > 0 ? provinces[provinceIndex - 1] : null;
       var cities = realProvince && realProvince.children && realProvince.children.length ? realProvince.children : [];
-      var realCity = realProvince && cityIndex > 0 ? cities[cityIndex - 1] : null;
-      var areas = realCity && realCity.children && realCity.children.length ? realCity.children : [];
-      this.areaColumns = [provinces.length ? [ALL_REGION_OPTION].concat(provinces) : [], cities.length ? [ALL_REGION_OPTION].concat(cities) : [], areas.length ? [ALL_REGION_OPTION].concat(areas) : []];
+      var provinceCol = provinces.length ? [{
+        id: '',
+        name: '全部'
+      }].concat(provinces) : [];
+      var cityCol = cities.length ? [{
+        id: '',
+        name: '全部'
+      }].concat(cities) : [{
+        id: '',
+        name: '全部'
+      }];
+      this.areaColumns = [provinceCol, cityCol];
     },
-    onAreaChange: function onAreaChange(event) {
-      var indexes = event && event.detail && Array.isArray(event.detail.value) ? event.detail.value : this.areaIndexes;
-      this.areaIndexes = indexes;
-      this.updateAreaColumns(indexes);
-      var path = this.getSelectedRegionPath(indexes);
+    confirmAreaSelection: function confirmAreaSelection() {
+      this.areaIndexes = this.tempAreaIndexes.slice();
+      var path = this.getSelectedRegionPath(this.areaIndexes);
       var locationIndex = this.secondaryTabs.findIndex(function (item) {
         return item.key === 'location';
       });
@@ -807,26 +655,15 @@ var _default = {
         }).filter(Boolean).join('');
         this.activeSecondaryTab = locationIndex;
       }
+      this.areaPopupVisible = false;
       this.resetCards();
     },
-    clearRegionFilter: function clearRegionFilter() {
-      this.selectedRegionId = '';
-      this.selectedRegionText = '';
-      this.selectedRegionPath = [];
-      this.areaIndexes = [0, 0, 0];
-      this.updateAreaColumns(this.areaIndexes);
-      var locationIndex = this.secondaryTabs.findIndex(function (item) {
-        return item.key === 'location';
-      });
-      if (this.activeSecondaryTab === locationIndex) {
-        this.activeSecondaryTab = 0;
-      }
-      this.resetCards();
+    cancelAreaSelection: function cancelAreaSelection() {
+      this.areaPopupVisible = false;
     },
     getSelectedRegionPath: function getSelectedRegionPath(indexes) {
       var provinceIndex = indexes[0] || 0;
       var cityIndex = indexes[1] || 0;
-      var areaIndex = indexes[2] || 0;
       if (provinceIndex === 0) {
         return [];
       }
@@ -843,15 +680,22 @@ var _default = {
       if (!city) {
         return [province];
       }
-      if (areaIndex === 0) {
-        return [province, city];
+      return [province, city];
+    },
+    clearRegionFilter: function clearRegionFilter() {
+      this.selectedRegionId = '';
+      this.selectedRegionText = '';
+      this.selectedRegionPath = [];
+      this.areaIndexes = [0, 0];
+      this.tempAreaIndexes = [0, 0];
+      this.updateAreaColumns(this.areaIndexes);
+      var locationIndex = this.secondaryTabs.findIndex(function (item) {
+        return item.key === 'location';
+      });
+      if (this.activeSecondaryTab === locationIndex) {
+        this.activeSecondaryTab = 0;
       }
-      var areas = city.children || [];
-      var area = areas[areaIndex - 1];
-      if (!area) {
-        return [province, city];
-      }
-      return [province, city, area];
+      this.resetCards();
     },
     onPriceChange: function onPriceChange(event) {
       this.selectedPriceIndex = Number(event.detail.value) || 0;
@@ -864,6 +708,10 @@ var _default = {
       this.pageNo = 1;
       this.finished = false;
       this.visibleCards = [];
+      this.leftColumn = [];
+      this.rightColumn = [];
+      this.leftColumnHeight = 0;
+      this.rightColumnHeight = 0;
       this.fetchShowcaseList(1, true);
     },
     loadMoreCards: function loadMoreCards() {
@@ -873,54 +721,61 @@ var _default = {
       this.fetchShowcaseList(this.pageNo + 1, false);
     },
     fetchShowcaseList: function fetchShowcaseList(pageNo, isRefresh) {
-      var _this8 = this;
+      var _this9 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee4() {
-        var requestSeq, res, rows, cards;
+        var requestSeq, newCards, res, rows;
         return _regenerator.default.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                requestSeq = ++_this8.requestSeq;
-                _this8.loading = true;
-                _context4.prev = 2;
-                _context4.next = 5;
-                return _request.default.get('/wechat/homePage/showCase/list', _this8.buildQueryParams(pageNo));
-              case 5:
+                requestSeq = ++_this9.requestSeq;
+                _this9.loading = true;
+                newCards = [];
+                _context4.prev = 3;
+                _context4.next = 6;
+                return _request.default.get('/wechat/homePage/showCase/list', _this9.buildQueryParams(pageNo));
+              case 6:
                 res = _context4.sent;
-                if (!(requestSeq !== _this8.requestSeq)) {
-                  _context4.next = 8;
-                  break;
+                if (requestSeq === _this9.requestSeq) {
+                  rows = Array.isArray(res.rows) ? res.rows : [];
+                  newCards = rows.map(function (item) {
+                    return _this9.normalizeShowcaseCard(item);
+                  });
+                  _this9.total = Number(res.total) || 0;
+                  _this9.pageNo = pageNo;
+                  _this9.visibleCards = isRefresh ? newCards : _this9.visibleCards.concat(newCards);
+                  _this9.finished = rows.length < _this9.pageSize || _this9.visibleCards.length >= _this9.total;
+                  if (isRefresh) {
+                    _this9.leftColumn = [];
+                    _this9.rightColumn = [];
+                    _this9.leftColumnHeight = 0;
+                    _this9.rightColumnHeight = 0;
+                  }
                 }
-                return _context4.abrupt("return");
-              case 8:
-                rows = Array.isArray(res.rows) ? res.rows : [];
-                cards = rows.map(function (item) {
-                  return _this8.normalizeShowcaseCard(item);
-                });
-                _this8.total = Number(res.total) || 0;
-                _this8.pageNo = pageNo;
-                _this8.visibleCards = isRefresh ? cards : _this8.visibleCards.concat(cards);
-                _this8.finished = rows.length < _this8.pageSize || _this8.visibleCards.length >= _this8.total;
-                _context4.next = 19;
+                _context4.next = 13;
                 break;
+              case 10:
+                _context4.prev = 10;
+                _context4.t0 = _context4["catch"](3);
+                if (requestSeq === _this9.requestSeq) {
+                  _this9.finished = isRefresh;
+                }
+              case 13:
+                _context4.prev = 13;
+                if (requestSeq === _this9.requestSeq) {
+                  _this9.loading = false;
+                }
+                return _context4.finish(13);
               case 16:
-                _context4.prev = 16;
-                _context4.t0 = _context4["catch"](2);
-                if (requestSeq === _this8.requestSeq) {
-                  _this8.finished = isRefresh;
+                if (requestSeq === _this9.requestSeq && newCards.length > 0) {
+                  _this9.distributeCards(newCards, requestSeq);
                 }
-              case 19:
-                _context4.prev = 19;
-                if (requestSeq === _this8.requestSeq) {
-                  _this8.loading = false;
-                }
-                return _context4.finish(19);
-              case 22:
+              case 17:
               case "end":
                 return _context4.stop();
             }
           }
-        }, _callee4, null, [[2, 16, 19, 22]]);
+        }, _callee4, null, [[3, 10, 13, 16]]);
       }))();
     },
     buildQueryParams: function buildQueryParams(pageNo) {
@@ -967,8 +822,93 @@ var _default = {
         sold: "\u5DF2\u552E".concat(Number(item.salesCount) || 0),
         cover: this.buildImageUrl(item.coverImage),
         avatar: this.buildImageUrl(item.avatarUrl) || '/static/yunyiku/avatar.png',
+        aspectRatio: 1,
+        coverHeight: 346,
         raw: item
       };
+    },
+    getImageInfo: function getImageInfo(src) {
+      return new Promise(function (resolve) {
+        uni.getImageInfo({
+          src: src,
+          success: function success(res) {
+            return resolve(res);
+          },
+          fail: function fail() {
+            return resolve(null);
+          }
+        });
+      });
+    },
+    calcCoverHeight: function calcCoverHeight(aspectRatio) {
+      var ratio = Math.max(0.66, Math.min(1.5, aspectRatio));
+      return Math.round(346 / ratio);
+    },
+    distributeCards: function distributeCards(cards, seq) {
+      var _this10 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee5() {
+        var _iterator, _step, card, info, cardHeight;
+        return _regenerator.default.wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                _iterator = _createForOfIteratorHelper(cards);
+                _context5.prev = 1;
+                _iterator.s();
+              case 3:
+                if ((_step = _iterator.n()).done) {
+                  _context5.next = 17;
+                  break;
+                }
+                card = _step.value;
+                if (!(seq !== _this10.requestSeq)) {
+                  _context5.next = 7;
+                  break;
+                }
+                return _context5.abrupt("return");
+              case 7:
+                if (!card.cover) {
+                  _context5.next = 12;
+                  break;
+                }
+                _context5.next = 10;
+                return _this10.getImageInfo(card.cover);
+              case 10:
+                info = _context5.sent;
+                if (info) {
+                  card.aspectRatio = info.width / info.height;
+                }
+              case 12:
+                card.coverHeight = _this10.calcCoverHeight(card.aspectRatio);
+                cardHeight = card.coverHeight + 220;
+                if (_this10.leftColumnHeight <= _this10.rightColumnHeight) {
+                  _this10.leftColumn.push(card);
+                  _this10.leftColumnHeight += cardHeight;
+                } else {
+                  _this10.rightColumn.push(card);
+                  _this10.rightColumnHeight += cardHeight;
+                }
+              case 15:
+                _context5.next = 3;
+                break;
+              case 17:
+                _context5.next = 22;
+                break;
+              case 19:
+                _context5.prev = 19;
+                _context5.t0 = _context5["catch"](1);
+                _iterator.e(_context5.t0);
+              case 22:
+                _context5.prev = 22;
+                _iterator.f();
+                return _context5.finish(22);
+              case 25:
+              case "end":
+                return _context5.stop();
+            }
+          }
+        }, _callee5, null, [[1, 19, 22, 25]]);
+      }))();
     },
     formatPrice: function formatPrice(price, unit) {
       var amount = price === null || price === undefined || price === '' ? '0' : price;
@@ -991,13 +931,13 @@ var _default = {
       this.resetCards();
     },
     handleSearchInput: function handleSearchInput(event) {
-      var _this9 = this;
+      var _this11 = this;
       this.searchKeyword = event.detail.value;
       if (this.searchTimer) {
         clearTimeout(this.searchTimer);
       }
       this.searchTimer = setTimeout(function () {
-        _this9.resetCards();
+        _this11.resetCards();
       }, 300);
     },
     previewCard: function previewCard(card) {

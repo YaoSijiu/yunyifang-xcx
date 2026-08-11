@@ -492,6 +492,20 @@ var _default = {
       var isQuoteType = Number(data.isOtherPartyQuote) === 1;
       var quoteList = Array.isArray(data.quoteUserList) ? data.quoteUserList : [];
       var acceptListCandidates = [data.receiverList, data.acceptUserList, data.orderUserList, data.participantList];
+      // 有效状态白名单：报价保留待选择/已选中/已生成订单；订单保留待支付/待接单/服务中/已完成
+      var VALID_QUOTE_STATUS = new Set(['pending', 'selected', 'ordered']);
+      var VALID_ORDER_STATUS = new Set(['pending_pay', 'pending_accept', 'in_service', 'completed']);
+      var isQuoteStatusValid = function isQuoteStatusValid(status) {
+        if (status === null || status === undefined || status === '') return false;
+        return VALID_QUOTE_STATUS.has(String(status).toLowerCase());
+      };
+      var isOrderStatusValid = function isOrderStatusValid(status) {
+        if (status === null || status === undefined || status === '') {
+          // 拿不到订单状态的兜底：可能是旧记录无状态字段，保守视为有效
+          return true;
+        }
+        return VALID_ORDER_STATUS.has(String(status).toLowerCase());
+      };
       // 将时间字符串转为时间戳用于比较新旧（iOS 不支持 - 分隔，统一替换为 /）
       var toTimestamp = function toTimestamp(value) {
         if (!value) return 0;
@@ -502,6 +516,8 @@ var _default = {
       var candidates = [];
       quoteList.forEach(function (item) {
         if (!item) return;
+        // 按报价状态白名单过滤：排除未选中/已取消/已婉拒等无效记录
+        if (!isQuoteStatusValid(item.quoteStatus)) return;
         candidates.push({
           source: 'quote',
           item: item,
@@ -513,6 +529,8 @@ var _default = {
         if (!Array.isArray(list)) return;
         list.forEach(function (item) {
           if (!item) return;
+          var orderStatus = item.orderStatus || item.status;
+          if (!isOrderStatusValid(orderStatus)) return;
           var userId = item.quoteUserId || item.receiverUserId || item.acceptUserId || item.orderUserId || '';
           var rawTime = item.quoteTime || item.receiverTime || item.acceptTime || item.orderTime || item.createTime || '';
           candidates.push({

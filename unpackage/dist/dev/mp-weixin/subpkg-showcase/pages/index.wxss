@@ -111,7 +111,7 @@
 .plain-input.data-v-343ecbe8 {
   height: 86rpx;
   font-size: 28rpx;
-  color: #D4D4D4;
+  color: #000000;
 }
 .plain-textarea.data-v-343ecbe8 {
   width: 100%;
@@ -125,7 +125,6 @@
 .plain-textarea.large.data-v-343ecbe8 {
   height: 220rpx;
 }
-.placeholder-text.data-v-343ecbe8,
 .line-placeholder.data-v-343ecbe8 {
   color: #888888;
   font-size: 28rpx;
