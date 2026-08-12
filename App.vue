@@ -5,11 +5,17 @@ export default {
 		updateManagerInited: false,
 		isUpdateModalShowing: false,
 		pendingUpdateModal: null,
+		// 自定义字体配置
+		customFont: {
+			family: 'Alibaba PuHuiTi',
+			source: 'https://cdn.yourdomain.com/fonts/AlibabaPuHuiTi_3_105_Heavy.woff2'
+		}
 	},
 	onLaunch: function (options) {
 		this.globalData.launchOptions = options || null;
 		console.log('App Launch')
 		this.checkMiniProgramUpdate()
+		this.loadCustomFont()
 	},
 	onShow: function (options) {
 		this.globalData.launchOptions = options || this.globalData.launchOptions;
@@ -20,6 +26,22 @@ export default {
 		console.log('App Hide')
 	},
 	methods: {
+		loadCustomFont() {
+			const { family, source } = this.globalData.customFont
+			// #ifdef MP-WEIXIN
+			if (wx.canIUse('loadFontFace')) {
+				wx.loadFontFace({
+					family,
+					source: `url("${source}")`,
+					global: true,
+					scopes: ['webview', 'native'],
+					desc: { style: 'normal', weight: 'normal', variant: 'normal' },
+					success: (res) => console.log('[字体] 加载成功', res),
+					fail: (err) => console.error('[字体] 加载失败', err)
+				})
+			}
+			// #endif
+		},
 		checkMiniProgramUpdate() {
 			console.log("我触发了",wx.canIUse('getUpdateManager'))
 			console.log(this.globalData.updateManagerInited)
@@ -115,7 +137,7 @@ cover-image,
 scroll-view,
 swiper,
 swiper-item {
-  font-family: PingFang SC !important;
+  font-family: "Alibaba PuHuiTi", "PingFang SC", "Microsoft YaHei", sans-serif !important;
 }
 
 /* 隐藏所有滚动条 - 适用于所有平台 */
@@ -136,7 +158,7 @@ swiper-item {
 }
 
 page {
-  font-family: PingFang SC;
+  font-family: "Alibaba PuHuiTi", "PingFang SC", "Microsoft YaHei", sans-serif;
   -webkit-overflow-scrolling: touch;
   overflow: auto;
   scrollbar-width: none !important;

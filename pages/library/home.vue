@@ -1,5 +1,13 @@
 ﻿<template>
-	<view class="page">
+	<view class="page"
+		:class="{ 'pc-pulling': pcPulling && pcPullDistance > 0 }"
+		@mousedown="onPcPullStart"
+		@mousemove="onPcPullMove"
+		@mouseup="onPcPullEnd"
+		@mouseleave="onPcPullEnd"
+		@touchstart.passive="onPcPullStart"
+		@touchmove.passive="onPcPullMove"
+		@touchend="onPcPullEnd">
 		<view class="condition-panel">
 			<view class="status-bar" :style="{ height: statusBarHeight + 'px' }"></view>
 			<view class="top-shell">
@@ -89,22 +97,19 @@
 							@click.stop="clearRegionFilter"
 						>×</text>
 					</view>
-					<picker
-						v-else-if="item.key === 'price'"
+					<view
+					v-else-if="item.key === 'price'"
 						class="secondary-picker"
-						:value="selectedPriceIndex"
-						:range="priceOptions"
-						range-key="label"
-						@change="onPriceChange"
+						@click="openPricePopup"
 					>
 						<view
-							class="secondary-tab filter"
-							:class="{ active: activeSecondaryTab === index }"
-						>
+						class="secondary-tab filter"
+						:class="{ active: selectedPriceIndex >= 0 || isCustomPrice }"
+					>
 							<text class="secondary-text">{{ selectedPriceLabel }}</text>
 							<image class="filter-arrow" src="/static/icon/xiangxia.svg" mode="aspectFit"></image>
 						</view>
-					</picker>
+					</view>
 					<view
 						v-else
 						class="secondary-tab"
@@ -117,12 +122,28 @@
 			</view>
 		</view>
 
-		<scroll-view
-			scroll-y
-			class="content-scroll"
-			lower-threshold="90"
-			@scrolltolower="loadMoreCards"
-		>
+		<view class="pc-list-wrap">
+			<view
+				class="pc-pull-tip"
+				:class="{ 'pc-pull-visible': pcPullTranslateY > 0 || refreshing }"
+				:style="{ height: pcPullThreshold + 'px', marginTop: (-pcPullThreshold) + 'px' }">
+				<view class="pc-pull-inner">
+					<view class="pc-pull-spinner" v-if="refreshing"></view>
+					<text class="pc-pull-text">{{ pcPullTip }}</text>
+				</view>
+			</view>
+			<view class="pc-scroll-wrap" :style="{ transform: 'translateY(' + pcPullTranslateY + 'px)', transition: (pcPulling ? 'none' : 'transform .25s ease-out') }">
+				<scroll-view
+					scroll-y
+					class="content-scroll"
+					lower-threshold="90"
+					refresher-enabled
+					:refresher-triggered="refreshing"
+					refresher-background="#ffffff"
+					@refresherrefresh="handleRefresh"
+					@scrolltolower="loadMoreCards"
+					@scroll="handleContentScroll"
+				>
 			<view class="card-grid">
 				<view class="card-column">
 					<view
@@ -178,7 +199,13 @@
 						</view>
 						<view class="card-title">{{ card.title }}</view>
 						<view class="card-footer">
-							<text class="price">{{ card.price }}</text>
+							<text class="price">
+								<text
+									v-for="(seg, i) in splitPriceSegments(card.price)"
+									:key="i"
+									:class="seg.num ? 'price-num' : 'price-unit'"
+								>{{ seg.text }}</text>
+							</text>
 							<text class="sold">{{ card.sold }}</text>
 						</view>
 					</view>
@@ -237,7 +264,13 @@
 						</view>
 						<view class="card-title">{{ card.title }}</view>
 						<view class="card-footer">
-							<text class="price">{{ card.price }}</text>
+							<text class="price">
+								<text
+									v-for="(seg, i) in splitPriceSegments(card.price)"
+									:key="i"
+									:class="seg.num ? 'price-num' : 'price-unit'"
+								>{{ seg.text }}</text>
+							</text>
 							<text class="sold">{{ card.sold }}</text>
 						</view>
 					</view>
@@ -251,8 +284,12 @@
 				<text v-else-if="finished">没有更多了</text>
 				<text v-else>上滑加载更多</text>
 			</view>
-			<view class="bottom-gap"></view>
-		</scroll-view>
+				<view class="bottom-gap"></view>
+				</scroll-view>
+			</view>
+		</view>
+
+		<yun-tabbar :selected="0"></yun-tabbar>
 
 		<view
 		v-if="areaPopupVisible"
@@ -261,7 +298,7 @@
 	>
 		<view class="area-popup" @click.stop>
 			<view class="area-popup-header">
-				<text class="area-popup-title">地理位置</text>
+				<text class="area-popup-title">选择地理位置</text>
 				<view class="area-popup-close" @click="cancelAreaSelection">×</view>
 			</view>
 			<picker-view
@@ -292,7 +329,58 @@
 		</view>
 	</view>
 
-		<yun-tabbar :selected="0"></yun-tabbar>
+		<view
+		v-if="pricePopupVisible"
+		class="price-popup-mask"
+		@click="closePricePopup"
+	>
+		<view class="price-popup" @click.stop>
+			<view class="price-popup-header">
+				<view class="price-popup-close" @click="closePricePopup">×</view>
+			</view>
+			<view class="price-popup-header">
+				<text class="price-popup-title">价格</text>
+				<text class="price-popup-title-2">（元）</text>
+				<text class="price-popup-no-limit" @click="clearPriceFilter">不限</text>
+			</view>
+			<view class="price-popup-options">
+				<view
+					v-for="(item, idx) in priceOptions"
+					:key="idx"
+					class="price-option"
+					:class="{ active: tempSelectedPriceIndex === idx }"
+					@click="selectPriceOption(idx)"
+				>{{ item.label }}</view>
+			</view>
+			<view class="price-popup-custom">
+				<view class="price-custom-label">自定义</view>
+				<view class="price-custom-inputs">
+					<input
+						class="price-custom-input"
+						type="number"
+						v-model="tempCustomMinPrice"
+						placeholder="0"
+						placeholder-class="price-custom-placeholder"
+						@input="onCustomMinInput"
+					/>
+					<text class="price-custom-sep">—</text>
+					<input
+						class="price-custom-input"
+						type="number"
+						v-model="tempCustomMaxPrice"
+						placeholder="10000"
+						placeholder-class="price-custom-placeholder"
+						@input="onCustomMaxInput"
+					/>
+				</view>
+			</view>
+			<view class="price-popup-footer">
+				<view class="price-popup-btn price-popup-btn-reset" @click="resetPricePopup">重置</view>
+				<view class="price-popup-btn price-popup-btn-confirm" @click="confirmPricePopup">确定</view>
+			</view>
+		</view>
+	</view>
+
 	</view>
 </template>
 
@@ -300,13 +388,14 @@
 import request from '@/utils/request.js';
 import env from '@/config/env.js';
 
-const DEFAULT_PRICE_OPTION = { label: '价格区间', minPrice: '', maxPrice: '' };
+
 const PRICE_OPTIONS = [
-	DEFAULT_PRICE_OPTION,
-	{ label: '0-200', minPrice: '0', maxPrice: '200' },
-	{ label: '200-500', minPrice: '200', maxPrice: '500' },
-	{ label: '500-1000', minPrice: '500', maxPrice: '1000' },
-	{ label: '1000以上', minPrice: '1000', maxPrice: '' }
+	{ label: '0-1000', minPrice: '0', maxPrice: '1000' },
+	{ label: '1000-2000', minPrice: '1000', maxPrice: '2000' },
+	{ label: '2000-3000', minPrice: '2000', maxPrice: '3000' },
+	{ label: '3000-4000', minPrice: '3000', maxPrice: '4000' },
+	{ label: '4000-5000', minPrice: '4000', maxPrice: '5000' },
+	{ label: '5000以上', minPrice: '5000', maxPrice: '' }
 ];
 
 export default {
@@ -336,7 +425,12 @@ export default {
 			selectedRegionText: '',
 			selectedRegionPath: [],
 			priceOptions: PRICE_OPTIONS,
-			selectedPriceIndex: 0,
+			selectedPriceIndex: -1,
+			pricePopupVisible: false,
+			tempSelectedPriceIndex: -1,
+			tempCustomMinPrice: '',
+			tempCustomMaxPrice: '',
+			isCustomPrice: false,
 			primaryTabs: [
 				{ label: '关注', key: 'fixed_follow', type: 'follow' },
 				{ label: '推荐', key: 'fixed_recommend', type: 'recommend' }
@@ -345,7 +439,7 @@ export default {
 				{ label: '最受欢迎', key: 'popular', type: 'popular' },
 				{ label: '新入驻', key: 'latest' },
 				{ label: '地理位置', key: 'location' },
-				{ label: '价格区间', key: 'price' }
+				{ label: '价格', key: 'price' }
 			],
 			visibleCards: [],
 			leftColumn: [],
@@ -358,17 +452,47 @@ export default {
 			dragStartTranslate: 0,
 			maxScroll: 0,
 			hasDragged: false,
-			preventClick: false
+			preventClick: false,
+			refreshing: false,
+			pcPullStartY: 0,
+			pcPullDistance: 0,
+			pcPulling: false,
+			pcPullTriggered: false,
+			pcPullThreshold: 70,
+			pcScrollTop: 0
 		};
 	},
 	computed: {
 		selectedPriceLabel() {
+			if (this.isCustomPrice) {
+				const min = this.tempCustomMinPrice || '0';
+				const max = this.tempCustomMaxPrice || '不限';
+				return `${min}-${max}`;
+			}
+			if (this.selectedPriceIndex < 0) {
+				return '价格区间';
+			}
 			const option = this.priceOptions[this.selectedPriceIndex];
-			return option ? option.label : DEFAULT_PRICE_OPTION.label;
+			return option ? option.label : '价格';
 		},
 		emptyStateText() {
 			const activeTab = this.primaryTabs[this.activePrimaryTab];
 			return activeTab && activeTab.type === 'follow' ? '暂无关注' : '暂无橱窗';
+		},
+		pcPullTranslateY() {
+			if (this.refreshing) {
+				return this.pcPullThreshold;
+			}
+			if (!this.pcPulling || this.pcPullDistance <= 0) {
+				return 0;
+			}
+			return Math.min(this.pcPullDistance, this.pcPullThreshold * 2.2);
+		},
+		pcPullTip() {
+			if (this.refreshing) {
+				return '正在刷新...';
+			}
+			return this.pcPullDistance >= this.pcPullThreshold ? '松开立即刷新' : '下拉可以刷新';
 		}
 	},
 	created() {
@@ -414,12 +538,35 @@ export default {
 		switchPrimaryTab(index) {
 			if (this.preventClick) return;
 			this.activePrimaryTab = index;
+			this.scrollActiveTabIntoView(index);
 			this.resetCards();
 		},
 		onTabExpandSelect(index) {
 			this.activePrimaryTab = index;
 			this.tabExpanded = false;
+			this.$nextTick(() => {
+				this.scrollActiveTabIntoView(index);
+			});
 			this.resetCards();
+		},
+		scrollActiveTabIntoView(index) {
+			const targetIndex = (typeof index === 'number') ? index : this.activePrimaryTab;
+			const query = uni.createSelectorQuery().in(this);
+			query.select('.primary-tabs').boundingClientRect();
+			query.selectAll('.primary-tab').boundingClientRect();
+			query.exec(res => {
+				const viewport = res && res[0];
+				const tabs = res && res[1];
+				if (!viewport || !tabs || !tabs[targetIndex]) return;
+				const tab = tabs[targetIndex];
+				const containerWidth = viewport.width;
+				const tabCenter = tab.left + tab.width / 2 - (viewport.left || 0);
+				const viewportCenter = containerWidth / 2;
+				const delta = tabCenter - viewportCenter;
+				const targetX = this.translateX - delta;
+				const maxX = -this.maxScroll;
+				this.translateX = Math.max(maxX, Math.min(0, targetX));
+			});
 		},
 		toggleTabDropdown() {
 			if (this.tabExpanded) {
@@ -674,27 +821,139 @@ export default {
 			}
 			this.resetCards();
 		},
-		onPriceChange(event) {
-			this.selectedPriceIndex = Number(event.detail.value) || 0;
-			this.activeSecondaryTab = this.secondaryTabs.findIndex(item => item.key === 'price');
+		openPricePopup() {
+			this.tempSelectedPriceIndex = this.isCustomPrice ? -1 : this.selectedPriceIndex;
+			this.tempCustomMinPrice = this.isCustomPrice ? this.tempCustomMinPrice : '';
+			this.tempCustomMaxPrice = this.isCustomPrice ? this.tempCustomMaxPrice : '';
+			this.pricePopupVisible = true;
+		},
+		closePricePopup() {
+			this.pricePopupVisible = false;
+		},
+		selectPriceOption(idx) {
+			this.tempSelectedPriceIndex = idx;
+			this.isCustomPrice = false;
+			this.tempCustomMinPrice = '';
+			this.tempCustomMaxPrice = '';
+		},
+		onCustomMinInput(e) {
+			this.tempCustomMinPrice = e.detail.value;
+			if (this.tempCustomMinPrice || this.tempCustomMaxPrice) {
+				this.isCustomPrice = true;
+				this.tempSelectedPriceIndex = -1;
+			}
+		},
+		onCustomMaxInput(e) {
+			this.tempCustomMaxPrice = e.detail.value;
+			if (this.tempCustomMinPrice || this.tempCustomMaxPrice) {
+				this.isCustomPrice = true;
+				this.tempSelectedPriceIndex = -1;
+			}
+		},
+		resetPricePopup() {
+			this.tempSelectedPriceIndex = -1;
+			this.tempCustomMinPrice = '';
+			this.tempCustomMaxPrice = '';
+			this.isCustomPrice = false;
+		},
+		clearPriceFilter() {
+			this.tempSelectedPriceIndex = -1;
+			this.tempCustomMinPrice = '';
+			this.tempCustomMaxPrice = '';
+			this.isCustomPrice = false;
+			this.selectedPriceIndex = -1;
+			this.pricePopupVisible = false;
+			this.resetCards();
+		},
+		confirmPricePopup() {
+			this.selectedPriceIndex = this.tempSelectedPriceIndex;
+			if (this.isCustomPrice) {
+				this.selectedPriceIndex = -1;
+			} else {
+				this.tempCustomMinPrice = '';
+				this.tempCustomMaxPrice = '';
+			}
+			this.pricePopupVisible = false;
 			this.resetCards();
 		},
 		resetCards() {
-			this.pageNo = 1;
-			this.finished = false;
-			this.visibleCards = [];
-			this.leftColumn = [];
-			this.rightColumn = [];
-			this.leftColumnHeight = 0;
-			this.rightColumnHeight = 0;
-			this.fetchShowcaseList(1, true);
-		},
-		loadMoreCards() {
-			if (this.loading || this.finished) {
-				return;
-			}
-			this.fetchShowcaseList(this.pageNo + 1, false);
-		},
+		this.pageNo = 1;
+		this.finished = false;
+		this.visibleCards = [];
+		this.leftColumn = [];
+		this.rightColumn = [];
+		this.leftColumnHeight = 0;
+		this.rightColumnHeight = 0;
+		return this.fetchShowcaseList(1, true);
+	},
+	async handleRefresh() {
+		if (this.searchTimer) {
+			clearTimeout(this.searchTimer);
+			this.searchTimer = null;
+		}
+		this.refreshing = true;
+		try {
+			await this.resetCards();
+		} finally {
+			this.refreshing = false;
+		}
+	},
+	loadMoreCards() {
+		if (this.loading || this.finished) {
+			return;
+		}
+		this.fetchShowcaseList(this.pageNo + 1, false);
+	},
+	handleContentScroll(e) {
+		const detail = e && e.detail ? e.detail : {};
+		this.pcScrollTop = typeof detail.scrollTop === 'number' ? detail.scrollTop : 0;
+	},
+	getPointerY(e) {
+		if (!e) return 0;
+		const touch = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]);
+		if (touch && typeof touch.clientY === 'number') return touch.clientY;
+		if (typeof e.clientY === 'number') return e.clientY;
+		return 0;
+	},
+	onPcPullStart(e) {
+		if (this.refreshing) return;
+		const y = this.getPointerY(e);
+		if (this.pcScrollTop > 0) {
+			this.pcPulling = false;
+			return;
+		}
+		this.pcPulling = true;
+		this.pcPullTriggered = false;
+		this.pcPullStartY = y;
+		this.pcPullDistance = 0;
+	},
+	onPcPullMove(e) {
+		if (!this.pcPulling || this.refreshing) return;
+		const y = this.getPointerY(e);
+		let delta = y - this.pcPullStartY;
+		if (delta <= 0) {
+			this.pcPullDistance = 0;
+			return;
+		}
+		const max = this.pcPullThreshold * 2.2;
+		if (delta > max) {
+			delta = max + (delta - max) * 0.3;
+		}
+		this.pcPullDistance = delta;
+		if (delta >= this.pcPullThreshold) {
+			this.pcPullTriggered = true;
+		}
+	},
+	onPcPullEnd() {
+		if (!this.pcPulling) return;
+		const triggered = this.pcPullTriggered;
+		this.pcPulling = false;
+		this.pcPullTriggered = false;
+		this.pcPullDistance = 0;
+		if (triggered && !this.refreshing) {
+			this.handleRefresh();
+		}
+	},
 		async fetchShowcaseList(pageNo, isRefresh) {
 			const requestSeq = ++this.requestSeq;
 			this.loading = true;
@@ -756,13 +1015,22 @@ export default {
 			if (activeSecondary && activeSecondary.key === 'location' && this.selectedRegionId) {
 				params.regionId = this.selectedRegionId;
 			}
-			const priceOption = this.priceOptions[this.selectedPriceIndex];
-			if (activeSecondary && activeSecondary.key === 'price' && priceOption) {
-				if (priceOption.minPrice !== '') {
-					params.minPrice = priceOption.minPrice;
+			if (this.isCustomPrice) {
+				if (this.tempCustomMinPrice) {
+					params.minPrice = this.tempCustomMinPrice;
 				}
-				if (priceOption.maxPrice !== '') {
-					params.maxPrice = priceOption.maxPrice;
+				if (this.tempCustomMaxPrice) {
+					params.maxPrice = this.tempCustomMaxPrice;
+				}
+			} else if (this.selectedPriceIndex >= 0) {
+				const priceOption = this.priceOptions[this.selectedPriceIndex];
+				if (priceOption) {
+					if (priceOption.minPrice !== '') {
+						params.minPrice = priceOption.minPrice;
+					}
+					if (priceOption.maxPrice !== '') {
+						params.maxPrice = priceOption.maxPrice;
+					}
 				}
 			}
 			return params;
@@ -817,6 +1085,16 @@ export default {
 		formatPrice(price, unit) {
 			const amount = price === null || price === undefined || price === '' ? '0' : price;
 			return `¥ ${amount}${unit ? '/' + unit : ''}`;
+		},
+		splitPriceSegments(price) {
+			if (!price) return [{ text: '', num: false }];
+			const segments = [];
+			const parts = price.split(/(\d+)/);
+			for (const part of parts) {
+				if (part === '') continue;
+				segments.push({ text: part, num: /\d/.test(part) });
+			}
+			return segments;
 		},
 		buildImageUrl(url) {
 			if (!url) {
@@ -1434,8 +1712,8 @@ export default {
 
 .designer-name {
 	font-size: 24rpx;
-	font-weight: 600;
-	color: #2b2b2b;
+	font-weight: normal;
+	color: #979797;
 }
 
 .card-title {
@@ -1443,7 +1721,7 @@ export default {
 	font-size: 28rpx;
 	line-height: 40rpx;
 	font-weight: 500;
-	color: #000000;
+	color: #363636;
 }
 
 .card-footer {
@@ -1454,10 +1732,15 @@ export default {
 }
 
 .price {
-	font-size: 30rpx;
 	line-height: 42rpx;
-	font-weight: 400;
+	font-weight: 500;
 	color: #f37738;
+}
+.price-num {
+	font-size: 36rpx;
+}
+.price-unit {
+	font-size: 24rpx;
 }
 
 .sold {
@@ -1593,5 +1876,232 @@ export default {
 .tab-dropdown-panel-tags{
 	font-size: 28rpx;
 	font-weight: 500;
+}
+
+.pc-list-wrap {
+	flex: 1;
+	height: 0;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	overflow: hidden;
+}
+
+.pc-scroll-wrap {
+	flex: 1;
+	height: 100%;
+	width: 100%;
+	will-change: transform;
+}
+
+.page.pc-pulling {
+	cursor: grab;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.pc-pull-tip {
+	width: 100%;
+	overflow: hidden;
+	pointer-events: none;
+	position: relative;
+}
+
+.pc-pull-visible .pc-pull-inner {
+	opacity: 1;
+}
+
+.pc-pull-inner {
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12rpx;
+	opacity: 0;
+	transition: opacity .2s ease;
+	padding-bottom: 10rpx;
+	box-sizing: border-box;
+}
+
+.pc-pull-text {
+	font-size: 24rpx;
+	color: #999999;
+	line-height: 1;
+}
+
+.pc-pull-spinner {
+	width: 28rpx;
+	height: 28rpx;
+	border: 3rpx solid #e5e5e5;
+	border-top-color: #ff6b35;
+	border-radius: 50%;
+	box-sizing: border-box;
+	animation: pc-pull-spin .7s linear infinite;
+}
+
+@keyframes pc-pull-spin {
+	to { transform: rotate(360deg); }
+}
+
+.price-popup-mask {
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: 9999;
+	display: flex;
+	align-items: flex-end;
+}
+
+.price-popup {
+	width: 100%;
+	background: #ffffff;
+	border-radius: 30rpx 30rpx 30rpx 30rpx;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	padding-bottom: env(safe-area-inset-bottom);
+	margin: 22rpx;
+}
+
+.price-popup-header {
+	display: flex;
+	align-items: center;
+	// justify-content: center;
+	padding: 50rpx 32rpx 30rpx;
+	position: relative;
+}
+
+.price-popup-title {
+	font-size: 32rpx;
+	font-weight: 600;
+	color: #000000;
+}
+.price-popup-title-2 {
+	font-size: 24rpx;
+	font-weight: 400;
+	color: #979797;
+}
+
+.price-popup-no-limit {
+	position: absolute;
+	right: 40rpx;
+	top: 60%;
+	transform: translateY(-50%);
+	font-size: 28rpx;
+	color: #999999;
+}
+
+.price-popup-close {
+	position: absolute;
+	right: 32rpx;
+	top: 80%;
+	transform: translateY(-50%);
+	width: 56rpx;
+	height: 56rpx;
+	line-height: 52rpx;
+	text-align: center;
+	font-size: 80rpx;
+	font-weight: 300;
+	color: #000;
+}
+
+.price-popup-options {
+	display: flex;
+	flex-wrap: wrap;
+	padding: 20rpx 32rpx;
+	gap: 20rpx;
+}
+
+.price-option {
+	width: calc((100% - 40rpx) / 3);
+	height: 72rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 28rpx;
+	color: #666666;
+	background: #FFFFFF;
+	border-radius: 226rpx;
+	box-sizing: border-box;
+	border: 1rpx solid #CECECE;
+}
+
+.price-option.active {
+	background: #fff3eb;
+	color: #f37738;
+	font-weight: 500;
+	border: 1rpx solid #f37738;
+}
+
+.price-popup-custom {
+	padding: 20rpx 32rpx;
+}
+
+.price-custom-label {
+	font-size: 26rpx;
+	color: #000000;
+	margin-bottom: 20rpx;
+}
+
+.price-custom-inputs {
+	display: flex;
+	align-items: center;
+	gap: 20rpx;
+}
+
+.price-custom-input {
+	flex: 1;
+	height: 72rpx;
+	background: #f5f5f5;
+	border-radius: 16rpx;
+	text-align: center;
+	font-size: 30rpx;
+	color: #333333;
+}
+
+.price-custom-placeholder {
+	color: #bbbbbb;
+	font-size: 30rpx;
+}
+
+.price-custom-sep {
+	font-size: 30rpx;
+	color: #F1F1F1;
+}
+
+.price-popup-footer {
+	display: flex;
+	padding: 24rpx 51rpx;
+	padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+	gap: 42rpx;
+}
+
+.price-popup-btn {
+	flex: 1;
+	height: 88rpx;
+	border-radius: 44rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 30rpx;
+	font-weight: 500;
+	margin-bottom: 20rpx;
+}
+
+.price-popup-btn-reset {
+	border: 1rpx solid #979797;
+	background: #FFFFFF;
+	color: #979797;
+}
+
+.price-popup-btn-confirm {
+	background: #F37738;
+	color: #ffffff;
 }
 </style>

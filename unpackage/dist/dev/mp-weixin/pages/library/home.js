@@ -125,6 +125,22 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
+  var l1 = _vm.__map(_vm.leftColumn, function (card, __i0__) {
+    var $orig = _vm.__get_orig(card)
+    var l0 = _vm.splitPriceSegments(card.price)
+    return {
+      $orig: $orig,
+      l0: l0,
+    }
+  })
+  var l3 = _vm.__map(_vm.rightColumn, function (card, __i1__) {
+    var $orig = _vm.__get_orig(card)
+    var l2 = _vm.splitPriceSegments(card.price)
+    return {
+      $orig: $orig,
+      l2: l2,
+    }
+  })
   var g0 = !_vm.loading && _vm.visibleCards.length === 0
   var g1 = _vm.visibleCards.length
   if (!_vm._isMounted) {
@@ -136,6 +152,8 @@ var render = function () {
     {},
     {
       $root: {
+        l1: l1,
+        l3: l3,
         g0: g0,
         g1: g1,
       },
@@ -188,26 +206,29 @@ var _env = _interopRequireDefault(__webpack_require__(/*! @/config/env.js */ 39)
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-var DEFAULT_PRICE_OPTION = {
-  label: '价格区间',
-  minPrice: '',
-  maxPrice: ''
-};
-var PRICE_OPTIONS = [DEFAULT_PRICE_OPTION, {
-  label: '0-200',
+var PRICE_OPTIONS = [{
+  label: '0-1000',
   minPrice: '0',
-  maxPrice: '200'
-}, {
-  label: '200-500',
-  minPrice: '200',
-  maxPrice: '500'
-}, {
-  label: '500-1000',
-  minPrice: '500',
   maxPrice: '1000'
 }, {
-  label: '1000以上',
+  label: '1000-2000',
   minPrice: '1000',
+  maxPrice: '2000'
+}, {
+  label: '2000-3000',
+  minPrice: '2000',
+  maxPrice: '3000'
+}, {
+  label: '3000-4000',
+  minPrice: '3000',
+  maxPrice: '4000'
+}, {
+  label: '4000-5000',
+  minPrice: '4000',
+  maxPrice: '5000'
+}, {
+  label: '5000以上',
+  minPrice: '5000',
   maxPrice: ''
 }];
 var _default = {
@@ -237,7 +258,12 @@ var _default = {
       selectedRegionText: '',
       selectedRegionPath: [],
       priceOptions: PRICE_OPTIONS,
-      selectedPriceIndex: 0,
+      selectedPriceIndex: -1,
+      pricePopupVisible: false,
+      tempSelectedPriceIndex: -1,
+      tempCustomMinPrice: '',
+      tempCustomMaxPrice: '',
+      isCustomPrice: false,
       primaryTabs: [{
         label: '关注',
         key: 'fixed_follow',
@@ -258,7 +284,7 @@ var _default = {
         label: '地理位置',
         key: 'location'
       }, {
-        label: '价格区间',
+        label: '价格',
         key: 'price'
       }],
       visibleCards: [],
@@ -272,17 +298,47 @@ var _default = {
       dragStartTranslate: 0,
       maxScroll: 0,
       hasDragged: false,
-      preventClick: false
+      preventClick: false,
+      refreshing: false,
+      pcPullStartY: 0,
+      pcPullDistance: 0,
+      pcPulling: false,
+      pcPullTriggered: false,
+      pcPullThreshold: 70,
+      pcScrollTop: 0
     };
   },
   computed: {
     selectedPriceLabel: function selectedPriceLabel() {
+      if (this.isCustomPrice) {
+        var min = this.tempCustomMinPrice || '0';
+        var max = this.tempCustomMaxPrice || '不限';
+        return "".concat(min, "-").concat(max);
+      }
+      if (this.selectedPriceIndex < 0) {
+        return '价格区间';
+      }
       var option = this.priceOptions[this.selectedPriceIndex];
-      return option ? option.label : DEFAULT_PRICE_OPTION.label;
+      return option ? option.label : '价格';
     },
     emptyStateText: function emptyStateText() {
       var activeTab = this.primaryTabs[this.activePrimaryTab];
       return activeTab && activeTab.type === 'follow' ? '暂无关注' : '暂无橱窗';
+    },
+    pcPullTranslateY: function pcPullTranslateY() {
+      if (this.refreshing) {
+        return this.pcPullThreshold;
+      }
+      if (!this.pcPulling || this.pcPullDistance <= 0) {
+        return 0;
+      }
+      return Math.min(this.pcPullDistance, this.pcPullThreshold * 2.2);
+    },
+    pcPullTip: function pcPullTip() {
+      if (this.refreshing) {
+        return '正在刷新...';
+      }
+      return this.pcPullDistance >= this.pcPullThreshold ? '松开立即刷新' : '下拉可以刷新';
     }
   },
   created: function created() {
@@ -357,15 +413,40 @@ var _default = {
     switchPrimaryTab: function switchPrimaryTab(index) {
       if (this.preventClick) return;
       this.activePrimaryTab = index;
+      this.scrollActiveTabIntoView(index);
       this.resetCards();
     },
     onTabExpandSelect: function onTabExpandSelect(index) {
+      var _this2 = this;
       this.activePrimaryTab = index;
       this.tabExpanded = false;
+      this.$nextTick(function () {
+        _this2.scrollActiveTabIntoView(index);
+      });
       this.resetCards();
     },
+    scrollActiveTabIntoView: function scrollActiveTabIntoView(index) {
+      var _this3 = this;
+      var targetIndex = typeof index === 'number' ? index : this.activePrimaryTab;
+      var query = uni.createSelectorQuery().in(this);
+      query.select('.primary-tabs').boundingClientRect();
+      query.selectAll('.primary-tab').boundingClientRect();
+      query.exec(function (res) {
+        var viewport = res && res[0];
+        var tabs = res && res[1];
+        if (!viewport || !tabs || !tabs[targetIndex]) return;
+        var tab = tabs[targetIndex];
+        var containerWidth = viewport.width;
+        var tabCenter = tab.left + tab.width / 2 - (viewport.left || 0);
+        var viewportCenter = containerWidth / 2;
+        var delta = tabCenter - viewportCenter;
+        var targetX = _this3.translateX - delta;
+        var maxX = -_this3.maxScroll;
+        _this3.translateX = Math.max(maxX, Math.min(0, targetX));
+      });
+    },
     toggleTabDropdown: function toggleTabDropdown() {
-      var _this2 = this;
+      var _this4 = this;
       if (this.tabExpanded) {
         this.tabExpanded = false;
         return;
@@ -374,13 +455,13 @@ var _default = {
       query.select('.primary-tabs-wrapper').boundingClientRect();
       query.exec(function (res) {
         if (res && res[0]) {
-          _this2.tabPanelTop = res[0].bottom;
+          _this4.tabPanelTop = res[0].bottom;
         }
-        _this2.tabExpanded = true;
+        _this4.tabExpanded = true;
       });
     },
     loadTaskTypeTabs: function loadTaskTypeTabs() {
-      var _this3 = this;
+      var _this5 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee2() {
         var res, tags;
         return _regenerator.default.wrap(function _callee2$(_context2) {
@@ -392,18 +473,18 @@ var _default = {
                 return _request.default.get('/wechat/homePage/taskTypeTags');
               case 3:
                 res = _context2.sent;
-                tags = _this3.extractTaskTypeTags(res);
-                _this3.primaryTabs = _this3.buildPrimaryTabs(tags);
+                tags = _this5.extractTaskTypeTags(res);
+                _this5.primaryTabs = _this5.buildPrimaryTabs(tags);
                 _context2.next = 11;
                 break;
               case 8:
                 _context2.prev = 8;
                 _context2.t0 = _context2["catch"](0);
-                _this3.primaryTabs = _this3.buildPrimaryTabs([]);
+                _this5.primaryTabs = _this5.buildPrimaryTabs([]);
               case 11:
                 _context2.prev = 11;
-                _this3.$nextTick(function () {
-                  _this3.updateScrollBounds();
+                _this5.$nextTick(function () {
+                  _this5.updateScrollBounds();
                 });
                 return _context2.finish(11);
               case 14:
@@ -415,15 +496,15 @@ var _default = {
       }))();
     },
     updateScrollBounds: function updateScrollBounds() {
-      var _this4 = this;
+      var _this6 = this;
       var query = uni.createSelectorQuery().in(this);
       query.select('.primary-tabs').boundingClientRect();
       query.select('.primary-tabs-track').boundingClientRect();
       query.exec(function (res) {
         if (res && res[0] && res[1]) {
-          _this4.maxScroll = Math.max(0, res[1].width - res[0].width);
-          if (_this4.translateX < -_this4.maxScroll) {
-            _this4.translateX = -_this4.maxScroll;
+          _this6.maxScroll = Math.max(0, res[1].width - res[0].width);
+          if (_this6.translateX < -_this6.maxScroll) {
+            _this6.translateX = -_this6.maxScroll;
           }
         }
       });
@@ -447,12 +528,12 @@ var _default = {
       this.translateX = newX;
     },
     onDragEnd: function onDragEnd() {
-      var _this5 = this;
+      var _this7 = this;
       this.isDragging = false;
       if (this.hasDragged) {
         this.preventClick = true;
         setTimeout(function () {
-          _this5.preventClick = false;
+          _this7.preventClick = false;
         }, 100);
       }
     },
@@ -479,7 +560,7 @@ var _default = {
       return [];
     },
     buildPrimaryTabs: function buildPrimaryTabs(tags) {
-      var _this6 = this;
+      var _this8 = this;
       var fixedTabs = [{
         label: '关注',
         key: 'fixed_follow',
@@ -491,8 +572,8 @@ var _default = {
       }];
       var seenKeys = {};
       var dynamicTabs = (tags || []).reduce(function (result, item) {
-        var categoryName = _this6.resolveProfessionCategoryName(item);
-        var categoryKey = _this6.resolveProfessionCategoryKey(item);
+        var categoryName = _this8.resolveProfessionCategoryName(item);
+        var categoryKey = _this8.resolveProfessionCategoryKey(item);
         if (!categoryName || !categoryKey || seenKeys[categoryKey]) {
           return result;
         }
@@ -500,7 +581,7 @@ var _default = {
         result.push({
           label: categoryName,
           key: "category_".concat(categoryKey),
-          professionCategoryId: _this6.resolveProfessionCategoryId(item),
+          professionCategoryId: _this8.resolveProfessionCategoryId(item),
           categoryCode: item && item.categoryCode ? String(item.categoryCode) : ''
         });
         return result;
@@ -544,40 +625,40 @@ var _default = {
       this.resetCards();
     },
     loadAreaTree: function loadAreaTree() {
-      var _this7 = this;
+      var _this9 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee3() {
         var res, tree;
         return _regenerator.default.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                if (!_this7.areaLoading) {
+                if (!_this9.areaLoading) {
                   _context3.next = 2;
                   break;
                 }
                 return _context3.abrupt("return");
               case 2:
-                _this7.areaLoading = true;
+                _this9.areaLoading = true;
                 _context3.prev = 3;
                 _context3.next = 6;
                 return _request.default.get('/wechat/basic/areaTree');
               case 6:
                 res = _context3.sent;
-                tree = _this7.normalizeAreas(res && res.data ? res.data : res);
-                _this7.areaTree = tree;
-                _this7.areaIndexes = [0, 0];
-                _this7.updateAreaColumns(_this7.areaIndexes);
+                tree = _this9.normalizeAreas(res && res.data ? res.data : res);
+                _this9.areaTree = tree;
+                _this9.areaIndexes = [0, 0];
+                _this9.updateAreaColumns(_this9.areaIndexes);
                 _context3.next = 18;
                 break;
               case 13:
                 _context3.prev = 13;
                 _context3.t0 = _context3["catch"](3);
-                _this7.areaTree = [];
-                _this7.areaColumns = [[], []];
-                _this7.areaIndexes = [0, 0];
+                _this9.areaTree = [];
+                _this9.areaColumns = [[], []];
+                _this9.areaIndexes = [0, 0];
               case 18:
                 _context3.prev = 18;
-                _this7.areaLoading = false;
+                _this9.areaLoading = false;
                 return _context3.finish(18);
               case 21:
               case "end":
@@ -588,12 +669,12 @@ var _default = {
       }))();
     },
     normalizeAreas: function normalizeAreas(list) {
-      var _this8 = this;
+      var _this10 = this;
       return (Array.isArray(list) ? list : []).map(function (item) {
         return {
           id: item.id || item.regionId || item.value || '',
           name: item.name || item.regionName || item.label || '',
-          children: _this8.normalizeAreas(item.children || item.childList || item.child || [])
+          children: _this10.normalizeAreas(item.children || item.childList || item.child || [])
         };
       }).filter(function (item) {
         return item.id || item.name;
@@ -697,11 +778,59 @@ var _default = {
       }
       this.resetCards();
     },
-    onPriceChange: function onPriceChange(event) {
-      this.selectedPriceIndex = Number(event.detail.value) || 0;
-      this.activeSecondaryTab = this.secondaryTabs.findIndex(function (item) {
-        return item.key === 'price';
-      });
+    openPricePopup: function openPricePopup() {
+      this.tempSelectedPriceIndex = this.isCustomPrice ? -1 : this.selectedPriceIndex;
+      this.tempCustomMinPrice = this.isCustomPrice ? this.tempCustomMinPrice : '';
+      this.tempCustomMaxPrice = this.isCustomPrice ? this.tempCustomMaxPrice : '';
+      this.pricePopupVisible = true;
+    },
+    closePricePopup: function closePricePopup() {
+      this.pricePopupVisible = false;
+    },
+    selectPriceOption: function selectPriceOption(idx) {
+      this.tempSelectedPriceIndex = idx;
+      this.isCustomPrice = false;
+      this.tempCustomMinPrice = '';
+      this.tempCustomMaxPrice = '';
+    },
+    onCustomMinInput: function onCustomMinInput(e) {
+      this.tempCustomMinPrice = e.detail.value;
+      if (this.tempCustomMinPrice || this.tempCustomMaxPrice) {
+        this.isCustomPrice = true;
+        this.tempSelectedPriceIndex = -1;
+      }
+    },
+    onCustomMaxInput: function onCustomMaxInput(e) {
+      this.tempCustomMaxPrice = e.detail.value;
+      if (this.tempCustomMinPrice || this.tempCustomMaxPrice) {
+        this.isCustomPrice = true;
+        this.tempSelectedPriceIndex = -1;
+      }
+    },
+    resetPricePopup: function resetPricePopup() {
+      this.tempSelectedPriceIndex = -1;
+      this.tempCustomMinPrice = '';
+      this.tempCustomMaxPrice = '';
+      this.isCustomPrice = false;
+    },
+    clearPriceFilter: function clearPriceFilter() {
+      this.tempSelectedPriceIndex = -1;
+      this.tempCustomMinPrice = '';
+      this.tempCustomMaxPrice = '';
+      this.isCustomPrice = false;
+      this.selectedPriceIndex = -1;
+      this.pricePopupVisible = false;
+      this.resetCards();
+    },
+    confirmPricePopup: function confirmPricePopup() {
+      this.selectedPriceIndex = this.tempSelectedPriceIndex;
+      if (this.isCustomPrice) {
+        this.selectedPriceIndex = -1;
+      } else {
+        this.tempCustomMinPrice = '';
+        this.tempCustomMaxPrice = '';
+      }
+      this.pricePopupVisible = false;
       this.resetCards();
     },
     resetCards: function resetCards() {
@@ -712,7 +841,34 @@ var _default = {
       this.rightColumn = [];
       this.leftColumnHeight = 0;
       this.rightColumnHeight = 0;
-      this.fetchShowcaseList(1, true);
+      return this.fetchShowcaseList(1, true);
+    },
+    handleRefresh: function handleRefresh() {
+      var _this11 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee4() {
+        return _regenerator.default.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                if (_this11.searchTimer) {
+                  clearTimeout(_this11.searchTimer);
+                  _this11.searchTimer = null;
+                }
+                _this11.refreshing = true;
+                _context4.prev = 2;
+                _context4.next = 5;
+                return _this11.resetCards();
+              case 5:
+                _context4.prev = 5;
+                _this11.refreshing = false;
+                return _context4.finish(5);
+              case 8:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4, null, [[2,, 5, 8]]);
+      }))();
     },
     loadMoreCards: function loadMoreCards() {
       if (this.loading || this.finished) {
@@ -720,62 +876,112 @@ var _default = {
       }
       this.fetchShowcaseList(this.pageNo + 1, false);
     },
+    handleContentScroll: function handleContentScroll(e) {
+      var detail = e && e.detail ? e.detail : {};
+      this.pcScrollTop = typeof detail.scrollTop === 'number' ? detail.scrollTop : 0;
+    },
+    getPointerY: function getPointerY(e) {
+      if (!e) return 0;
+      var touch = e.touches && e.touches[0] || e.changedTouches && e.changedTouches[0];
+      if (touch && typeof touch.clientY === 'number') return touch.clientY;
+      if (typeof e.clientY === 'number') return e.clientY;
+      return 0;
+    },
+    onPcPullStart: function onPcPullStart(e) {
+      if (this.refreshing) return;
+      var y = this.getPointerY(e);
+      if (this.pcScrollTop > 0) {
+        this.pcPulling = false;
+        return;
+      }
+      this.pcPulling = true;
+      this.pcPullTriggered = false;
+      this.pcPullStartY = y;
+      this.pcPullDistance = 0;
+    },
+    onPcPullMove: function onPcPullMove(e) {
+      if (!this.pcPulling || this.refreshing) return;
+      var y = this.getPointerY(e);
+      var delta = y - this.pcPullStartY;
+      if (delta <= 0) {
+        this.pcPullDistance = 0;
+        return;
+      }
+      var max = this.pcPullThreshold * 2.2;
+      if (delta > max) {
+        delta = max + (delta - max) * 0.3;
+      }
+      this.pcPullDistance = delta;
+      if (delta >= this.pcPullThreshold) {
+        this.pcPullTriggered = true;
+      }
+    },
+    onPcPullEnd: function onPcPullEnd() {
+      if (!this.pcPulling) return;
+      var triggered = this.pcPullTriggered;
+      this.pcPulling = false;
+      this.pcPullTriggered = false;
+      this.pcPullDistance = 0;
+      if (triggered && !this.refreshing) {
+        this.handleRefresh();
+      }
+    },
     fetchShowcaseList: function fetchShowcaseList(pageNo, isRefresh) {
-      var _this9 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee4() {
+      var _this12 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee5() {
         var requestSeq, newCards, res, rows;
-        return _regenerator.default.wrap(function _callee4$(_context4) {
+        return _regenerator.default.wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
-                requestSeq = ++_this9.requestSeq;
-                _this9.loading = true;
+                requestSeq = ++_this12.requestSeq;
+                _this12.loading = true;
                 newCards = [];
-                _context4.prev = 3;
-                _context4.next = 6;
-                return _request.default.get('/wechat/homePage/showCase/list', _this9.buildQueryParams(pageNo));
+                _context5.prev = 3;
+                _context5.next = 6;
+                return _request.default.get('/wechat/homePage/showCase/list', _this12.buildQueryParams(pageNo));
               case 6:
-                res = _context4.sent;
-                if (requestSeq === _this9.requestSeq) {
+                res = _context5.sent;
+                if (requestSeq === _this12.requestSeq) {
                   rows = Array.isArray(res.rows) ? res.rows : [];
                   newCards = rows.map(function (item) {
-                    return _this9.normalizeShowcaseCard(item);
+                    return _this12.normalizeShowcaseCard(item);
                   });
-                  _this9.total = Number(res.total) || 0;
-                  _this9.pageNo = pageNo;
-                  _this9.visibleCards = isRefresh ? newCards : _this9.visibleCards.concat(newCards);
-                  _this9.finished = rows.length < _this9.pageSize || _this9.visibleCards.length >= _this9.total;
+                  _this12.total = Number(res.total) || 0;
+                  _this12.pageNo = pageNo;
+                  _this12.visibleCards = isRefresh ? newCards : _this12.visibleCards.concat(newCards);
+                  _this12.finished = rows.length < _this12.pageSize || _this12.visibleCards.length >= _this12.total;
                   if (isRefresh) {
-                    _this9.leftColumn = [];
-                    _this9.rightColumn = [];
-                    _this9.leftColumnHeight = 0;
-                    _this9.rightColumnHeight = 0;
+                    _this12.leftColumn = [];
+                    _this12.rightColumn = [];
+                    _this12.leftColumnHeight = 0;
+                    _this12.rightColumnHeight = 0;
                   }
                 }
-                _context4.next = 13;
+                _context5.next = 13;
                 break;
               case 10:
-                _context4.prev = 10;
-                _context4.t0 = _context4["catch"](3);
-                if (requestSeq === _this9.requestSeq) {
-                  _this9.finished = isRefresh;
+                _context5.prev = 10;
+                _context5.t0 = _context5["catch"](3);
+                if (requestSeq === _this12.requestSeq) {
+                  _this12.finished = isRefresh;
                 }
               case 13:
-                _context4.prev = 13;
-                if (requestSeq === _this9.requestSeq) {
-                  _this9.loading = false;
+                _context5.prev = 13;
+                if (requestSeq === _this12.requestSeq) {
+                  _this12.loading = false;
                 }
-                return _context4.finish(13);
+                return _context5.finish(13);
               case 16:
-                if (requestSeq === _this9.requestSeq && newCards.length > 0) {
-                  _this9.distributeCards(newCards, requestSeq);
+                if (requestSeq === _this12.requestSeq && newCards.length > 0) {
+                  _this12.distributeCards(newCards, requestSeq);
                 }
               case 17:
               case "end":
-                return _context4.stop();
+                return _context5.stop();
             }
           }
-        }, _callee4, null, [[3, 10, 13, 16]]);
+        }, _callee5, null, [[3, 10, 13, 16]]);
       }))();
     },
     buildQueryParams: function buildQueryParams(pageNo) {
@@ -802,13 +1008,22 @@ var _default = {
       if (activeSecondary && activeSecondary.key === 'location' && this.selectedRegionId) {
         params.regionId = this.selectedRegionId;
       }
-      var priceOption = this.priceOptions[this.selectedPriceIndex];
-      if (activeSecondary && activeSecondary.key === 'price' && priceOption) {
-        if (priceOption.minPrice !== '') {
-          params.minPrice = priceOption.minPrice;
+      if (this.isCustomPrice) {
+        if (this.tempCustomMinPrice) {
+          params.minPrice = this.tempCustomMinPrice;
         }
-        if (priceOption.maxPrice !== '') {
-          params.maxPrice = priceOption.maxPrice;
+        if (this.tempCustomMaxPrice) {
+          params.maxPrice = this.tempCustomMaxPrice;
+        }
+      } else if (this.selectedPriceIndex >= 0) {
+        var priceOption = this.priceOptions[this.selectedPriceIndex];
+        if (priceOption) {
+          if (priceOption.minPrice !== '') {
+            params.minPrice = priceOption.minPrice;
+          }
+          if (priceOption.maxPrice !== '') {
+            params.maxPrice = priceOption.maxPrice;
+          }
         }
       }
       return params;
@@ -845,74 +1060,99 @@ var _default = {
       return Math.round(346 / ratio);
     },
     distributeCards: function distributeCards(cards, seq) {
-      var _this10 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee5() {
+      var _this13 = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee6() {
         var _iterator, _step, card, info, cardHeight;
-        return _regenerator.default.wrap(function _callee5$(_context5) {
+        return _regenerator.default.wrap(function _callee6$(_context6) {
           while (1) {
-            switch (_context5.prev = _context5.next) {
+            switch (_context6.prev = _context6.next) {
               case 0:
                 _iterator = _createForOfIteratorHelper(cards);
-                _context5.prev = 1;
+                _context6.prev = 1;
                 _iterator.s();
               case 3:
                 if ((_step = _iterator.n()).done) {
-                  _context5.next = 17;
+                  _context6.next = 17;
                   break;
                 }
                 card = _step.value;
-                if (!(seq !== _this10.requestSeq)) {
-                  _context5.next = 7;
+                if (!(seq !== _this13.requestSeq)) {
+                  _context6.next = 7;
                   break;
                 }
-                return _context5.abrupt("return");
+                return _context6.abrupt("return");
               case 7:
                 if (!card.cover) {
-                  _context5.next = 12;
+                  _context6.next = 12;
                   break;
                 }
-                _context5.next = 10;
-                return _this10.getImageInfo(card.cover);
+                _context6.next = 10;
+                return _this13.getImageInfo(card.cover);
               case 10:
-                info = _context5.sent;
+                info = _context6.sent;
                 if (info) {
                   card.aspectRatio = info.width / info.height;
                 }
               case 12:
-                card.coverHeight = _this10.calcCoverHeight(card.aspectRatio);
+                card.coverHeight = _this13.calcCoverHeight(card.aspectRatio);
                 cardHeight = card.coverHeight + 220;
-                if (_this10.leftColumnHeight <= _this10.rightColumnHeight) {
-                  _this10.leftColumn.push(card);
-                  _this10.leftColumnHeight += cardHeight;
+                if (_this13.leftColumnHeight <= _this13.rightColumnHeight) {
+                  _this13.leftColumn.push(card);
+                  _this13.leftColumnHeight += cardHeight;
                 } else {
-                  _this10.rightColumn.push(card);
-                  _this10.rightColumnHeight += cardHeight;
+                  _this13.rightColumn.push(card);
+                  _this13.rightColumnHeight += cardHeight;
                 }
               case 15:
-                _context5.next = 3;
+                _context6.next = 3;
                 break;
               case 17:
-                _context5.next = 22;
+                _context6.next = 22;
                 break;
               case 19:
-                _context5.prev = 19;
-                _context5.t0 = _context5["catch"](1);
-                _iterator.e(_context5.t0);
+                _context6.prev = 19;
+                _context6.t0 = _context6["catch"](1);
+                _iterator.e(_context6.t0);
               case 22:
-                _context5.prev = 22;
+                _context6.prev = 22;
                 _iterator.f();
-                return _context5.finish(22);
+                return _context6.finish(22);
               case 25:
               case "end":
-                return _context5.stop();
+                return _context6.stop();
             }
           }
-        }, _callee5, null, [[1, 19, 22, 25]]);
+        }, _callee6, null, [[1, 19, 22, 25]]);
       }))();
     },
     formatPrice: function formatPrice(price, unit) {
       var amount = price === null || price === undefined || price === '' ? '0' : price;
       return "\xA5 ".concat(amount).concat(unit ? '/' + unit : '');
+    },
+    splitPriceSegments: function splitPriceSegments(price) {
+      if (!price) return [{
+        text: '',
+        num: false
+      }];
+      var segments = [];
+      var parts = price.split(/(\d+)/);
+      var _iterator2 = _createForOfIteratorHelper(parts),
+        _step2;
+      try {
+        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+          var part = _step2.value;
+          if (part === '') continue;
+          segments.push({
+            text: part,
+            num: /\d/.test(part)
+          });
+        }
+      } catch (err) {
+        _iterator2.e(err);
+      } finally {
+        _iterator2.f();
+      }
+      return segments;
     },
     buildImageUrl: function buildImageUrl(url) {
       if (!url) {
@@ -931,13 +1171,13 @@ var _default = {
       this.resetCards();
     },
     handleSearchInput: function handleSearchInput(event) {
-      var _this11 = this;
+      var _this14 = this;
       this.searchKeyword = event.detail.value;
       if (this.searchTimer) {
         clearTimeout(this.searchTimer);
       }
       this.searchTimer = setTimeout(function () {
-        _this11.resetCards();
+        _this14.resetCards();
       }, 300);
     },
     previewCard: function previewCard(card) {

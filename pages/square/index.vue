@@ -8,16 +8,6 @@
 		@touchstart.passive="onPcPullStart"
 		@touchmove.passive="onPcPullMove"
 		@touchend="onPcPullEnd">
-		<view
-			class="pc-pull-tip"
-			:class="{ 'pc-pull-visible': pcPullTranslateY > 0 || refreshing }"
-			:style="{ height: pcPullThreshold + 'px', marginTop: (-pcPullThreshold) + 'px' }">
-			<view class="pc-pull-inner">
-				<view class="pc-pull-spinner" v-if="refreshing"></view>
-				<text class="pc-pull-text">{{ pcPullTip }}</text>
-			</view>
-		</view>
-		<view class="pc-scroll-wrap" :style="{ transform: 'translateY(' + pcPullTranslateY + 'px)', transition: (pcPulling ? 'none' : 'transform .25s ease-out') }">
 		<view class="top-area" :style="{ paddingTop: (statusBarHeight + 8) + 'px' }">
 			<view class="search-row">
 				<view class="search-box">
@@ -46,21 +36,29 @@
 						<image class="arrow" src="/static/icon/xiangxia.svg" mode="aspectFit"></image>
 					</view>
 				</picker>
-				<picker
+				<view
 					class="filter-picker filter-picker-right"
-					:value="selectedPriceIndex"
-					:range="priceOptions"
-					range-key="label"
-					@change="handlePriceChange"
+					@click="openPricePopup"
 				>
 					<view class="filter-item filter-item-right">
 						<text class="filter-text">{{ selectedPriceLabel }}</text>
 						<image class="arrow" src="/static/icon/xiangxia.svg" mode="aspectFit"></image>
 					</view>
-				</picker>
+				</view>
 			</view>
 		</view>
 
+		<view class="pc-list-wrap">
+			<view
+				class="pc-pull-tip"
+				:class="{ 'pc-pull-visible': pcPullTranslateY > 0 || refreshing }"
+				:style="{ height: pcPullThreshold + 'px', marginTop: (-pcPullThreshold) + 'px' }">
+				<view class="pc-pull-inner">
+					<view class="pc-pull-spinner" v-if="refreshing"></view>
+					<text class="pc-pull-text">{{ pcPullTip }}</text>
+				</view>
+			</view>
+			<view class="pc-scroll-wrap" :style="{ transform: 'translateY(' + pcPullTranslateY + 'px)', transition: (pcPulling ? 'none' : 'transform .25s ease-out') }">
 		<scroll-view
 			scroll-y
 			class="task-scroll"
@@ -147,9 +145,61 @@
 				</view>
 			</view>
 		</scroll-view>
+			</view>
+		</view>
 
 		<yun-tabbar :selected="1"></yun-tabbar>
+
+		<view
+		v-if="pricePopupVisible"
+		class="price-popup-mask"
+		@click="closePricePopup"
+	>
+		<view class="price-popup" @click.stop>
+			<view class="price-popup-header">
+				<view class="price-popup-close" @click="closePricePopup">×</view>
+			</view>
+			<view class="price-popup-header">
+				<text class="price-popup-title">价格</text>
+				<text class="price-popup-no-limit" @click="clearPriceFilter">不限</text>
+			</view>
+			<view class="price-popup-options">
+				<view
+					v-for="(item, idx) in priceOptions"
+					:key="idx"
+					class="price-option"
+					:class="{ active: tempSelectedPriceIndex === idx }"
+					@click="selectPriceOption(idx)"
+				>{{ item.label }}</view>
+			</view>
+			<view class="price-popup-custom">
+				<view class="price-custom-label">自定义</view>
+				<view class="price-custom-inputs">
+					<input
+						class="price-custom-input"
+						type="number"
+						v-model="tempCustomMinPrice"
+						placeholder="0"
+						placeholder-class="price-custom-placeholder"
+						@input="onCustomMinInput"
+					/>
+					<text class="price-custom-sep">—</text>
+					<input
+						class="price-custom-input"
+						type="number"
+						v-model="tempCustomMaxPrice"
+						placeholder="10000"
+						placeholder-class="price-custom-placeholder"
+						@input="onCustomMaxInput"
+					/>
+				</view>
+			</view>
+			<view class="price-popup-footer">
+				<view class="price-popup-btn price-popup-btn-reset" @click="resetPricePopup">重置</view>
+				<view class="price-popup-btn price-popup-btn-confirm" @click="confirmPricePopup">确定</view>
+			</view>
 		</view>
+	</view>
 	</view>
 </template>
 
@@ -163,11 +213,12 @@ const DEFAULT_CATEGORY_OPTION = {
 	value: ''
 };
 const PRICE_OPTIONS = [
-	{ label: '价格区间', minPrice: '', maxPrice: '' },
-	{ label: '0-200', minPrice: '0', maxPrice: '200' },
-	{ label: '200-500', minPrice: '200', maxPrice: '500' },
-	{ label: '500-1000', minPrice: '500', maxPrice: '1000' },
-	{ label: '1000以上', minPrice: '1000', maxPrice: '' }
+	{ label: '0-1000', minPrice: '0', maxPrice: '1000' },
+	{ label: '1000-2000', minPrice: '1000', maxPrice: '2000' },
+	{ label: '2000-3000', minPrice: '2000', maxPrice: '3000' },
+	{ label: '3000-4000', minPrice: '3000', maxPrice: '4000' },
+	{ label: '4000以上', minPrice: '4000', maxPrice: '' },
+	{ label: '乙方报价', minPrice: '', maxPrice: '', isOtherPartyQuote: true }
 ];
 
 export default {
@@ -193,7 +244,12 @@ export default {
 			categoryOptions: [DEFAULT_CATEGORY_OPTION],
 			selectedCategoryIndex: 0,
 			priceOptions: PRICE_OPTIONS,
-			selectedPriceIndex: 0,
+			selectedPriceIndex: -1,
+			pricePopupVisible: false,
+			tempSelectedPriceIndex: -1,
+			tempCustomMinPrice: '',
+			tempCustomMaxPrice: '',
+			isCustomPrice: false,
 			CARD_UPDATE_KEY: 'square_card_update'
 		};
 	},
@@ -203,8 +259,16 @@ export default {
 			return option ? option.label : DEFAULT_CATEGORY_OPTION.label;
 		},
 		selectedPriceLabel() {
+			if (this.isCustomPrice) {
+				const min = this.tempCustomMinPrice || '0';
+				const max = this.tempCustomMaxPrice || '不限';
+				return `${min}-${max}`;
+			}
+			if (this.selectedPriceIndex < 0) {
+				return '价格区间';
+			}
 			const option = this.priceOptions[this.selectedPriceIndex];
-			return option ? option.label : PRICE_OPTIONS[0].label;
+			return option ? option.label : '价格';
 		},
 		pcPullTranslateY() {
 			if (this.refreshing) {
@@ -220,6 +284,13 @@ export default {
 				return '正在刷新...';
 			}
 			return this.pcPullDistance >= this.pcPullThreshold ? '松开立即刷新' : '下拉可以刷新';
+		},
+		isOtherPartyQuoteFilterActive() {
+			if (this.isCustomPrice || this.selectedPriceIndex < 0) {
+				return false;
+			}
+			const option = this.priceOptions[this.selectedPriceIndex];
+			return !!(option && option.isOtherPartyQuote);
 		}
 	},
 	async onLoad() {
@@ -271,8 +342,59 @@ export default {
 			this.selectedCategoryIndex = Number(event.detail.value) || 0;
 			this.resetList();
 		},
-		handlePriceChange(event) {
-			this.selectedPriceIndex = Number(event.detail.value) || 0;
+		openPricePopup() {
+			this.tempSelectedPriceIndex = this.isCustomPrice ? -1 : this.selectedPriceIndex;
+			this.tempCustomMinPrice = this.isCustomPrice ? this.tempCustomMinPrice : '';
+			this.tempCustomMaxPrice = this.isCustomPrice ? this.tempCustomMaxPrice : '';
+			this.pricePopupVisible = true;
+		},
+		closePricePopup() {
+			this.pricePopupVisible = false;
+		},
+		selectPriceOption(idx) {
+			this.tempSelectedPriceIndex = idx;
+			this.isCustomPrice = false;
+			this.tempCustomMinPrice = '';
+			this.tempCustomMaxPrice = '';
+		},
+		onCustomMinInput(e) {
+			this.tempCustomMinPrice = e.detail.value;
+			if (this.tempCustomMinPrice || this.tempCustomMaxPrice) {
+				this.isCustomPrice = true;
+				this.tempSelectedPriceIndex = -1;
+			}
+		},
+		onCustomMaxInput(e) {
+			this.tempCustomMaxPrice = e.detail.value;
+			if (this.tempCustomMinPrice || this.tempCustomMaxPrice) {
+				this.isCustomPrice = true;
+				this.tempSelectedPriceIndex = -1;
+			}
+		},
+		resetPricePopup() {
+			this.tempSelectedPriceIndex = -1;
+			this.tempCustomMinPrice = '';
+			this.tempCustomMaxPrice = '';
+			this.isCustomPrice = false;
+		},
+		clearPriceFilter() {
+			this.tempSelectedPriceIndex = -1;
+			this.tempCustomMinPrice = '';
+			this.tempCustomMaxPrice = '';
+			this.isCustomPrice = false;
+			this.selectedPriceIndex = -1;
+			this.pricePopupVisible = false;
+			this.resetList();
+		},
+		confirmPricePopup() {
+			this.selectedPriceIndex = this.tempSelectedPriceIndex;
+			if (this.isCustomPrice) {
+				this.selectedPriceIndex = -1;
+			} else {
+				this.tempCustomMinPrice = '';
+				this.tempCustomMaxPrice = '';
+			}
+			this.pricePopupVisible = false;
 			this.resetList();
 		},
 		handleSearchInput(event) {
@@ -319,13 +441,19 @@ export default {
 		async fetchTaskList(pageNum, isRefresh) {
 			const currentRequestSeq = ++this.requestSeq;
 			this.loading = true;
+			const filterActive = this.isOtherPartyQuoteFilterActive;
+			const requestPageSize = filterActive ? 50 : this.pageSize;
 			try {
 				const res = await request.get('/wechat/square/page', this.buildQueryParams(pageNum));
 				if (currentRequestSeq !== this.requestSeq) {
 					return;
 				}
 				const pageData = this.extractPageData(res);
-				const rows = pageData.rows;
+				const rawRows = pageData.rows || [];
+				let rows = rawRows;
+				if (filterActive) {
+					rows = rows.filter(item => Number(item && item.isOtherPartyQuote) === 1);
+				}
 				const nextList = rows.map(item => this.normalizeTaskCard(item));
 				const total = Number(pageData.total);
 				const hasTotal = Number.isFinite(total) && total >= 0;
@@ -333,7 +461,18 @@ export default {
 				this.pageNum = pageNum;
 				this.total = hasTotal ? total : mergedList.length;
 				this.visibleList = mergedList;
-				this.finished = hasTotal ? mergedList.length >= total : rows.length < this.pageSize;
+				const rawFinished = hasTotal
+					? mergedList.length >= total
+					: rawRows.length < requestPageSize;
+				this.finished = rawFinished;
+				if (filterActive && !rawFinished && nextList.length === 0 && !hasTotal) {
+					// 本页全被过滤掉了，直接跳下一页继续拿，避免显示空白
+					setTimeout(() => {
+						if (currentRequestSeq === this.requestSeq) {
+							this.fetchTaskList(pageNum + 1, false);
+						}
+					}, 0);
+				}
 			} catch (e) {
 				if (currentRequestSeq === this.requestSeq) {
 					this.finished = isRefresh;
@@ -360,9 +499,10 @@ export default {
 			};
 		},
 		buildQueryParams(pageNum) {
+			const actualPageSize = this.isOtherPartyQuoteFilterActive ? 50 : this.pageSize;
 			const params = {
 				pageNum,
-				pageSize: this.pageSize
+				pageSize: actualPageSize
 			};
 			const keyword = this.searchKeyword.trim();
 			if (keyword) {
@@ -372,13 +512,25 @@ export default {
 			if (categoryOption && categoryOption.value) {
 				params.categoryCode = categoryOption.value;
 			}
-			const priceOption = this.priceOptions[this.selectedPriceIndex];
-			if (priceOption) {
-				if (priceOption.minPrice !== '') {
-					params.minPrice = priceOption.minPrice;
+			if (this.isCustomPrice) {
+				if (this.tempCustomMinPrice) {
+					params.minPrice = this.tempCustomMinPrice;
 				}
-				if (priceOption.maxPrice !== '') {
-					params.maxPrice = priceOption.maxPrice;
+				if (this.tempCustomMaxPrice) {
+					params.maxPrice = this.tempCustomMaxPrice;
+				}
+			} else if (this.selectedPriceIndex >= 0) {
+				const priceOption = this.priceOptions[this.selectedPriceIndex];
+				if (priceOption) {
+					if (priceOption.isOtherPartyQuote) {
+						params.isOtherPartyQuote = 1;
+					}
+					if (priceOption.minPrice !== '') {
+						params.minPrice = priceOption.minPrice;
+					}
+					if (priceOption.maxPrice !== '') {
+						params.maxPrice = priceOption.maxPrice;
+					}
 				}
 			}
 			return params;
@@ -782,15 +934,17 @@ export default {
 }
 
 .top-area {
-	padding: 0 21rpx 24rpx 23rpx; 
+	padding: 0 21rpx 24rpx 23rpx;
 	box-sizing: border-box;
 	background: #ffffff;
 	position: relative;
-	
+	flex-shrink: 0;
+	z-index: 2;
+
 	display: flex;
 	flex-direction: column;
-	justify-content: flex-end; 
-	min-height: calc(100rpx + var(--status-bar-height)); 
+	justify-content: flex-end;
+	min-height: calc(100rpx + var(--status-bar-height));
 }
 
 .search-row {
@@ -1184,11 +1338,22 @@ button::after {
 	color: #b2b2b2;
 }
 
-.pc-scroll-wrap {
+.pc-list-wrap {
+	flex: 1;
+	height: 0;
+	min-height: 0;
 	display: flex;
 	flex-direction: column;
-	height: 100%;
+	position: relative;
+	overflow: hidden;
+}
+
+.pc-scroll-wrap {
+	flex: 1;
+	min-height: 0;
 	width: 100%;
+	display: flex;
+	flex-direction: column;
 	will-change: transform;
 }
 
@@ -1241,5 +1406,159 @@ button::after {
 
 @keyframes pc-pull-spin {
 	to { transform: rotate(360deg); }
+}
+
+.price-popup-mask {
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: 9999;
+	display: flex;
+	align-items: flex-end;
+}
+
+.price-popup {
+	width: 100%;
+	background: #ffffff;
+	border-radius: 30rpx 30rpx 30rpx 30rpx;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	padding-bottom: env(safe-area-inset-bottom);
+	margin: 22rpx;
+}
+
+.price-popup-header {
+	display: flex;
+	align-items: center;
+	// justify-content: center;
+	padding: 50rpx 32rpx 30rpx;
+	position: relative;
+}
+
+.price-popup-title {
+	font-size: 32rpx;
+	font-weight: 600;
+	color: #000000;
+}
+
+.price-popup-no-limit {
+	position: absolute;
+	right: 40rpx;
+	top: 60%;
+	transform: translateY(-50%);
+	font-size: 28rpx;
+	color: #999999;
+}
+
+.price-popup-close {
+	position: absolute;
+	right: 32rpx;
+	top: 80%;
+	transform: translateY(-50%);
+	width: 56rpx;
+	height: 56rpx;
+	line-height: 52rpx;
+	text-align: center;
+	font-size: 80rpx;
+	font-weight: 300;
+	color: #000;
+}
+
+.price-popup-options {
+	display: flex;
+	flex-wrap: wrap;
+	padding: 20rpx 32rpx;
+	gap: 20rpx;
+}
+
+.price-option {
+	width: calc((100% - 40rpx) / 3);
+	height: 72rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 28rpx;
+	color: #666666;
+	background: #FFFFFF;
+	border-radius: 226rpx;
+	box-sizing: border-box;
+	border: 1rpx solid #CECECE;
+}
+
+.price-option.active {
+	background: #fff3eb;
+	color: #f37738;
+	font-weight: 500;
+	border: 1rpx solid #f37738;
+}
+
+.price-popup-custom {
+	padding: 20rpx 32rpx;
+}
+
+.price-custom-label {
+	font-size: 26rpx;
+	color: #000000;
+	margin-bottom: 20rpx;
+}
+
+.price-custom-inputs {
+	display: flex;
+	align-items: center;
+	gap: 20rpx;
+}
+
+.price-custom-input {
+	flex: 1;
+	height: 72rpx;
+	background: #f5f5f5;
+	border-radius: 16rpx;
+	text-align: center;
+	font-size: 30rpx;
+	color: #333333;
+}
+
+.price-custom-placeholder {
+	color: #bbbbbb;
+	font-size: 30rpx;
+}
+
+.price-custom-sep {
+	font-size: 30rpx;
+	color: #F1F1F1;
+}
+
+.price-popup-footer {
+	display: flex;
+	padding: 24rpx 51rpx;
+	padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+	gap: 42rpx;
+}
+
+.price-popup-btn {
+	flex: 1;
+	height: 88rpx;
+	border-radius: 44rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 30rpx;
+	font-weight: 500;
+	margin-bottom: 20rpx;
+}
+
+.price-popup-btn-reset {
+	border: 1rpx solid #979797;
+	background: #FFFFFF;
+	color: #979797;
+}
+
+.price-popup-btn-confirm {
+	background: #F37738;
+	color: #ffffff;
 }
 </style>

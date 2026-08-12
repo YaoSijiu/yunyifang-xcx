@@ -346,6 +346,56 @@ var _env = _interopRequireDefault(__webpack_require__(/*! @/config/env.js */ 39)
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 var DEFAULT_AVATAR = '/static/yunyiku/avatar.png';
 var DEFAULT_CATEGORY_OPTION = {
@@ -353,25 +403,30 @@ var DEFAULT_CATEGORY_OPTION = {
   value: ''
 };
 var PRICE_OPTIONS = [{
-  label: '价格区间',
-  minPrice: '',
-  maxPrice: ''
-}, {
-  label: '0-200',
+  label: '0-1000',
   minPrice: '0',
-  maxPrice: '200'
-}, {
-  label: '200-500',
-  minPrice: '200',
-  maxPrice: '500'
-}, {
-  label: '500-1000',
-  minPrice: '500',
   maxPrice: '1000'
 }, {
-  label: '1000以上',
+  label: '1000-2000',
   minPrice: '1000',
+  maxPrice: '2000'
+}, {
+  label: '2000-3000',
+  minPrice: '2000',
+  maxPrice: '3000'
+}, {
+  label: '3000-4000',
+  minPrice: '3000',
+  maxPrice: '4000'
+}, {
+  label: '4000以上',
+  minPrice: '4000',
   maxPrice: ''
+}, {
+  label: '乙方报价',
+  minPrice: '',
+  maxPrice: '',
+  isOtherPartyQuote: true
 }];
 var _default = {
   data: function data() {
@@ -396,7 +451,12 @@ var _default = {
       categoryOptions: [DEFAULT_CATEGORY_OPTION],
       selectedCategoryIndex: 0,
       priceOptions: PRICE_OPTIONS,
-      selectedPriceIndex: 0,
+      selectedPriceIndex: -1,
+      pricePopupVisible: false,
+      tempSelectedPriceIndex: -1,
+      tempCustomMinPrice: '',
+      tempCustomMaxPrice: '',
+      isCustomPrice: false,
       CARD_UPDATE_KEY: 'square_card_update'
     };
   },
@@ -406,8 +466,16 @@ var _default = {
       return option ? option.label : DEFAULT_CATEGORY_OPTION.label;
     },
     selectedPriceLabel: function selectedPriceLabel() {
+      if (this.isCustomPrice) {
+        var min = this.tempCustomMinPrice || '0';
+        var max = this.tempCustomMaxPrice || '不限';
+        return "".concat(min, "-").concat(max);
+      }
+      if (this.selectedPriceIndex < 0) {
+        return '价格区间';
+      }
       var option = this.priceOptions[this.selectedPriceIndex];
-      return option ? option.label : PRICE_OPTIONS[0].label;
+      return option ? option.label : '价格';
     },
     pcPullTranslateY: function pcPullTranslateY() {
       if (this.refreshing) {
@@ -423,6 +491,13 @@ var _default = {
         return '正在刷新...';
       }
       return this.pcPullDistance >= this.pcPullThreshold ? '松开立即刷新' : '下拉可以刷新';
+    },
+    isOtherPartyQuoteFilterActive: function isOtherPartyQuoteFilterActive() {
+      if (this.isCustomPrice || this.selectedPriceIndex < 0) {
+        return false;
+      }
+      var option = this.priceOptions[this.selectedPriceIndex];
+      return !!(option && option.isOtherPartyQuote);
     }
   },
   onLoad: function onLoad() {
@@ -512,8 +587,59 @@ var _default = {
       this.selectedCategoryIndex = Number(event.detail.value) || 0;
       this.resetList();
     },
-    handlePriceChange: function handlePriceChange(event) {
-      this.selectedPriceIndex = Number(event.detail.value) || 0;
+    openPricePopup: function openPricePopup() {
+      this.tempSelectedPriceIndex = this.isCustomPrice ? -1 : this.selectedPriceIndex;
+      this.tempCustomMinPrice = this.isCustomPrice ? this.tempCustomMinPrice : '';
+      this.tempCustomMaxPrice = this.isCustomPrice ? this.tempCustomMaxPrice : '';
+      this.pricePopupVisible = true;
+    },
+    closePricePopup: function closePricePopup() {
+      this.pricePopupVisible = false;
+    },
+    selectPriceOption: function selectPriceOption(idx) {
+      this.tempSelectedPriceIndex = idx;
+      this.isCustomPrice = false;
+      this.tempCustomMinPrice = '';
+      this.tempCustomMaxPrice = '';
+    },
+    onCustomMinInput: function onCustomMinInput(e) {
+      this.tempCustomMinPrice = e.detail.value;
+      if (this.tempCustomMinPrice || this.tempCustomMaxPrice) {
+        this.isCustomPrice = true;
+        this.tempSelectedPriceIndex = -1;
+      }
+    },
+    onCustomMaxInput: function onCustomMaxInput(e) {
+      this.tempCustomMaxPrice = e.detail.value;
+      if (this.tempCustomMinPrice || this.tempCustomMaxPrice) {
+        this.isCustomPrice = true;
+        this.tempSelectedPriceIndex = -1;
+      }
+    },
+    resetPricePopup: function resetPricePopup() {
+      this.tempSelectedPriceIndex = -1;
+      this.tempCustomMinPrice = '';
+      this.tempCustomMaxPrice = '';
+      this.isCustomPrice = false;
+    },
+    clearPriceFilter: function clearPriceFilter() {
+      this.tempSelectedPriceIndex = -1;
+      this.tempCustomMinPrice = '';
+      this.tempCustomMaxPrice = '';
+      this.isCustomPrice = false;
+      this.selectedPriceIndex = -1;
+      this.pricePopupVisible = false;
+      this.resetList();
+    },
+    confirmPricePopup: function confirmPricePopup() {
+      this.selectedPriceIndex = this.tempSelectedPriceIndex;
+      if (this.isCustomPrice) {
+        this.selectedPriceIndex = -1;
+      } else {
+        this.tempCustomMinPrice = '';
+        this.tempCustomMaxPrice = '';
+      }
+      this.pricePopupVisible = false;
       this.resetList();
     },
     handleSearchInput: function handleSearchInput(event) {
@@ -576,26 +702,34 @@ var _default = {
     fetchTaskList: function fetchTaskList(pageNum, isRefresh) {
       var _this5 = this;
       return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee4() {
-        var currentRequestSeq, res, pageData, rows, nextList, total, hasTotal, mergedList;
+        var currentRequestSeq, filterActive, requestPageSize, res, pageData, rawRows, rows, nextList, total, hasTotal, mergedList, rawFinished;
         return _regenerator.default.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
                 currentRequestSeq = ++_this5.requestSeq;
                 _this5.loading = true;
-                _context4.prev = 2;
-                _context4.next = 5;
+                filterActive = _this5.isOtherPartyQuoteFilterActive;
+                requestPageSize = filterActive ? 50 : _this5.pageSize;
+                _context4.prev = 4;
+                _context4.next = 7;
                 return _request.default.get('/wechat/square/page', _this5.buildQueryParams(pageNum));
-              case 5:
+              case 7:
                 res = _context4.sent;
                 if (!(currentRequestSeq !== _this5.requestSeq)) {
-                  _context4.next = 8;
+                  _context4.next = 10;
                   break;
                 }
                 return _context4.abrupt("return");
-              case 8:
+              case 10:
                 pageData = _this5.extractPageData(res);
-                rows = pageData.rows;
+                rawRows = pageData.rows || [];
+                rows = rawRows;
+                if (filterActive) {
+                  rows = rows.filter(function (item) {
+                    return Number(item && item.isOtherPartyQuote) === 1;
+                  });
+                }
                 nextList = rows.map(function (item) {
                   return _this5.normalizeTaskCard(item);
                 });
@@ -605,27 +739,36 @@ var _default = {
                 _this5.pageNum = pageNum;
                 _this5.total = hasTotal ? total : mergedList.length;
                 _this5.visibleList = mergedList;
-                _this5.finished = hasTotal ? mergedList.length >= total : rows.length < _this5.pageSize;
-                _context4.next = 23;
+                rawFinished = hasTotal ? mergedList.length >= total : rawRows.length < requestPageSize;
+                _this5.finished = rawFinished;
+                if (filterActive && !rawFinished && nextList.length === 0 && !hasTotal) {
+                  // 本页全被过滤掉了，直接跳下一页继续拿，避免显示空白
+                  setTimeout(function () {
+                    if (currentRequestSeq === _this5.requestSeq) {
+                      _this5.fetchTaskList(pageNum + 1, false);
+                    }
+                  }, 0);
+                }
+                _context4.next = 29;
                 break;
-              case 20:
-                _context4.prev = 20;
-                _context4.t0 = _context4["catch"](2);
+              case 26:
+                _context4.prev = 26;
+                _context4.t0 = _context4["catch"](4);
                 if (currentRequestSeq === _this5.requestSeq) {
                   _this5.finished = isRefresh;
                 }
-              case 23:
-                _context4.prev = 23;
+              case 29:
+                _context4.prev = 29;
                 if (currentRequestSeq === _this5.requestSeq) {
                   _this5.loading = false;
                 }
-                return _context4.finish(23);
-              case 26:
+                return _context4.finish(29);
+              case 32:
               case "end":
                 return _context4.stop();
             }
           }
-        }, _callee4, null, [[2, 20, 23, 26]]);
+        }, _callee4, null, [[4, 26, 29, 32]]);
       }))();
     },
     extractPageData: function extractPageData(res) {
@@ -648,9 +791,10 @@ var _default = {
       };
     },
     buildQueryParams: function buildQueryParams(pageNum) {
+      var actualPageSize = this.isOtherPartyQuoteFilterActive ? 50 : this.pageSize;
       var params = {
         pageNum: pageNum,
-        pageSize: this.pageSize
+        pageSize: actualPageSize
       };
       var keyword = this.searchKeyword.trim();
       if (keyword) {
@@ -660,13 +804,25 @@ var _default = {
       if (categoryOption && categoryOption.value) {
         params.categoryCode = categoryOption.value;
       }
-      var priceOption = this.priceOptions[this.selectedPriceIndex];
-      if (priceOption) {
-        if (priceOption.minPrice !== '') {
-          params.minPrice = priceOption.minPrice;
+      if (this.isCustomPrice) {
+        if (this.tempCustomMinPrice) {
+          params.minPrice = this.tempCustomMinPrice;
         }
-        if (priceOption.maxPrice !== '') {
-          params.maxPrice = priceOption.maxPrice;
+        if (this.tempCustomMaxPrice) {
+          params.maxPrice = this.tempCustomMaxPrice;
+        }
+      } else if (this.selectedPriceIndex >= 0) {
+        var priceOption = this.priceOptions[this.selectedPriceIndex];
+        if (priceOption) {
+          if (priceOption.isOtherPartyQuote) {
+            params.isOtherPartyQuote = 1;
+          }
+          if (priceOption.minPrice !== '') {
+            params.minPrice = priceOption.minPrice;
+          }
+          if (priceOption.maxPrice !== '') {
+            params.maxPrice = priceOption.maxPrice;
+          }
         }
       }
       return params;

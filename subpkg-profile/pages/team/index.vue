@@ -1937,7 +1937,8 @@
 		position: fixed;
 		bottom: 0; left: 0; right: 0;
 		background-color: #fff;
-		border-radius: 30rpx 30rpx 0 0;
+		margin: 20rpx;
+		border-radius: 30rpx 30rpx 30rpx 30rpx;
 		z-index: 999;
 		transform: translateY(100%);
 		transition: transform 0.3s;

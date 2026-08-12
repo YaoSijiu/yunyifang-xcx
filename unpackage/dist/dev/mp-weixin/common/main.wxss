@@ -97,6 +97,28 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*每个页面公共css */
 page,
 view,
@@ -115,7 +137,7 @@ cover-image,
 scroll-view,
 swiper,
 swiper-item {
-  font-family: PingFang SC !important;
+  font-family: "Alibaba PuHuiTi", "PingFang SC", "Microsoft YaHei", sans-serif !important;
 }
 /* 隐藏所有滚动条 - 适用于所有平台 */
 ::-webkit-scrollbar {
@@ -127,7 +149,7 @@ swiper-item {
 }
 /* 为不同平台添加滚动条隐藏样式 */
 page {
-  font-family: PingFang SC;
+  font-family: "Alibaba PuHuiTi", "PingFang SC", "Microsoft YaHei", sans-serif;
   -webkit-overflow-scrolling: touch;
   overflow: auto;
   scrollbar-width: none !important;

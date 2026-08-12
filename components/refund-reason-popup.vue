@@ -200,11 +200,11 @@ export default {
 }
 
 .refund-reason-confirm {
-	min-width: 120rpx;
-	height: 60rpx;
+	min-width: 140rpx;
+	height: 56rpx;
 	padding: 0 34rpx;
 	border-radius: 999rpx;
-	background: #000000;
+	background: #F37738;
 	line-height: 60rpx;
 	text-align: center;
 	font-size: 28rpx;
@@ -249,13 +249,15 @@ export default {
 }
 
 .refund-reason-radio {
-	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	width: 39rpx;
 	height: 39rpx;
-	border: 3rpx solid #979797;
+	border: 4rpx solid #cfcfcf;
 	border-radius: 50%;
 	box-sizing: border-box;
-	background: #ffffff;
+	flex-shrink: 0;
 }
 
 .refund-reason-radio.active {
@@ -263,14 +265,14 @@ export default {
 }
 
 .refund-reason-dot {
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	width: 19rpx;
-	height: 19rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 22rpx;
+	height: 22rpx;
 	border-radius: 50%;
 	background: #f37738;
-	transform: translate(-50%, -50%);
+	flex-shrink: 0;
 }
 
 .refund-reason-other-input {

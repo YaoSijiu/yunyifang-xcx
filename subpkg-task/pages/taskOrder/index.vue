@@ -1,5 +1,13 @@
-<template>
-	<view class="task-order-page">
+﻿<template>
+	<view class="task-order-page"
+		:class="{ 'pc-pulling': pcPulling && pcPullDistance > 0 }"
+		@mousedown="onPcPullStart"
+		@mousemove="onPcPullMove"
+		@mouseup="onPcPullEnd"
+		@mouseleave="onPcPullEnd"
+		@touchstart.passive="onPcPullStart"
+		@touchmove.passive="onPcPullMove"
+		@touchend="onPcPullEnd">
 		<view class="header-panel">
 			<view class="tab-scroll"
 				:class="{ 'is-dragging': isDragging }"
@@ -39,7 +47,24 @@
 			</view>
 		</view>
 
-		<scroll-view class="page-scroll" scroll-y :lower-threshold="80" @scrolltolower="loadMore">
+		<view class="pc-list-wrap">
+			<view
+				class="pc-pull-tip"
+				:class="{ 'pc-pull-visible': pcPullTranslateY > 0 || refreshing }"
+				:style="{ height: pcPullThreshold + 'px', marginTop: (-pcPullThreshold) + 'px' }">
+				<view class="pc-pull-inner">
+					<view class="pc-pull-spinner" v-if="refreshing"></view>
+					<text class="pc-pull-text">{{ pcPullTip }}</text>
+				</view>
+			</view>
+			<view class="pc-scroll-wrap" :style="{ transform: 'translateY(' + pcPullTranslateY + 'px)', transition: (pcPulling ? 'none' : 'transform .25s ease-out') }">
+		<scroll-view class="page-scroll" scroll-y :lower-threshold="80"
+			refresher-enabled
+			:refresher-triggered="refreshing"
+			refresher-background="#ffffff"
+			@refresherrefresh="handleRefresh"
+			@scrolltolower="loadMore"
+			@scroll="handleContentScroll">
 			<view class="order-list">
 				<view
 					v-for="item in orderList"
@@ -249,9 +274,11 @@
 				</view>
 
 				<view v-if="!loading && orderList.length === 0" class="empty-state">暂无订单</view>
-				<view v-else class="load-state">{{ loadText }}</view>
+			<view v-else class="load-state">{{ loadText }}</view>
+		</view>
+	</scroll-view>
 			</view>
-		</scroll-view>
+		</view>
 		<reject-reason-popup
 			:visible="rejectPopupVisible"
 			:reasons="rejectReasons"
@@ -416,7 +443,14 @@ export default {
 			dragStartTranslate: 0,
 			maxScroll: 0,
 			hasDragged: false,
-			preventClick: false
+			preventClick: false,
+			refreshing: false,
+			pcPullStartY: 0,
+			pcPullDistance: 0,
+			pcPulling: false,
+			pcPullTriggered: false,
+			pcPullThreshold: 70,
+			pcScrollTop: 0
 		}
 	},
 	computed: {
@@ -428,6 +462,21 @@ export default {
 				return ''
 			}
 			return this.finished ? '没有更多了' : '上滑加载更多'
+	},
+		pcPullTranslateY() {
+			if (this.refreshing) {
+				return this.pcPullThreshold
+			}
+			if (!this.pcPulling || this.pcPullDistance <= 0) {
+				return 0
+			}
+			return Math.min(this.pcPullDistance, this.pcPullThreshold * 2.2)
+		},
+		pcPullTip() {
+			if (this.refreshing) {
+				return '正在刷新...'
+			}
+			return this.pcPullDistance >= this.pcPullThreshold ? '松开立即刷新' : '下拉可以刷新'
 		}
 	},
 	onLoad() {
@@ -842,18 +891,80 @@ export default {
 			this.rejectOrder(this.rejectTargetItem, reason)
 		},
 		loadMore() {
-			if (this.loading || this.finished) {
-				return
-			}
-			this.fetchOrderList(this.pageNum + 1, false)
-		},
-		resetList() {
-			this.pageNum = 1
-			this.total = 0
-			this.finished = false
-			this.orderList = []
-			this.fetchOrderList(1, true)
-		},
+		if (this.loading || this.finished) {
+			return
+		}
+		this.fetchOrderList(this.pageNum + 1, false)
+	},
+	resetList() {
+		this.pageNum = 1
+		this.total = 0
+		this.finished = false
+		this.orderList = []
+		return this.fetchOrderList(1, true)
+	},
+	async handleRefresh() {
+		if (this.searchTimer) {
+			clearTimeout(this.searchTimer)
+			this.searchTimer = null
+		}
+		this.refreshing = true
+		try {
+			await this.resetList()
+		} finally {
+			this.refreshing = false
+		}
+	},
+	handleContentScroll(e) {
+		const detail = e && e.detail ? e.detail : {}
+		this.pcScrollTop = typeof detail.scrollTop === 'number' ? detail.scrollTop : 0
+	},
+	getPointerY(e) {
+		if (!e) return 0
+		const touch = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0])
+		if (touch && typeof touch.clientY === 'number') return touch.clientY
+		if (typeof e.clientY === 'number') return e.clientY
+		return 0
+	},
+	onPcPullStart(e) {
+		if (this.refreshing) return
+		const y = this.getPointerY(e)
+		if (this.pcScrollTop > 0) {
+			this.pcPulling = false
+			return
+		}
+		this.pcPulling = true
+		this.pcPullTriggered = false
+		this.pcPullStartY = y
+		this.pcPullDistance = 0
+	},
+	onPcPullMove(e) {
+		if (!this.pcPulling || this.refreshing) return
+		const y = this.getPointerY(e)
+		let delta = y - this.pcPullStartY
+		if (delta <= 0) {
+			this.pcPullDistance = 0
+			return
+		}
+		const max = this.pcPullThreshold * 2.2
+		if (delta > max) {
+			delta = max + (delta - max) * 0.3
+		}
+		this.pcPullDistance = delta
+		if (delta >= this.pcPullThreshold) {
+			this.pcPullTriggered = true
+		}
+	},
+	onPcPullEnd() {
+		if (!this.pcPulling) return
+		const triggered = this.pcPullTriggered
+		this.pcPulling = false
+		this.pcPullTriggered = false
+		this.pcPullDistance = 0
+		if (triggered && !this.refreshing) {
+			this.handleRefresh()
+		}
+	},
 		async fetchOrderList(pageNum, isRefresh) {
 			const currentRequestSeq = ++this.requestSeq
 			this.loading = true
@@ -1730,6 +1841,9 @@ page {
 
 .header-panel {
 	background: #ffffff;
+	flex-shrink: 0;
+	position: relative;
+	z-index: 2;
 }
 
 .tab-scroll {
@@ -2853,7 +2967,7 @@ page {
 .primary-btn,
 .outline-btn {
 	display: inline-flex;
-	align-items: flex-start;
+	align-items: center;
 	justify-content: center;
 	height: 48rpx;
 	line-height: 48rpx;
@@ -3021,5 +3135,75 @@ page {
 
 .theme-done .time-text {
 	color: rgba(255, 255, 255, 0.72);
+}
+
+.pc-list-wrap {
+	flex: 1;
+	height: 0;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	overflow: hidden;
+}
+
+.pc-scroll-wrap {
+	flex: 1;
+	min-height: 0;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	will-change: transform;
+}
+
+.task-order-page.pc-pulling {
+	cursor: grab;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.pc-pull-tip {
+	width: 100%;
+	overflow: hidden;
+	pointer-events: none;
+	position: relative;
+}
+
+.pc-pull-visible .pc-pull-inner {
+	opacity: 1;
+}
+
+.pc-pull-inner {
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12rpx;
+	opacity: 0;
+	transition: opacity .2s ease;
+	padding-bottom: 10rpx;
+	box-sizing: border-box;
+}
+
+.pc-pull-text {
+	font-size: 24rpx;
+	color: #999999;
+	line-height: 1;
+}
+
+.pc-pull-spinner {
+	width: 28rpx;
+	height: 28rpx;
+	border: 3rpx solid #e5e5e5;
+	border-top-color: #ff6b35;
+	border-radius: 50%;
+	box-sizing: border-box;
+	animation: pc-pull-spin .7s linear infinite;
+}
+
+@keyframes pc-pull-spin {
+	to { transform: rotate(360deg); }
 }
 </style>

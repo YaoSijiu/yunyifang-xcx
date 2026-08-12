@@ -133,7 +133,7 @@ export default {
 	bottom: 24rpx;
 	max-height: 82vh;
 	padding: 34rpx 46rpx 44rpx;
-	border-radius: 40rpx 40rpx 0 0;
+	border-radius: 40rpx 40rpx 40rpx 40rpx;
 	background: #ffffff;
 	box-sizing: border-box;
 	box-shadow: 0 -16rpx 46rpx rgba(0, 0, 0, 0.08);
@@ -172,7 +172,7 @@ export default {
 }
 
 .reject-confirm {
-	min-width: 140rpx;
+	width: 140rpx;
 	height: 56rpx;
 	padding: 0 34rpx;
 	border-radius: 999rpx;
@@ -232,7 +232,7 @@ export default {
 	justify-content: center;
 	width: 39rpx;
 	height: 39rpx;
-	border: 3rpx solid #cfcfcf;
+	border: 4rpx solid #cfcfcf;
 	border-radius: 50%;
 	box-sizing: border-box;
 	flex-shrink: 0;
@@ -243,9 +243,13 @@ export default {
 }
 
 .reason-radio-dot {
-	width: 21rpx;
-	height: 21rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 22rpx;
+	height: 22rpx;
 	border-radius: 50%;
 	background: #f37738;
+	flex-shrink: 0;
 }
 </style>

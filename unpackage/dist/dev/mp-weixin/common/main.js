@@ -106,12 +106,18 @@ var _default = {
     launchOptions: null,
     updateManagerInited: false,
     isUpdateModalShowing: false,
-    pendingUpdateModal: null
+    pendingUpdateModal: null,
+    // 自定义字体配置
+    customFont: {
+      family: 'Alibaba PuHuiTi',
+      source: 'https://cdn.yourdomain.com/fonts/AlibabaPuHuiTi_3_105_Heavy.woff2'
+    }
   },
   onLaunch: function onLaunch(options) {
     this.globalData.launchOptions = options || null;
     console.log('App Launch');
     this.checkMiniProgramUpdate();
+    this.loadCustomFont();
   },
   onShow: function onShow(options) {
     this.globalData.launchOptions = options || this.globalData.launchOptions;
@@ -122,6 +128,30 @@ var _default = {
     console.log('App Hide');
   },
   methods: {
+    loadCustomFont: function loadCustomFont() {
+      var _this$globalData$cust = this.globalData.customFont,
+        family = _this$globalData$cust.family,
+        source = _this$globalData$cust.source;
+      if (wx.canIUse('loadFontFace')) {
+        wx.loadFontFace({
+          family: family,
+          source: "url(\"".concat(source, "\")"),
+          global: true,
+          scopes: ['webview', 'native'],
+          desc: {
+            style: 'normal',
+            weight: 'normal',
+            variant: 'normal'
+          },
+          success: function success(res) {
+            return console.log('[字体] 加载成功', res);
+          },
+          fail: function fail(err) {
+            return console.error('[字体] 加载失败', err);
+          }
+        });
+      }
+    },
     checkMiniProgramUpdate: function checkMiniProgramUpdate() {
       var _this = this;
       console.log("我触发了", wx.canIUse('getUpdateManager'));
