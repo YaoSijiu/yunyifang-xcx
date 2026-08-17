@@ -127,17 +127,21 @@ var render = function () {
   var _c = _vm._self._c || _h
   var l1 = _vm.__map(_vm.leftColumn, function (card, __i0__) {
     var $orig = _vm.__get_orig(card)
+    var m0 = _vm.truncateTitle(card.title)
     var l0 = _vm.splitPriceSegments(card.price)
     return {
       $orig: $orig,
+      m0: m0,
       l0: l0,
     }
   })
   var l3 = _vm.__map(_vm.rightColumn, function (card, __i1__) {
     var $orig = _vm.__get_orig(card)
+    var m1 = _vm.truncateTitle(card.title)
     var l2 = _vm.splitPriceSegments(card.price)
     return {
       $orig: $orig,
+      m1: m1,
       l2: l2,
     }
   })
@@ -290,8 +294,6 @@ var _default = {
       visibleCards: [],
       leftColumn: [],
       rightColumn: [],
-      leftColumnHeight: 0,
-      rightColumnHeight: 0,
       translateX: 0,
       isDragging: false,
       dragStartX: 0,
@@ -839,8 +841,6 @@ var _default = {
       this.visibleCards = [];
       this.leftColumn = [];
       this.rightColumn = [];
-      this.leftColumnHeight = 0;
-      this.rightColumnHeight = 0;
       return this.fetchShowcaseList(1, true);
     },
     handleRefresh: function handleRefresh() {
@@ -954,8 +954,6 @@ var _default = {
                   if (isRefresh) {
                     _this12.leftColumn = [];
                     _this12.rightColumn = [];
-                    _this12.leftColumnHeight = 0;
-                    _this12.rightColumnHeight = 0;
                   }
                 }
                 _context5.next = 13;
@@ -1037,93 +1035,34 @@ var _default = {
         sold: "\u5DF2\u552E".concat(Number(item.salesCount) || 0),
         cover: this.buildImageUrl(item.coverImage),
         avatar: this.buildImageUrl(item.avatarUrl) || '/static/yunyiku/avatar.png',
-        aspectRatio: 1,
         coverHeight: 346,
         raw: item
       };
     },
-    getImageInfo: function getImageInfo(src) {
-      return new Promise(function (resolve) {
-        uni.getImageInfo({
-          src: src,
-          success: function success(res) {
-            return resolve(res);
-          },
-          fail: function fail() {
-            return resolve(null);
-          }
-        });
-      });
-    },
-    calcCoverHeight: function calcCoverHeight(aspectRatio) {
-      var ratio = Math.max(0.66, Math.min(1.5, aspectRatio));
-      return Math.round(346 / ratio);
-    },
     distributeCards: function distributeCards(cards, seq) {
-      var _this13 = this;
-      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee6() {
-        var _iterator, _step, card, info, cardHeight;
-        return _regenerator.default.wrap(function _callee6$(_context6) {
-          while (1) {
-            switch (_context6.prev = _context6.next) {
-              case 0:
-                _iterator = _createForOfIteratorHelper(cards);
-                _context6.prev = 1;
-                _iterator.s();
-              case 3:
-                if ((_step = _iterator.n()).done) {
-                  _context6.next = 17;
-                  break;
-                }
-                card = _step.value;
-                if (!(seq !== _this13.requestSeq)) {
-                  _context6.next = 7;
-                  break;
-                }
-                return _context6.abrupt("return");
-              case 7:
-                if (!card.cover) {
-                  _context6.next = 12;
-                  break;
-                }
-                _context6.next = 10;
-                return _this13.getImageInfo(card.cover);
-              case 10:
-                info = _context6.sent;
-                if (info) {
-                  card.aspectRatio = info.width / info.height;
-                }
-              case 12:
-                card.coverHeight = _this13.calcCoverHeight(card.aspectRatio);
-                cardHeight = card.coverHeight + 220;
-                if (_this13.leftColumnHeight <= _this13.rightColumnHeight) {
-                  _this13.leftColumn.push(card);
-                  _this13.leftColumnHeight += cardHeight;
-                } else {
-                  _this13.rightColumn.push(card);
-                  _this13.rightColumnHeight += cardHeight;
-                }
-              case 15:
-                _context6.next = 3;
-                break;
-              case 17:
-                _context6.next = 22;
-                break;
-              case 19:
-                _context6.prev = 19;
-                _context6.t0 = _context6["catch"](1);
-                _iterator.e(_context6.t0);
-              case 22:
-                _context6.prev = 22;
-                _iterator.f();
-                return _context6.finish(22);
-              case 25:
-              case "end":
-                return _context6.stop();
-            }
+      var _iterator = _createForOfIteratorHelper(cards),
+        _step;
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var card = _step.value;
+          if (seq !== this.requestSeq) return;
+          var baseIndex = this.leftColumn.length + this.rightColumn.length;
+          if (baseIndex % 2 === 0) {
+            this.leftColumn.push(card);
+          } else {
+            this.rightColumn.push(card);
           }
-        }, _callee6, null, [[1, 19, 22, 25]]);
-      }))();
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+    },
+    truncateTitle: function truncateTitle(title) {
+      var maxLen = 11; // 最多显示字数，可调整
+      if (!title) return '';
+      return title.length > maxLen ? title.slice(0, maxLen) : title;
     },
     formatPrice: function formatPrice(price, unit) {
       var amount = price === null || price === undefined || price === '' ? '0' : price;
@@ -1171,13 +1110,13 @@ var _default = {
       this.resetCards();
     },
     handleSearchInput: function handleSearchInput(event) {
-      var _this14 = this;
+      var _this13 = this;
       this.searchKeyword = event.detail.value;
       if (this.searchTimer) {
         clearTimeout(this.searchTimer);
       }
       this.searchTimer = setTimeout(function () {
-        _this14.resetCards();
+        _this13.resetCards();
       }, 300);
     },
     previewCard: function previewCard(card) {

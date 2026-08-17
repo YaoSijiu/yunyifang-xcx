@@ -1450,8 +1450,9 @@ button::after {
 	right: 40rpx;
 	top: 60%;
 	transform: translateY(-50%);
-	font-size: 28rpx;
-	color: #999999;
+	font-size: 24rpx;
+	font-weight: 400;
+	color: #979797;
 }
 
 .price-popup-close {
@@ -1477,12 +1478,13 @@ button::after {
 
 .price-option {
 	width: calc((100% - 40rpx) / 3);
-	height: 72rpx;
+	height: 55rpx;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	font-size: 28rpx;
-	color: #666666;
+	font-weight: 400;
+	color: #000000;
 	background: #FFFFFF;
 	border-radius: 226rpx;
 	box-sizing: border-box;
@@ -1501,7 +1503,8 @@ button::after {
 }
 
 .price-custom-label {
-	font-size: 26rpx;
+	font-size: 32rpx;
+	font-weight: 600;
 	color: #000000;
 	margin-bottom: 20rpx;
 }
@@ -1541,7 +1544,7 @@ button::after {
 
 .price-popup-btn {
 	flex: 1;
-	height: 88rpx;
+	height: 72rpx;
 	border-radius: 44rpx;
 	display: flex;
 	align-items: center;
@@ -1549,6 +1552,7 @@ button::after {
 	font-size: 30rpx;
 	font-weight: 500;
 	margin-bottom: 20rpx;
+	margin-top: 40rpx;
 }
 
 .price-popup-btn-reset {

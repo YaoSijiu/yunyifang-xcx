@@ -58,7 +58,7 @@
 			
 			<view class="tab-dropdown-panel" @click.stop>
 				<view class="tab-dropdown-panel-title">
-					<text class="tab-dropdown-panel-tags">所有标签</text>
+					<text class="tab-dropdown-panel-tags">展开所有标签</text>
 				</view>
 				<view
 					v-for="(item, index) in primaryTabs"
@@ -197,7 +197,7 @@
 							<image class="designer-avatar" :src="card.avatar" mode="aspectFill"></image>
 							<text class="designer-name">{{ card.author }}</text>
 						</view>
-						<view class="card-title">{{ card.title }}</view>
+						<view class="card-title">{{ truncateTitle(card.title) }}</view>
 						<view class="card-footer">
 							<text class="price">
 								<text
@@ -262,7 +262,7 @@
 							<image class="designer-avatar" :src="card.avatar" mode="aspectFill"></image>
 							<text class="designer-name">{{ card.author }}</text>
 						</view>
-						<view class="card-title">{{ card.title }}</view>
+						<view class="card-title">{{ truncateTitle(card.title) }}</view>
 						<view class="card-footer">
 							<text class="price">
 								<text
@@ -444,8 +444,6 @@ export default {
 			visibleCards: [],
 			leftColumn: [],
 			rightColumn: [],
-			leftColumnHeight: 0,
-			rightColumnHeight: 0,
 			translateX: 0,
 			isDragging: false,
 			dragStartX: 0,
@@ -882,8 +880,6 @@ export default {
 		this.visibleCards = [];
 		this.leftColumn = [];
 		this.rightColumn = [];
-		this.leftColumnHeight = 0;
-		this.rightColumnHeight = 0;
 		return this.fetchShowcaseList(1, true);
 	},
 	async handleRefresh() {
@@ -971,11 +967,9 @@ export default {
 					this.finished = rows.length < this.pageSize || this.visibleCards.length >= this.total;
 
 					if (isRefresh) {
-						this.leftColumn = [];
-						this.rightColumn = [];
-						this.leftColumnHeight = 0;
-						this.rightColumnHeight = 0;
-					}
+					this.leftColumn = [];
+					this.rightColumn = [];
+				}
 				}
 			} catch (e) {
 				if (requestSeq === this.requestSeq) {
@@ -1044,43 +1038,25 @@ export default {
 				sold: `已售${Number(item.salesCount) || 0}`,
 				cover: this.buildImageUrl(item.coverImage),
 				avatar: this.buildImageUrl(item.avatarUrl) || '/static/yunyiku/avatar.png',
-				aspectRatio: 1,
 				coverHeight: 346,
 				raw: item
 			};
 		},
-		getImageInfo(src) {
-			return new Promise((resolve) => {
-				uni.getImageInfo({
-					src: src,
-					success: (res) => resolve(res),
-					fail: () => resolve(null)
-				});
-			});
-		},
-		calcCoverHeight(aspectRatio) {
-			const ratio = Math.max(0.66, Math.min(1.5, aspectRatio));
-			return Math.round(346 / ratio);
-		},
-		async distributeCards(cards, seq) {
+		distributeCards(cards, seq) {
 			for (const card of cards) {
 				if (seq !== this.requestSeq) return;
-				if (card.cover) {
-					const info = await this.getImageInfo(card.cover);
-					if (info) {
-						card.aspectRatio = info.width / info.height;
-					}
-				}
-				card.coverHeight = this.calcCoverHeight(card.aspectRatio);
-				const cardHeight = card.coverHeight + 220;
-				if (this.leftColumnHeight <= this.rightColumnHeight) {
+				const baseIndex = this.leftColumn.length + this.rightColumn.length;
+				if (baseIndex % 2 === 0) {
 					this.leftColumn.push(card);
-					this.leftColumnHeight += cardHeight;
 				} else {
 					this.rightColumn.push(card);
-					this.rightColumnHeight += cardHeight;
 				}
 			}
+		},
+		truncateTitle(title) {
+			const maxLen = 11; // 最多显示字数，可调整
+			if (!title) return '';
+			return title.length > maxLen ? title.slice(0, maxLen) : title;
 		},
 		formatPrice(price, unit) {
 			const amount = price === null || price === undefined || price === '' ? '0' : price;
@@ -1722,6 +1698,8 @@ export default {
 	line-height: 40rpx;
 	font-weight: 500;
 	color: #363636;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 .card-footer {
@@ -1802,9 +1780,9 @@ export default {
 }
 
 .area-popup-title {
-	font-size: 36rpx;
-	font-weight: 500;
-	color: #1a1a1a;
+	font-size: 32rpx;
+	font-weight: 600;
+	color: #000000;
 }
 
 .area-popup-close {
@@ -1834,8 +1812,9 @@ export default {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 30rpx;
-	color: #333333;
+	font-size: 32rpx;
+	font-weight: 400;
+	color: #000000;
 }
 
 .area-popup-footer {
@@ -1875,7 +1854,8 @@ export default {
 
 .tab-dropdown-panel-tags{
 	font-size: 28rpx;
-	font-weight: 500;
+	font-weight: 600;
+	color: #000;
 }
 
 .pc-list-wrap {
@@ -1993,8 +1973,9 @@ export default {
 	right: 40rpx;
 	top: 60%;
 	transform: translateY(-50%);
-	font-size: 28rpx;
-	color: #999999;
+	font-size: 24rpx;
+	font-weight: 400;
+	color: #979797;
 }
 
 .price-popup-close {
@@ -2020,12 +2001,13 @@ export default {
 
 .price-option {
 	width: calc((100% - 40rpx) / 3);
-	height: 72rpx;
+	height: 55rpx;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	font-size: 28rpx;
-	color: #666666;
+	font-weight: 400;
+	color: #000000;
 	background: #FFFFFF;
 	border-radius: 226rpx;
 	box-sizing: border-box;
@@ -2044,7 +2026,8 @@ export default {
 }
 
 .price-custom-label {
-	font-size: 26rpx;
+	font-size: 32rpx;
+	font-weight: 600;
 	color: #000000;
 	margin-bottom: 20rpx;
 }
@@ -2084,7 +2067,7 @@ export default {
 
 .price-popup-btn {
 	flex: 1;
-	height: 88rpx;
+	height: 72rpx;
 	border-radius: 44rpx;
 	display: flex;
 	align-items: center;
@@ -2092,6 +2075,7 @@ export default {
 	font-size: 30rpx;
 	font-weight: 500;
 	margin-bottom: 20rpx;
+	margin-top: 40rpx;
 }
 
 .price-popup-btn-reset {
