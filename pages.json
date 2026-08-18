@@ -109,6 +109,18 @@
 				},
 				{
 					"path": "pages/follow-list"
+				},
+				{
+					"path": "pages/agreement/index",
+					"style": {
+						"navigationBarTitleText": "协议与规则"
+					}
+				},
+				{
+					"path": "pages/agreement/detail",
+					"style": {
+						"navigationBarTitleText": "协议详情"
+					}
 				}
 			]
 		},

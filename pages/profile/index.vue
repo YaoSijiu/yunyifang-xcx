@@ -182,6 +182,11 @@
 						text: '问题反馈',
 						url: '/subpkg-profile/pages/feedback/index'
 					},
+					{
+						icon: '/static/profile/问题反馈.png',
+						text: '协议与规则',
+						url: '/subpkg-profile/pages/agreement/index'
+					},
 				],
 			};
 		},

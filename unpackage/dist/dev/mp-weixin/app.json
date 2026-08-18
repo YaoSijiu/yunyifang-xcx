@@ -21,7 +21,9 @@
         "pages/member/index",
         "pages/feedback/index",
         "pages/settings/index",
-        "pages/follow-list"
+        "pages/follow-list",
+        "pages/agreement/index",
+        "pages/agreement/detail"
       ]
     },
     {

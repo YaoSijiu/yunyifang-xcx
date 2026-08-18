@@ -101,10 +101,10 @@ var components
 try {
   components = {
     yunStorageWarning: function () {
-      return __webpack_require__.e(/*! import() | components/yun-storage-warning */ "components/yun-storage-warning").then(__webpack_require__.bind(null, /*! @/components/yun-storage-warning.vue */ 343))
+      return __webpack_require__.e(/*! import() | components/yun-storage-warning */ "components/yun-storage-warning").then(__webpack_require__.bind(null, /*! @/components/yun-storage-warning.vue */ 359))
     },
     yunTabbar: function () {
-      return Promise.all(/*! import() | components/yun-tabbar */[__webpack_require__.e("common/vendor"), __webpack_require__.e("components/yun-tabbar")]).then(__webpack_require__.bind(null, /*! @/components/yun-tabbar.vue */ 336))
+      return Promise.all(/*! import() | components/yun-tabbar */[__webpack_require__.e("common/vendor"), __webpack_require__.e("components/yun-tabbar")]).then(__webpack_require__.bind(null, /*! @/components/yun-tabbar.vue */ 352))
     },
   }
 } catch (e) {
@@ -416,7 +416,7 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 var PortfolioSelect = function PortfolioSelect() {
   __webpack_require__.e(/*! require.ensure | components/portfolio-select */ "components/portfolio-select").then((function () {
-    return resolve(__webpack_require__(/*! @/components/portfolio-select.vue */ 350));
+    return resolve(__webpack_require__(/*! @/components/portfolio-select.vue */ 366));
   }).bind(null, __webpack_require__)).catch(__webpack_require__.oe);
 };
 var createDefaultHomeUserInfo = function createDefaultHomeUserInfo() {

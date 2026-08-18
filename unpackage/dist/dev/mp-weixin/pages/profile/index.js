@@ -101,13 +101,13 @@ var components
 try {
   components = {
     yunTabbar: function () {
-      return Promise.all(/*! import() | components/yun-tabbar */[__webpack_require__.e("common/vendor"), __webpack_require__.e("components/yun-tabbar")]).then(__webpack_require__.bind(null, /*! @/components/yun-tabbar.vue */ 336))
+      return Promise.all(/*! import() | components/yun-tabbar */[__webpack_require__.e("common/vendor"), __webpack_require__.e("components/yun-tabbar")]).then(__webpack_require__.bind(null, /*! @/components/yun-tabbar.vue */ 352))
     },
     yunStorageWarning: function () {
-      return __webpack_require__.e(/*! import() | components/yun-storage-warning */ "components/yun-storage-warning").then(__webpack_require__.bind(null, /*! @/components/yun-storage-warning.vue */ 343))
+      return __webpack_require__.e(/*! import() | components/yun-storage-warning */ "components/yun-storage-warning").then(__webpack_require__.bind(null, /*! @/components/yun-storage-warning.vue */ 359))
     },
     yunUserSwitch: function () {
-      return __webpack_require__.e(/*! import() | components/yun-user-switch */ "components/yun-user-switch").then(__webpack_require__.bind(null, /*! @/components/yun-user-switch.vue */ 357))
+      return __webpack_require__.e(/*! import() | components/yun-user-switch */ "components/yun-user-switch").then(__webpack_require__.bind(null, /*! @/components/yun-user-switch.vue */ 373))
     },
   }
 } catch (e) {
@@ -195,12 +195,12 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2.default)(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 var TitleBar = function TitleBar() {
   __webpack_require__.e(/*! require.ensure | components/title */ "components/title").then((function () {
-    return resolve(__webpack_require__(/*! @/components/title.vue */ 364));
+    return resolve(__webpack_require__(/*! @/components/title.vue */ 380));
   }).bind(null, __webpack_require__)).catch(__webpack_require__.oe);
 };
 var YunUserSwitch = function YunUserSwitch() {
   __webpack_require__.e(/*! require.ensure | components/yun-user-switch */ "components/yun-user-switch").then((function () {
-    return resolve(__webpack_require__(/*! @/components/yun-user-switch.vue */ 357));
+    return resolve(__webpack_require__(/*! @/components/yun-user-switch.vue */ 373));
   }).bind(null, __webpack_require__)).catch(__webpack_require__.oe);
 };
 var createDefaultProfileUserInfo = function createDefaultProfileUserInfo() {
@@ -276,6 +276,10 @@ var _default = {
         icon: '/static/profile/问题反馈.png',
         text: '问题反馈',
         url: '/subpkg-profile/pages/feedback/index'
+      }, {
+        icon: '/static/profile/问题反馈.png',
+        text: '协议与规则',
+        url: '/subpkg-profile/pages/agreement/index'
       }]
     };
   },
